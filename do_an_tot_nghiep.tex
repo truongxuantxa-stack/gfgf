@@ -66,6 +66,7 @@
 \usepackage{enumitem}
 % Xóa bỏ khoảng trắng thừa của danh sách (itemize, enumerate) để giống Word
 \setlist{topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt}
+\usepackage{longtable}
 
 \begin{document}
 
@@ -1863,13 +1864,21 @@ Nếu người dùng chưa có cấu hình riêng, hệ thống có thể sử d
 
 Ví dụ, nếu một bữa chiếm 30\% tổng mục tiêu trong ngày, thì năng lượng, protein, carbohydrate và chất béo của bữa đó cũng được tính theo tỷ lệ tương ứng. Cách làm này giúp Meal Planner không tạo khẩu phần rời rạc, mà luôn bám theo mục tiêu tổng thể của người dùng.
 
-\begin{table}[htbp]
-\centering
-\caption{trình bày các nhóm xử lý chính trong Meal Planner.}
-\begin{tabular}{|p{5cm}|p{10cm}|}
+\begin{longtable}{|p{5cm}|p{10cm}|}
+\caption{trình bày các nhóm xử lý chính trong Meal Planner.} \\
 \hline
 \textbf{Nhóm xử lý} & \textbf{Vai trò} \\
 \hline
+\endfirsthead
+\caption[]{trình bày các nhóm xử lý chính trong Meal Planner. (tiếp theo)} \\
+\hline
+\textbf{Nhóm xử lý} & \textbf{Vai trò} \\
+\hline
+\endhead
+\hline
+\endfoot
+\hline
+\endlastfoot
 Meal Target Allocation & Chuyển mục tiêu dinh dưỡng trong ngày thành mục tiêu cho từng bữa \\
 \hline
 Template Matching & Chọn tổ hợp nguyên liệu theo các vai trò carbohydrate, protein, chất béo và rau \\
@@ -1904,8 +1913,7 @@ Cơ chế Smart Swap được sử dụng khi nguyên liệu hiện tại làm c
 \hline
 Meal Planner có liên hệ trực tiếp với Nutrition Core vì cần targetCalories và mục tiêu macro làm dữ liệu đầu vào. Trong phạm vi triển khai hiện tại, Meal Planner ưu tiên các ràng buộc về năng lượng, protein, carbohydrate, chất béo, vai trò nguyên liệu, tính khả thi của khối lượng và dữ liệu thực phẩm hiện có. Food Scoring có thể được xem là hướng mở rộng nếu hệ thống cần bổ sung tiêu chí về chất lượng thực phẩm trong các phiên bản sau. & Gợi ý chèn hình 3.x: Sơ đồ luồng Meal Planner gồm các bước: lấy mục tiêu từ Nutrition Core → phân bổ mục tiêu theo bữa → chọn mẫu nguyên liệu → áp dụng preferences và danh sách loại trừ → cố định phần rau 200g → trừ macro của rau khỏi mục tiêu → lập hệ phương trình 3x3 → giải bằng khử Gauss → kiểm tra nghiệm → Smart Swap nếu không khả thi → trả về khẩu phần. \\
 \hline
-\end{tabular}
-\end{table}
+\end{longtable}
 
 \section{Hybrid Nutrition Scanner}Hybrid Nutrition Scanner là chức năng hỗ trợ người dùng ghi nhận thông tin dinh dưỡng của thực phẩm đóng gói thông qua hai hướng xử lý: tra cứu bằng mã vạch và trích xuất thông tin từ ảnh nhãn dinh dưỡng. Chức năng này được xây dựng nhằm giảm thao tác nhập liệu thủ công khi người dùng cần ghi lại các chỉ số như năng lượng, protein, carbohydrate, chất béo, chất xơ, đường và natri. Nếu phải nhập từng chỉ số bằng tay, người dùng dễ mất thời gian và có thể nhập sai dữ liệu, làm ảnh hưởng đến kết quả tổng hợp trong nhật ký ăn uống.
 
