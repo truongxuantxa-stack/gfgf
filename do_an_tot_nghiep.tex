@@ -635,51 +635,61 @@ Hệ thống được xây dựng hoàn toàn trên nền tảng JavaScript ở 
         box/.style={rectangle, draw=black, rounded corners=2pt, fill=white, 
                     text width=6.5cm, align=center, minimum height=1cm, 
                     font=\fontsize{11pt}{13pt}\selectfont},
-        extbox/.style={rectangle, draw=black, rounded corners=2pt, fill=white, 
-                    text width=3.8cm, align=center, minimum height=0.8cm, 
-                    font=\fontsize{10pt}{12pt}\selectfont, dashed},
+        extbox/.style={rectangle, draw=gray, rounded corners=4pt, inner sep=6pt, align=center, fill=gray!10, font=\fontsize{10pt}{12pt}\selectfont},
+        groupbox/.style={rectangle, draw=black, rounded corners=6pt, inner sep=15pt, align=center, fill=blue!5},
         grouptitle/.style={font=\bfseries\fontsize{12pt}{14pt}\selectfont},
-        arrow/.style={-{Stealth[length=3mm]}, thick}
+        arrow/.style={-{Stealth[length=3mm]}, thick},
+        dashedarrow/.style={-{Stealth[length=3mm]}, thick, dashed}
     ]
 
-        % Frontend
-        \node[box, fill=blue!10] (react) at (0, 0) {\textbf{React}\\(Frontend)};
+        % --- BACKEND (Middle) ---
+        \node[box] (api) {RESTful API\\/api/v1};
+        \node[box, right=0.8cm of api] (router) {Router};
+        \node[box, right=0.8cm of router] (middleware) {Middleware};
+        
+        \node[box, below=1.5cm of api] (controller) {Controller};
+        \node[box, right=0.8cm of controller] (service) {Service\\{\normalfont\fontsize{9pt}{11pt}\selectfont Business Logic:\\Nutrition Core, Adaptive TDEE,\\Food Scoring, Health Insights,\\Meal Planner, Scanner, Report}};
+        \node[box, right=0.8cm of service] (sequelize) {Sequelize ORM};
 
-        % Backend
-        \node[box, fill=orange!10, below=1.5cm of react] (express) {\textbf{Express}\\(Router / Middleware / Controller)};
-        \node[box, fill=orange!10, below=0.8cm of express] (service) {\textbf{Service}\\(Business Logic: Nutrition Core, Adaptive TDEE, Food Scoring, Health Insights, Meal Planner, Scanner, Report)};
-        \node[box, fill=orange!10, below=0.8cm of service] (sequelize) {\textbf{Sequelize ORM}};
+        \draw[arrow] (api) -- (router);
+        \draw[arrow] (router) -- (middleware);
+        \draw[arrow] (middleware.south) -- +(0,-0.75) -| (controller.north);
+        \draw[arrow] (controller) -- (service);
+        \draw[arrow] (service) -- (sequelize);
 
-        % Backend Group
         \begin{scope}[on background layer]
-            \node[rectangle, draw=black, fill=yellow!10, inner sep=15pt, 
-                  fit=(express) (service) (sequelize)] (backend_box) {};
-            \node[grouptitle, anchor=south east, xshift=-10pt, yshift=2pt] at (backend_box.north) {BACKEND (Node.js)};
+            \node[groupbox, fit=(api) (router) (middleware) (controller) (service) (sequelize)] (backend) {};
+            \node[grouptitle, anchor=south, yshift=5pt] at (backend.north) {BACKEND (Node.js + Express)};
         \end{scope}
 
-        % Database
-        \node[box, fill=green!10, below=1cm of backend_box.south] (mysql) {\textbf{MySQL}\\(Database)};
+        % --- CLIENT (Left) ---
+        \node[box, fill=cyan!10, left=2.5cm of api] (react) {React Frontend};
+        \node[box, fill=gray!10, above=1cm of react] (user) {Người dùng};
+        
+        \draw[arrow] (user) -- (react);
+        \draw[arrow] (react) -- node[above, font=\fontsize{10pt}{12pt}\selectfont] {Axios / HTTP Request} (api);
 
-        % External Services
-        \node[extbox, fill=gray!10, right=1.5cm of express] (jwt) {JWT Authentication};
-        \node[extbox, fill=gray!10, right=1.5cm of service, yshift=0.8cm] (openfood) {Open Food Facts API};
-        \node[extbox, fill=gray!10, right=1.5cm of service, yshift=-0.8cm] (gemini) {Gemini AI Vision};
+        % --- DATABASE (Right) ---
+        \node[box, fill=green!10, right=2cm of sequelize] (mysql) {MySQL Database};
+        \draw[arrow] (sequelize) -- (mysql);
 
-        % Connections
-        \draw[arrow] (react) -- node[right, xshift=5pt, pos=0.45, font=\bfseries\fontsize{10pt}{12pt}\selectfont] {Axios gọi RESTful API} (backend_box.north);
-        \draw[arrow] (express) -- (service);
-        \draw[arrow] (service) -- (sequelize);
-        \draw[arrow] (backend_box.south) -- (mysql);
+        % --- EXTERNAL SERVICES (Top/Bottom) ---
+        \node[extbox, above=1.5cm of middleware] (jwt) {JWT Authentication};
+        \draw[dashedarrow, <->] (jwt) -- (middleware);
 
-        \draw[arrow, dashed, <->] (express) -- (jwt);
-        \draw[arrow, dashed, <->] (service.east |- openfood) -- (openfood);
-        \draw[arrow, dashed, <->] (service.east |- gemini) -- (gemini);
+        \node[extbox, below=1.5cm of service, xshift=-2.2cm] (openfood) {Open Food Facts API};
+        \node[extbox, below=1.5cm of service, xshift=2.2cm] (gemini) {Gemini AI Vision};
+        
+        \draw[dashedarrow, <->] (openfood) -- (service.south -| openfood);
+        \draw[dashedarrow, <->] (gemini) -- (service.south -| gemini);
 
     \end{tikzpicture}
     }
-    \caption{Mô hình liên kết các công nghệ trong hệ thống}
-    \label{fig:cac_cong_nghe}
+    \caption{Kiến trúc tổng thể Client - Server của hệ thống}
+    \label{fig:kientruc_tongthe}
 \end{figure}
+
+Hình \ref{fig:kientruc_tongthe} mô tả kiến trúc tổng thể của hệ thống theo mô hình Client - Server. Người dùng thao tác trên giao diện React Frontend, các yêu cầu được gửi đến Backend thông qua Axios và RESTful API. Tại Backend, yêu cầu lần lượt được tiếp nhận qua Router, xử lý tại Middleware, điều phối bởi Controller và thực hiện nghiệp vụ tại tầng Service. Tầng Service truy cập cơ sở dữ liệu thông qua Sequelize ORM hoặc gọi các dịch vụ bên ngoài như Open Food Facts API và Gemini AI Vision khi cần thiết. Dữ liệu được lưu trữ trong MySQL và kết quả xử lý được trả về Frontend dưới dạng JSON.
 
 \subsection{React}Giao diện người dùng của hệ thống được phát triển bằng React theo mô hình Single Page Application (SPA). Trong mô hình này, việc chuyển đổi giữa các chức năng được thực hiện trên cùng một trang web, chỉ những thành phần có thay đổi mới được cập nhật thay vì tải lại toàn bộ giao diện. Cách tiếp cận này giúp giảm thời gian phản hồi và cải thiện trải nghiệm sử dụng.
 
