@@ -26,7 +26,8 @@
 ## 4. QUY TẮC LÀM VIỆC DÀNH CHO AI (CRITICAL RULES)
 1. **Định vị khu vực (Targeted Edits):** Vì file LaTeX rất nặng, AI **không được** load và đọc lại toàn bộ file nếu không cần thiết. Người dùng sẽ cung cấp từ khóa, số dòng, hoặc mục cụ thể (VD: "Sửa phần 2.3", "dòng 885-1715"). AI phải dùng công cụ `grep_search` hoặc `view_file` để khoanh vùng và thao tác chính xác tại khu vực đó.
 2. **Sửa đổi cục bộ (Surgical Changes):** Dùng `replace_file_content` hoặc `multi_replace_file_content` (thay vì ghi đè cả file) để giữ an toàn cho các phần không liên quan.
-3. **Vẽ sơ đồ bằng TikZ:** Khi vẽ sơ đồ kiến trúc, luồng dữ liệu trực tiếp bằng code LaTeX (gói TikZ):
+3. **Vẽ sơ đồ bằng TikZ / Chèn hình ảnh:**
+   - **Tuyệt đối không dùng `\begin{figure}[H]`** để tránh tạo khoảng trắng lớn ở cuối trang. Luôn dùng `\begin{figure}[htbp]` để thả nổi hình (floating) và kết hợp tham chiếu chéo (VD: Hình \ref{...}) trong văn bản.
    - Đảm bảo thiết kế gọn gàng, chia tầng (layer) rõ ràng bằng các khung `fit` hoặc `rectangle`.
    - Các chữ/nhãn trên mũi tên phải được tinh chỉnh `xshift`, `yshift`, `pos` để không đè lên các đối tượng khác.
    - Chương 1 chỉ vẽ khái quát (lược bỏ các chi tiết kỹ thuật quá sâu nếu không cần thiết).
