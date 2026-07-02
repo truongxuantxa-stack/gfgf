@@ -889,9 +889,70 @@ Dữ liệu hiển thị trên giao diện được quản lý bởi \textbf{Tan
 
 Việc trao đổi dữ liệu giữa Frontend và Backend được thực hiện thông qua \textbf{Axios}, đóng vai trò gửi yêu cầu HTTP và nhận dữ liệu phản hồi từ các RESTful API.
 
-\textbf{Gợi ý chèn Hình 1.6. Kiến trúc Frontend}
+\begin{figure}[H]
+    \centering
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tikzpicture}[
+        node distance=0.6cm and 1.5cm,
+        box/.style={rectangle, draw=black, rounded corners=4pt, inner sep=6pt, align=center, fill=white, font=\bfseries\fontsize{10pt}{12pt}\selectfont, minimum width=7.5cm},
+        authbox/.style={rectangle, draw=orange, rounded corners=4pt, inner sep=6pt, align=center, fill=orange!10, font=\bfseries\fontsize{10pt}{12pt}\selectfont, minimum width=4cm},
+        groupbox/.style={rectangle, draw=black, rounded corners=6pt, inner sep=15pt, align=center, fill=cyan!5},
+        grouptitle/.style={font=\bfseries\fontsize{12pt}{14pt}\selectfont},
+        arrow/.style={-{Stealth[length=3mm]}, thick},
+        dashedarrow/.style={-{Stealth[length=3mm]}, thick, dashed, draw=orange}
+    ]
 
-\textit{Hình minh họa: React Router → Pages → Components → Custom Hooks → Auth Context → TanStack Query → Axios.}
+        % Main flow (vertical)
+        \node[box, fill=gray!10, minimum width=4cm] (user) {Người dùng};
+        
+        \node[box, below=1.5cm of user] (providers) {QueryClientProvider | AuthProvider | BrowserRouter};
+        
+        \node[box, below=0.6cm of providers] (router) {React Router\\ \normalfont\fontsize{9pt}{11pt}\selectfont Routes, ProtectedRoute, AuthOnlyRoute};
+        
+        \node[box, below=0.6cm of router] (pages) {Pages\\ \normalfont\fontsize{9pt}{11pt}\selectfont Dashboard, Diary, Meal Planner, Weight, Exercise, Profile\\ \normalfont\fontsize{9pt}{11pt}\selectfont Login, Register, Onboarding};
+        
+        \node[box, below=0.6cm of pages] (components) {Components\\ \normalfont\fontsize{9pt}{11pt}\selectfont Layout, Cards, Forms, Modals, Charts, Scanner UI};
+        
+        \node[box, below=0.6cm of components] (hooks) {Custom Hooks\\ \normalfont\fontsize{9pt}{11pt}\selectfont useDashboard, useDiary, useWeight, useMealPlanner, useScanner...};
+        
+        \node[box, below=0.6cm of hooks] (query) {TanStack Query\\ \normalfont\fontsize{9pt}{11pt}\selectfont useQuery, useMutation, cache, invalidateQueries};
+        
+        \node[box, below=0.6cm of query] (axios) {Axios\\ \normalfont\fontsize{9pt}{11pt}\selectfont baseURL /api/v1, Authorization Header, Refresh Token};
+        
+        \node[box, fill=blue!10, below=1.2cm of axios, minimum width=5cm] (backend) {Backend RESTful API};
+
+        % Auth Context (side)
+        % Placed to the right of 'components'
+        \node[authbox, right=1.5cm of components] (auth) {Auth Context\\ \normalfont\fontsize{9pt}{11pt}\selectfont user, token, login};
+
+        % Connections main flow
+        \draw[arrow] (user) -- (providers);
+        \draw[arrow] (providers) -- (router);
+        \draw[arrow] (router) -- (pages);
+        \draw[arrow] (pages) -- (components);
+        \draw[arrow] (components) -- (hooks);
+        \draw[arrow] (hooks) -- (query);
+        \draw[arrow] (query) -- (axios);
+        \draw[arrow] (axios) -- (backend);
+
+        % Connections Auth Context
+        \draw[dashedarrow] (auth.north) |- node[above, font=\fontsize{9pt}{11pt}\selectfont, text=orange, pos=0.75] {Xác thực} ([yshift=-6pt]router.east);
+        \draw[dashedarrow] (auth.west) -- node[above, font=\fontsize{9pt}{11pt}\selectfont, text=orange] {Thông tin user} (components.east);
+        \draw[dashedarrow] (auth.south) |- node[above, font=\fontsize{9pt}{11pt}\selectfont, text=orange, pos=0.75] {Access Token} (axios.east);
+
+        % Group box
+        \begin{scope}[on background layer]
+            \node[groupbox, fit=(providers) (pages) (components) (hooks) (query) (axios) (auth)] (frontend) {};
+            \node[grouptitle, anchor=south, yshift=5pt] at (frontend.north) {REACT FRONTEND SPA};
+        \end{scope}
+
+    \end{tikzpicture}
+    }
+    \caption{Kiến trúc Frontend trong ứng dụng React SPA}
+    \label{fig:kientruc_frontend}
+\end{figure}
+
+Hình \ref{fig:kientruc_frontend} mô tả kiến trúc Frontend của hệ thống. Ứng dụng được tổ chức theo mô hình React SPA, trong đó React Router quản lý điều hướng giữa các trang chức năng. Các route yêu cầu đăng nhập được bảo vệ thông qua ProtectedRoute và Auth Context. Mỗi trang được cấu thành từ nhiều component giao diện nhỏ, còn logic lấy dữ liệu và cập nhật dữ liệu được tách ra các custom hook. TanStack Query được sử dụng để quản lý dữ liệu lấy từ máy chủ, lưu cache và đồng bộ dữ liệu sau các thao tác thêm, sửa hoặc xóa. Axios đảm nhiệm việc gửi yêu cầu HTTP đến RESTful API và xử lý token khi giao tiếp với Backend.
 
 \subsection{Kiến trúc Backend}Backend được xây dựng trên nền tảng \textbf{Node.js} kết hợp với \textbf{Express Framework} và được tổ chức theo mô hình \textbf{MVC kết hợp với tầng Service}.
 
