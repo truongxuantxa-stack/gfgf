@@ -416,7 +416,7 @@ Trong phạm vi đề tài, bài toán không chỉ dừng ở việc lưu trữ
         
         \node[box, below=0.5cm of i1] (i4) {Nước uống\\(WaterLog)};
         \node[box, right=0.5cm of i4] (i5) {Luyện tập\\(ExerciseLog)};
-        \node[box, right=0.5cm of i5] (i6) {Sản phẩm quét\\(ScannedProduct)};
+        \node[box, right=0.5cm of i5] (i6) {Sản phẩm quét / đóng góp\\(ScannedProduct...)};
 
         \begin{scope}[on background layer]
             \node[rectangle, draw=black, fill=cyan!10, inner sep=15pt, 
@@ -429,25 +429,21 @@ Trong phạm vi đề tài, bài toán không chỉ dừng ở việc lưu trữ
         \node[grouptitle, below=1.5cm of in_box] (mid_title) {BACKEND NUTRITRACK XỬ LÝ DỮ LIỆU};
         
         \node[widebox, below=0.5cm of mid_title, align=center] (b1) {
-            \textbf{RESTful API /api/v1} \\
-            \textbf{Middleware xác thực JWT} \\
-            \textbf{Controller điều phối yêu cầu}
+            \textbf{Tầng API và điều phối yêu cầu} \\
+            \textbf{Xác thực và kiểm soát truy cập} \\
+            \textbf{Điều phối xử lý nghiệp vụ}
         };
 
         \node[widebox, below=0.5cm of b1, text width=12cm] (b2) {
-            \textbf{Service xử lý nghiệp vụ:}\\
-            - Nutrition Core: BMI, BMR, TDEE, macro, water goal\\
-            - Dashboard Service: tổng hợp dữ liệu theo ngày\\
-            - Food Scoring: chấm điểm mật độ dinh dưỡng\\
-            - Health Insights: phân tích cảnh báo\\
-            - Adaptive TDEE: hiệu chỉnh TDEE theo dữ liệu thực tế\\
-            - Meal Planner: tạo kế hoạch bữa ăn\\
-            - Scanner Service: mã vạch + AI Vision\\
-            - PDF Service: xuất báo cáo
+            \textbf{Nhóm xử lý tính toán và phân tích:}\\
+            - Nutrition Core, Food Scoring, Health Insights\\
+            - Adaptive TDEE, Meal Planner\\[0.3cm]
+            \textbf{Nhóm hỗ trợ hệ thống:}\\
+            - Dashboard Service, Scanner Service, PDF Service
         };
 
         \node[widebox, below=0.5cm of b2, text width=6cm, align=center] (b3) {
-            \textbf{Sequelize ORM + MySQL}
+            \textbf{Cơ sở dữ liệu (MySQL)}
         };
         
         \draw[arrow] (b1) -- (b2);
@@ -464,8 +460,8 @@ Trong phạm vi đề tài, bài toán không chỉ dừng ở việc lưu trữ
         \node[grouptitle, below=1.5cm of mid_box] (out_title) {KẾT QUẢ ĐẦU RA};
         
         \node[box, below=0.5cm of out_title, xshift=-4.5cm] (o1) {Chỉ số sức khỏe:\\BMI, BMR, TDEE, calo};
-        \node[box, right=0.5cm of o1] (o2) {Tổng hợp Dashboard:\\calo, macro, nước...};
-        \node[box, right=0.5cm of o2] (o3) {Đánh giá dinh dưỡng:\\điểm món ăn};
+        \node[box, right=0.5cm of o1] (o2) {Tổng hợp Dashboard:\\năng lượng, macro, nước, vận động};
+        \node[box, right=0.5cm of o2] (o3) {Đánh giá dinh dưỡng:\\điểm món ăn, nhãn};
         
         \node[box, below=0.5cm of o1] (o4) {Cảnh báo / gợi ý:\\Health Insights};
         \node[box, right=0.5cm of o4] (o5) {Thực đơn gợi ý:\\Meal Planner};
@@ -486,9 +482,11 @@ Trong phạm vi đề tài, bài toán không chỉ dừng ở việc lưu trữ
 
     \end{tikzpicture}
     }
-    \caption{Tổng quan bài toán quản lý dinh dưỡng cá nhân}
+    \caption{Mô hình tổng quan dữ liệu của hệ thống quản lý dinh dưỡng cá nhân}
     \label{fig:tong_quan_bai_toan}
 \end{figure}
+
+Hình \ref{fig:tong_quan_bai_toan} mô tả các nhóm dữ liệu đầu vào của hệ thống, bao gồm hồ sơ sức khỏe, nhật ký ăn uống, cân nặng, nước uống, luyện tập và dữ liệu quét sản phẩm. Các dữ liệu này được Backend tiếp nhận qua tầng API, xử lý tại các service nghiệp vụ và lưu trữ trong cơ sở dữ liệu MySQL thông qua Sequelize ORM. Kết quả xử lý được sử dụng để tạo ra các chỉ số sức khỏe, dashboard tổng hợp, đánh giá dinh dưỡng, gợi ý thực đơn và báo cáo PDF.
 
 \subsection{Các yêu cầu đặt ra đối với hệ thống}Từ đặc điểm của bài toán, hệ thống cần đáp ứng một số yêu cầu nhằm đảm bảo quá trình quản lý và phân tích dữ liệu được thực hiện thống nhất.
 
