@@ -68,6 +68,9 @@
 \setlist{topsep=0pt, partopsep=0pt, itemsep=0pt, parsep=0pt}
 \usepackage{longtable}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds}
+
 \begin{document}
 
 % ============================================================
@@ -390,7 +393,99 @@ Trong phạm vi đề tài, bài toán không chỉ dừng ở việc lưu trữ
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/tong_quan_kien_truc.pdf}
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        box/.style={rectangle, draw=black, rounded corners=2pt, fill=white, 
+                    text width=3.8cm, align=center, minimum height=1cm, 
+                    font=\fontsize{11pt}{13pt}\selectfont},
+        widebox/.style={rectangle, draw=black, rounded corners=2pt, fill=white, 
+                    text width=10cm, align=left, minimum height=1cm, 
+                    font=\fontsize{11pt}{13pt}\selectfont, inner sep=10pt},
+        grouptitle/.style={font=\bfseries\fontsize{12pt}{14pt}\selectfont},
+        arrow/.style={-{Stealth[length=3mm]}, thick}
+    ]
+
+        % ==============================================
+        % GROUP 1: IN
+        % ==============================================
+        \node[grouptitle] (in_title) at (0, 0) {NGUỒN DỮ LIỆU ĐẦU VÀO};
+        
+        \node[box, below=0.5cm of in_title, xshift=-4.5cm] (i1) {Hồ sơ sức khỏe\\(User / Profile)};
+        \node[box, right=0.5cm of i1] (i2) {Nhật ký ăn uống\\(DiaryEntry + Food)};
+        \node[box, right=0.5cm of i2] (i3) {Cân nặng\\(WeightLog)};
+        
+        \node[box, below=0.5cm of i1] (i4) {Nước uống\\(WaterLog)};
+        \node[box, right=0.5cm of i4] (i5) {Luyện tập\\(ExerciseLog)};
+        \node[box, right=0.5cm of i5] (i6) {Sản phẩm quét\\(ScannedProduct)};
+
+        \begin{scope}[on background layer]
+            \node[rectangle, draw=black, fill=cyan!10, inner sep=15pt, 
+                  fit=(in_title) (i1) (i2) (i3) (i4) (i5) (i6)] (in_box) {};
+        \end{scope}
+
+        % ==============================================
+        % GROUP 2: MID
+        % ==============================================
+        \node[grouptitle, below=1.5cm of in_box] (mid_title) {BACKEND NUTRITRACK XỬ LÝ DỮ LIỆU};
+        
+        \node[widebox, below=0.5cm of mid_title, align=center] (b1) {
+            \textbf{RESTful API /api/v1} \\
+            \textbf{Middleware xác thực JWT} \\
+            \textbf{Controller điều phối yêu cầu}
+        };
+
+        \node[widebox, below=0.5cm of b1, text width=12cm] (b2) {
+            \textbf{Service xử lý nghiệp vụ:}\\
+            - Nutrition Core: BMI, BMR, TDEE, macro, water goal\\
+            - Dashboard Service: tổng hợp dữ liệu theo ngày\\
+            - Food Scoring: chấm điểm mật độ dinh dưỡng\\
+            - Health Insights: phân tích cảnh báo\\
+            - Adaptive TDEE: hiệu chỉnh TDEE theo dữ liệu thực tế\\
+            - Meal Planner: tạo kế hoạch bữa ăn\\
+            - Scanner Service: mã vạch + AI Vision\\
+            - PDF Service: xuất báo cáo
+        };
+
+        \node[widebox, below=0.5cm of b2, text width=6cm, align=center] (b3) {
+            \textbf{Sequelize ORM + MySQL}
+        };
+        
+        \draw[arrow] (b1) -- (b2);
+        \draw[arrow] (b2) -- (b3);
+
+        \begin{scope}[on background layer]
+            \node[rectangle, draw=black, fill=orange!10, inner sep=15pt, 
+                  fit=(mid_title) (b1) (b2) (b3)] (mid_box) {};
+        \end{scope}
+
+        % ==============================================
+        % GROUP 3: OUT
+        % ==============================================
+        \node[grouptitle, below=1.5cm of mid_box] (out_title) {KẾT QUẢ ĐẦU RA};
+        
+        \node[box, below=0.5cm of out_title, xshift=-4.5cm] (o1) {Chỉ số sức khỏe:\\BMI, BMR, TDEE, calo};
+        \node[box, right=0.5cm of o1] (o2) {Tổng hợp Dashboard:\\calo, macro, nước...};
+        \node[box, right=0.5cm of o2] (o3) {Đánh giá dinh dưỡng:\\điểm món ăn};
+        
+        \node[box, below=0.5cm of o1] (o4) {Cảnh báo / gợi ý:\\Health Insights};
+        \node[box, right=0.5cm of o4] (o5) {Thực đơn gợi ý:\\Meal Planner};
+        \node[box, right=0.5cm of o5] (o6) {Dữ liệu sản phẩm\\sau quét};
+        
+        \node[box, below=0.5cm of o5, xshift=-4.5cm] (o7) {Báo cáo PDF\\theo tuần / tháng};
+
+        \begin{scope}[on background layer]
+            \node[rectangle, draw=black, fill=green!10, inner sep=15pt, 
+                  fit=(out_title) (o1) (o2) (o3) (o4) (o5) (o6) (o7)] (out_box) {};
+        \end{scope}
+
+        % ==============================================
+        % Connections
+        % ==============================================
+        \draw[arrow] (in_box.south) -- (mid_box.north);
+        \draw[arrow] (mid_box.south) -- (out_box.north);
+
+    \end{tikzpicture}
+    }
     \caption{Tổng quan bài toán quản lý dinh dưỡng cá nhân}
     \label{fig:tong_quan_bai_toan}
 \end{figure}
