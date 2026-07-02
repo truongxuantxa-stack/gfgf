@@ -34,8 +34,11 @@
 5. **Đồng bộ Git:** Luôn kết thúc một task quan trọng bằng việc tạo commit rõ ràng và push lên repository.
 
 ## 5. LỊCH SỬ CẬP NHẬT GẦN NHẤT
-- Đã hoàn thiện **Hình 1.1**: Mô hình tổng quan dữ liệu của hệ thống quản lý dinh dưỡng cá nhân. (Đã tinh chỉnh khoảng cách, sửa lỗi chữ Axios đè lên khối Backend).
-- Đã hoàn thiện **Hình 1.4**: Kiến trúc truy cập dữ liệu thông qua Sequelize ORM. (Vẽ theo dạng 3 tầng: Service -> Sequelize -> MySQL Database, chia module rõ ràng, gọn gàng, không đưa râu ria Frontend vào để giữ đúng trọng tâm).
+- Đã quyết định **KHÔNG CHIA TÁCH** file LaTeX (`do_an_tot_nghiep.tex`) để đảm bảo an toàn tuyệt đối trước thềm bảo vệ.
+- Đã fix triệt để lỗi biên dịch LaTeX (crash do ngoặc nhọn `{` nằm ngay sau ký tự xuống dòng `\\` bên trong TikZ node).
+- Đã hoàn thiện **Hình 1.5**: Sơ đồ Kiến trúc tổng thể Client - Server. 
+  - Giao diện trải ngang trực quan: `Router → Middleware → Controller → Service → Sequelize ORM`.
+  - Tách RESTful API làm cầu nối, thêm luồng JWT Authentication một chiều vào Middleware, và các dịch vụ ngoài (Open Food Facts, Gemini AI) giao tiếp nét đứt 2 chiều với tầng Service.
 
 ---
-*(Cập nhật lần cuối: Tháng 7/2026 - Giai đoạn chuẩn bị nộp báo cáo đồ án)*
+*(Cập nhật lần cuối: Tháng 7/2026 - Kết thúc phiên tinh chỉnh sơ đồ kiến trúc tổng thể)*
