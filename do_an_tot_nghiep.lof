@@ -2,6 +2,7 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {1.1}{\ignorespaces Mô hình tổng quan dữ liệu của hệ thống quản lý dinh dưỡng cá nhân}}{6}{figure.1.1}%
 \contentsline {figure}{\numberline {1.2}{\ignorespaces Mô hình liên kết các công nghệ trong hệ thống}}{11}{figure.1.2}%
+\contentsline {figure}{\numberline {1.3}{\ignorespaces Kiến trúc truy cập dữ liệu thông qua Sequelize ORM}}{14}{figure.1.3}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
