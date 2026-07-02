@@ -1287,9 +1287,94 @@ Gemini AI Vision & Hệ thống bên ngoài & Hỗ trợ nhận dạng bảng th
 \end{table}
 \subsection{Biểu đồ Use Case tổng thể}Biểu đồ Use Case tổng thể thể hiện các chức năng chính mà người dùng có thể thực hiện trong hệ thống. Các Use Case được chia thành các nhóm chức năng tương ứng với các nghiệp vụ đã phân tích, bao gồm xác thực người dùng, quản lý hồ sơ sức khỏe, ghi nhận dữ liệu hằng ngày, theo dõi chỉ số cá nhân, sử dụng Scanner, xây dựng thực đơn, xem Dashboard và xuất báo cáo.
 
-\textbf{Gợi ý chèn Hình 2.x. Biểu đồ Use Case tổng thể của hệ thống}
+\begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        usecase/.style={rectangle, rounded corners=12pt, draw=black, thick, minimum width=3.4cm, minimum height=0.8cm, align=center, fill=blue!5, font=\small},
+        actor/.style={align=center, font=\bfseries},
+        sysbox/.style={rectangle, draw=black, thick, rounded corners=10pt, inner sep=15pt},
+        arrow/.style={-, thick},
+        include/.style={-Latex, dashed, font=\scriptsize}
+    ]
+        
+        \tikzset{
+            stick figure/.pic={
+                \draw[thick] (0, 0.4) circle (0.15);
+                \draw[thick] (0, 0.25) -- (0, -0.25);
+                \draw[thick] (0, 0.1) -- (-0.3, -0.1);
+                \draw[thick] (0, 0.1) -- (0.3, -0.1);
+                \draw[thick] (0, -0.25) -- (-0.25, -0.6);
+                \draw[thick] (0, -0.25) -- (0.25, -0.6);
+            }
+        }
 
-\textit{Biểu đồ nên thể hiện tác nhân Người dùng ở bên ngoài biên hệ thống. Bên trong hệ thống gồm các nhóm Use Case chính. Open Food Facts API và Gemini AI Vision có thể được đặt ngoài hệ thống và liên kết với nhóm Use Case Hybrid Nutrition Scanner.}
+        % --- CỘT 1 ---
+        \node[usecase] (uc_register) at (-4.2, 0) {Đăng ký tài khoản};
+        \node[usecase] (uc_profile) at (-4.2, -1.5) {Khởi tạo / cập nhật\\hồ sơ sức khỏe};
+        \node[usecase] (uc_log_water) at (-4.2, -3) {Ghi nhận nước uống};
+        \node[usecase] (uc_dashboard) at (-4.2, -4.5) {Xem Dashboard};
+        \node[usecase] (uc_report) at (-4.2, -6) {Xuất báo cáo PDF};
+        \node[usecase] (uc_meal) at (-4.2, -8.0) {Xây dựng thực đơn};
+
+        % --- CỘT 2 ---
+        \node[usecase] (uc_logout) at (0, 0.75) {Đăng xuất};
+        \node[usecase] (uc_login) at (0, -0.75) {Đăng nhập};
+        \node[usecase] (uc_log_food) at (0, -2.25) {Ghi nhật ký ăn uống};
+        \node[usecase] (uc_weight) at (0, -3.75) {Theo dõi cân nặng};
+        \node[usecase] (uc_exercise) at (0, -5.25) {Ghi nhận luyện tập};
+        \node[usecase] (uc_aggregate) at (0, -6) {Tổng hợp dữ liệu\\dinh dưỡng};
+        \node[usecase] (uc_scanner) at (0, -7.25) {Sử dụng Hybrid\\Nutrition Scanner};
+
+        % --- CỘT 3 ---
+        \node[usecase] (uc_search) at (4.2, -2.25) {Tìm kiếm thực phẩm};
+        \node[usecase] (uc_analysis) at (4.2, -4.5) {Xem phân tích\\dinh dưỡng};
+        \node[usecase] (uc_barcode) at (4.2, -6.5) {Quét mã vạch};
+        \node[usecase] (uc_ocr) at (4.2, -8.0) {Nhận dạng bảng\\dinh dưỡng};
+
+        % --- SYSTEM BOUNDARY ---
+        \node[sysbox, fit=(uc_logout) (uc_meal) (uc_register) (uc_search) (uc_ocr), label={[font=\bfseries, yshift=8pt]north:HỆ THỐNG QUẢN LÝ DINH DƯỠNG CÁ NHÂN}] (system) {};
+        
+        \node[anchor=south west, font=\itshape\scriptsize] at ([yshift=5pt, xshift=5pt]system.south west) {* Ghi chú: Các chức năng nghiệp vụ (trừ đăng ký) yêu cầu người dùng đã đăng nhập.};
+
+        % --- ACTORS ---
+        \node[actor] (user) at (-8.2, -3.6) {Người dùng};
+        \pic at ([yshift=0.8cm]user.center) {stick figure};
+
+        \node[actor, draw=black, thick, fill=gray!10, minimum width=2.2cm, minimum height=0.8cm, align=center, rounded corners=5pt] (openfood) at (8.5, -6.5) {<<system>>\\Open Food Facts\\API};
+        \node[actor, draw=black, thick, fill=gray!10, minimum width=2.2cm, minimum height=0.8cm, align=center, rounded corners=5pt] (gemini) at (8.5, -8.0) {<<system>>\\Gemini AI\\Vision};
+
+        % --- INCLUDE ARROWS ---
+        \draw[include] (uc_log_food) -- node[above, font=\scriptsize] {<<include>>} (uc_search);
+        \draw[include] (uc_dashboard) -- node[above, font=\scriptsize] {<<include>>} (uc_analysis);
+        \draw[include] (uc_report) -- node[above, font=\scriptsize] {<<include>>} (uc_aggregate);
+        \draw[include] (uc_scanner) -- node[above, sloped, font=\scriptsize] {<<include>>} (uc_barcode);
+        \draw[include] (uc_scanner) -- node[below, sloped, font=\scriptsize] {<<include>>} (uc_ocr);
+
+        % --- EXTERNAL ARROWS ---
+        \draw[-, thick] (openfood.west) -- (uc_barcode.east);
+        \draw[-, thick] (gemini.west) -- (uc_ocr.east);
+
+        % --- USER CONNECTIONS ---
+        \draw[-, thick] (user.east) -- (-6.5, -3.6);
+        \draw[-, thick] (-6.5, 0.75) -- (-6.5, -8.0);
+
+        % Nối vào Cột 1
+        \foreach \y in {0, -1.5, -3.0, -4.5, -6.0, -8.0} {
+            \draw[-, thick] (-6.5, \y) -- (-5.9, \y);
+        }
+        % Nối vào Cột 2
+        \foreach \y in {0.75, -0.75, -2.25, -3.75, -5.25, -7.25} {
+            \draw[-, thick] (-6.5, \y) -- (-1.7, \y);
+        }
+
+    \end{tikzpicture}
+    }
+    \caption{Biểu đồ Use Case tổng thể của hệ thống}
+    \label{fig:usecase_tong_the}
+\end{figure}
+
+Hình \ref{fig:usecase_tong_the} trình bày biểu đồ Use Case tổng thể của hệ thống. Tác nhân chính của hệ thống là Người dùng, thực hiện các nhóm chức năng gồm đăng ký, đăng nhập, quản lý hồ sơ sức khỏe, ghi nhận nhật ký ăn uống, ghi nhận nước uống, theo dõi cân nặng, ghi nhận luyện tập, sử dụng Hybrid Nutrition Scanner, xem Dashboard, xây dựng thực đơn và xuất báo cáo PDF. Hai hệ thống bên ngoài gồm Open Food Facts API và Gemini AI Vision được liên kết với nhóm Use Case Hybrid Nutrition Scanner để hỗ trợ tra cứu sản phẩm theo mã vạch và nhận dạng bảng thành phần dinh dưỡng từ hình ảnh.
 
 \subsection{Danh sách Use Case chính}Bảng dưới đây tổng hợp các Use Case chính của hệ thống. Các Use Case này được lựa chọn dựa trên những chức năng có vai trò trực tiếp trong quá trình sử dụng của người dùng và được triển khai trong hệ thống.
 
