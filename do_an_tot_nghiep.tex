@@ -827,7 +827,7 @@ Trong mô hình này, người dùng thao tác trên giao diện được xây d
         \node[box, right=0.8cm of router] (middleware) {Middleware};
         
         \node[box, below=1.5cm of api] (controller) {Controller};
-        \node[box, right=0.8cm of controller] (service) {Service\\{\normalfont\fontsize{9pt}{11pt}\selectfont Business Logic:\\Nutrition Core, Adaptive TDEE,\\Food Scoring, Health Insights,\\Meal Planner, Scanner, Report}};
+        \node[box, right=0.8cm of controller] (service) {Service\\ \normalfont\fontsize{9pt}{11pt}\selectfont Business Logic:\\Nutrition Core, Adaptive TDEE,\\Food Scoring, Health Insights,\\Meal Planner, Scanner, Report};
         \node[box, right=0.8cm of service] (sequelize) {Sequelize ORM};
 
         \draw[arrow] (api) -- (router);
