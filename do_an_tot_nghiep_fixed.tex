@@ -534,13 +534,13 @@ Hệ thống được xây dựng hoàn toàn trên nền tảng JavaScript ở 
 
 \begin{figure}[htbp]
     \centering
-    \resizebox{0.9\textwidth}{!}{
+    \resizebox{0.75\textwidth}{!}{
     \begin{tikzpicture}[
         box/.style={rectangle, draw=black, rounded corners=2pt, fill=white, 
-                    text width=2.5cm, align=center, minimum height=1cm, 
+                    text width=6.5cm, align=center, minimum height=1cm, 
                     font=\fontsize{11pt}{13pt}\selectfont},
         extbox/.style={rectangle, draw=black, rounded corners=2pt, fill=white, 
-                    text width=3.2cm, align=center, minimum height=0.8cm, 
+                    text width=3.8cm, align=center, minimum height=0.8cm, 
                     font=\fontsize{10pt}{12pt}\selectfont, dashed},
         grouptitle/.style={font=\bfseries\fontsize{12pt}{14pt}\selectfont},
         arrow/.style={-{Stealth[length=3mm]}, thick}
@@ -550,9 +550,9 @@ Hệ thống được xây dựng hoàn toàn trên nền tảng JavaScript ở 
         \node[box, fill=blue!10] (react) at (0, 0) {\textbf{React}\\(Frontend)};
 
         % Backend
-        \node[box, fill=orange!10, right=3.5cm of react] (express) {\textbf{Express}\\(Controller)};
-        \node[box, fill=orange!10, right=0.8cm of express] (service) {\textbf{Service}\\(Business Logic)};
-        \node[box, fill=orange!10, right=0.8cm of service] (sequelize) {\textbf{Sequelize\\ORM}};
+        \node[box, fill=orange!10, below=2cm of react] (express) {\textbf{Express}\\(Router / Middleware / Controller)};
+        \node[box, fill=orange!10, below=1cm of express] (service) {\textbf{Service}\\(Business Logic)};
+        \node[box, fill=orange!10, below=1cm of service] (sequelize) {\textbf{Sequelize ORM}};
 
         % Backend Group
         \begin{scope}[on background layer]
@@ -562,26 +562,26 @@ Hệ thống được xây dựng hoàn toàn trên nền tảng JavaScript ở 
         \end{scope}
 
         % Database
-        \node[box, fill=green!10, right=1.5cm of sequelize] (mysql) {\textbf{MySQL}\\(Database)};
+        \node[box, fill=green!10, below=1.5cm of backend_box.south] (mysql) {\textbf{MySQL}\\(Database)};
 
         % External Services
-        \node[extbox, fill=gray!10, above=1.5cm of express] (jwt) {JWT\\Authentication};
-        \node[extbox, fill=gray!10, above=1.5cm of service] (openfood) {Open Food Facts\\API};
-        \node[extbox, fill=gray!10, above=1.5cm of sequelize] (gemini) {Gemini AI\\Vision};
+        \node[extbox, fill=gray!10, right=1.5cm of express] (jwt) {JWT Authentication};
+        \node[extbox, fill=gray!10, right=1.5cm of service, yshift=0.8cm] (openfood) {Open Food Facts API};
+        \node[extbox, fill=gray!10, right=1.5cm of service, yshift=-0.8cm] (gemini) {Gemini AI Vision};
 
         % Connections
-        \draw[arrow] (react) -- node[above, font=\bfseries\fontsize{10pt}{12pt}\selectfont] {RESTful API} (express);
+        \draw[arrow] (react) -- node[right, font=\bfseries\fontsize{10pt}{12pt}\selectfont] {Axios gọi RESTful API} (backend_box.north);
         \draw[arrow] (express) -- (service);
         \draw[arrow] (service) -- (sequelize);
-        \draw[arrow] (sequelize) -- (mysql);
+        \draw[arrow] (backend_box.south) -- (mysql);
 
         \draw[arrow, dashed, <->] (express) -- (jwt);
-        \draw[arrow, dashed, <->] (service) -- (openfood);
-        \draw[arrow, dashed, <->] (service) -- (gemini);
+        \draw[arrow, dashed, <->] (service.east |- openfood) -- (openfood);
+        \draw[arrow, dashed, <->] (service.east |- gemini) -- (gemini);
 
     \end{tikzpicture}
     }
-    \caption{Các công nghệ sử dụng trong hệ thống}
+    \caption{Mô hình liên kết các công nghệ trong hệ thống}
     \label{fig:cac_cong_nghe}
 \end{figure}
 
