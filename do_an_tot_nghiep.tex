@@ -1116,103 +1116,40 @@ Bảng Food có quan hệ với DiaryEntry. Một thực phẩm có thể xuất
 
 Đối với Scanner, một sản phẩm trong ScannedProduct có thể có nhiều bản ghi đóng góp trong ProductContribution. Mỗi đóng góp liên kết với một người dùng và một sản phẩm được quét. Nếu sản phẩm đã được chuẩn hóa thành dữ liệu thực phẩm sử dụng chung, ScannedProduct có thể liên kết tùy chọn với Food.
 
-\textbf{Bảng 2.x. Tóm tắt khóa chính và khóa ngoại của một số bảng chính}
+\begin{longtable}{|p{3.5cm}|p{2cm}|p{4.5cm}|p{5cm}|}
+\caption{Tóm tắt khóa chính và khóa ngoại của một số bảng chính} \\
+\hline
+\textbf{Bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại chính} & \textbf{Vai trò} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Bảng} & \textbf{Khóa chính} & \textbf{Khóa ngoại chính} & \textbf{Vai trò} \\
+\hline
+\endhead
 
-\textbf{Bảng}
-
-\textbf{Khóa chính}
-
-\textbf{Khóa ngoại chính}
-
-\textbf{Vai trò}
-
-User
-
-id
-
-—
-
-Lưu tài khoản, hồ sơ sức khỏe và cấu hình cá nhân
-
-Food
-
-id
-
-userId, nếu là thực phẩm do người dùng tạo
-
-Lưu dữ liệu thực phẩm
-
-DiaryEntry
-
-id
-
-userId, foodId
-
-Lưu nhật ký ăn uống
-
-WeightLog
-
-id
-
-userId
-
-Lưu lịch sử cân nặng
-
-WaterLog
-
-id
-
-userId
-
-Lưu dữ liệu nước uống theo ngày
-
-ExerciseLog
-
-id
-
-userId
-
-Lưu hoạt động luyện tập
-
-MealTemplate
-
-id
-
-—
-
-Lưu mẫu bữa ăn
-
-UserMealConfig
-
-id
-
-userId
-
-Lưu cấu hình phân bổ bữa ăn của người dùng
-
-AdaptiveTDEELog
-
-id
-
-userId
-
-Lưu lịch sử tính toán TDEE thích ứng
-
-ScannedProduct
-
-id
-
-foodId, tùy chọn
-
-Lưu sản phẩm được quét
-
-ProductContribution
-
-id
-
-userId, scannedProductId
-
-Lưu dữ liệu đóng góp cho sản phẩm quét
+User & id & --- & Lưu tài khoản, hồ sơ sức khỏe và cấu hình cá nhân \\
+\hline
+Food & id & userId, nếu là thực phẩm do người dùng tạo & Lưu dữ liệu thực phẩm \\
+\hline
+DiaryEntry & id & userId, foodId & Lưu nhật ký ăn uống \\
+\hline
+WeightLog & id & userId & Lưu lịch sử cân nặng \\
+\hline
+WaterLog & id & userId & Lưu dữ liệu nước uống theo ngày \\
+\hline
+ExerciseLog & id & userId & Lưu hoạt động luyện tập \\
+\hline
+MealTemplate & id & --- & Lưu mẫu bữa ăn \\
+\hline
+UserMealConfig & id & userId & Lưu cấu hình phân bổ bữa ăn của người dùng \\
+\hline
+AdaptiveTDEELog & id & userId & Lưu lịch sử tính toán TDEE thích ứng \\
+\hline
+ScannedProduct & id & foodId, tùy chọn & Lưu sản phẩm được quét \\
+\hline
+ProductContribution & id & userId, scannedProductId & Lưu dữ liệu đóng góp cho sản phẩm quét \\
+\hline
+\end{longtable}
 
 \textbf{Gợi ý chèn Hình 2.x. Sơ đồ ERD rút gọn của hệ thống}
 
