@@ -550,19 +550,19 @@ Hệ thống được xây dựng hoàn toàn trên nền tảng JavaScript ở 
         \node[box, fill=blue!10] (react) at (0, 0) {\textbf{React}\\(Frontend)};
 
         % Backend
-        \node[box, fill=orange!10, below=2.8cm of react] (express) {\textbf{Express}\\(Router / Middleware / Controller)};
-        \node[box, fill=orange!10, below=1cm of express] (service) {\textbf{Service}\\(Business Logic: Nutrition Core, Adaptive TDEE, Food Scoring, Health Insights, Meal Planner, Scanner, Report)};
-        \node[box, fill=orange!10, below=1cm of service] (sequelize) {\textbf{Sequelize ORM}};
+        \node[box, fill=orange!10, below=1.5cm of react] (express) {\textbf{Express}\\(Router / Middleware / Controller)};
+        \node[box, fill=orange!10, below=0.8cm of express] (service) {\textbf{Service}\\(Business Logic: Nutrition Core, Adaptive TDEE, Food Scoring, Health Insights, Meal Planner, Scanner, Report)};
+        \node[box, fill=orange!10, below=0.8cm of service] (sequelize) {\textbf{Sequelize ORM}};
 
         % Backend Group
         \begin{scope}[on background layer]
             \node[rectangle, draw=black, fill=yellow!10, inner sep=15pt, 
                   fit=(express) (service) (sequelize)] (backend_box) {};
-            \node[grouptitle, above=0.2cm of backend_box.north] (backend_title) {BACKEND (Node.js)};
+            \node[grouptitle, anchor=south west, xshift=5pt, yshift=2pt] at (backend_box.north west) {BACKEND (Node.js)};
         \end{scope}
 
         % Database
-        \node[box, fill=green!10, below=1.5cm of backend_box.south] (mysql) {\textbf{MySQL}\\(Database)};
+        \node[box, fill=green!10, below=1cm of backend_box.south] (mysql) {\textbf{MySQL}\\(Database)};
 
         % External Services
         \node[extbox, fill=gray!10, right=1.5cm of express] (jwt) {JWT Authentication};
@@ -570,7 +570,7 @@ Hệ thống được xây dựng hoàn toàn trên nền tảng JavaScript ở 
         \node[extbox, fill=gray!10, right=1.5cm of service, yshift=-0.8cm] (gemini) {Gemini AI Vision};
 
         % Connections
-        \draw[arrow] (react) -- node[right, pos=0.4, font=\bfseries\fontsize{10pt}{12pt}\selectfont] {Axios gọi RESTful API} (backend_box.north);
+        \draw[arrow] (react) -- node[right, font=\bfseries\fontsize{10pt}{12pt}\selectfont] {Axios gọi RESTful API} (backend_box.north);
         \draw[arrow] (express) -- (service);
         \draw[arrow] (service) -- (sequelize);
         \draw[arrow] (backend_box.south) -- (mysql);
