@@ -717,9 +717,9 @@ Ngoài ra, Sequelize được sử dụng để thiết lập quan hệ giữa c
         \node[outerbox, fill=blue!5, minimum height=3.8cm] (layer_service) {};
         \node[layertitle] at (layer_service.north) {SERVICE XỬ LÝ NGHIỆP VỤ};
         
-        \node[innerbox, below=1cm of layer_service.north] (s1) {Dashboard $|$ Diary $|$ Nutrition Core $|$ Adaptive TDEE};
-        \node[innerbox, below=0.2cm of s1] (s2) {Food Scoring $|$ Health Insights $|$ Meal Planner $|$ Scanner};
-        \node[innerbox, below=0.2cm of s2] (s3) {Report $|$ Weight $|$ Water $|$ Exercise};
+        \node[innerbox, below=1cm of layer_service.north] (s1) {Dashboard $|$ Diary $|$ Weight $|$ Water $|$ Exercise};
+        \node[innerbox, below=0.2cm of s1] (s2) {Nutrition Core $|$ Adaptive TDEE $|$ Food Scoring $|$ Health Insights};
+        \node[innerbox, below=0.2cm of s2] (s3) {Meal Planner $|$ Scanner $|$ Report};
 
         % ================= LAYER 2: SEQUELIZE =================
         \node[outerbox, fill=orange!5, minimum height=2.4cm, below=1cm of layer_service] (layer_seq) {};
@@ -734,7 +734,7 @@ Ngoài ra, Sequelize được sử dụng để thiết lập quan hệ giữa c
         \node[outerbox, fill=green!5, minimum height=4.6cm, below=1cm of layer_seq] (layer_db) {};
         \node[layertitle] at (layer_db.north) {MYSQL DATABASE};
         
-        \node[innerbox, below=1cm of layer_db.north] (db1) {User / Profile $|$ Food / Product $|$ DiaryEntry};
+        \node[innerbox, below=1cm of layer_db.north] (db1) {User $|$ Food $|$ DiaryEntry};
         \node[innerbox, below=0.2cm of db1] (db2) {WeightLog $|$ WaterLog $|$ ExerciseLog $|$ AdaptiveTDEELog};
         \node[innerbox, below=0.2cm of db2] (db3) {ScannedProduct $|$ ProductContribution};
         \node[innerbox, below=0.2cm of db3] (db4) {MealTemplate $|$ UserMealConfig};
