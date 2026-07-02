@@ -635,61 +635,51 @@ Hệ thống được xây dựng hoàn toàn trên nền tảng JavaScript ở 
         box/.style={rectangle, draw=black, rounded corners=2pt, fill=white, 
                     text width=6.5cm, align=center, minimum height=1cm, 
                     font=\fontsize{11pt}{13pt}\selectfont},
-        extbox/.style={rectangle, draw=gray, rounded corners=4pt, inner sep=6pt, align=center, fill=gray!10, font=\fontsize{10pt}{12pt}\selectfont},
-        groupbox/.style={rectangle, draw=black, rounded corners=6pt, inner sep=15pt, align=center, fill=blue!5},
+        extbox/.style={rectangle, draw=black, rounded corners=2pt, fill=white, 
+                    text width=3.8cm, align=center, minimum height=0.8cm, 
+                    font=\fontsize{10pt}{12pt}\selectfont, dashed},
         grouptitle/.style={font=\bfseries\fontsize{12pt}{14pt}\selectfont},
-        arrow/.style={-{Stealth[length=3mm]}, thick},
-        dashedarrow/.style={-{Stealth[length=3mm]}, thick, dashed}
+        arrow/.style={-{Stealth[length=3mm]}, thick}
     ]
 
-        % --- BACKEND (Middle) ---
-        \node[box] (api) {RESTful API\\/api/v1};
-        \node[box, right=0.8cm of api] (router) {Router};
-        \node[box, right=0.8cm of router] (middleware) {Middleware};
-        
-        \node[box, below=1.5cm of api] (controller) {Controller};
-        \node[box, right=0.8cm of controller] (service) {Service\\{\normalfont\fontsize{9pt}{11pt}\selectfont Business Logic:\\Nutrition Core, Adaptive TDEE,\\Food Scoring, Health Insights,\\Meal Planner, Scanner, Report}};
-        \node[box, right=0.8cm of service] (sequelize) {Sequelize ORM};
+        % Frontend
+        \node[box, fill=blue!10] (react) at (0, 0) {\textbf{React}\\(Frontend)};
 
-        \draw[arrow] (api) -- (router);
-        \draw[arrow] (router) -- (middleware);
-        \draw[arrow] (middleware.south) -- +(0,-0.75) -| (controller.north);
-        \draw[arrow] (controller) -- (service);
-        \draw[arrow] (service) -- (sequelize);
+        % Backend
+        \node[box, fill=orange!10, below=1.5cm of react] (express) {\textbf{Express}\\(Router / Middleware / Controller)};
+        \node[box, fill=orange!10, below=0.8cm of express] (service) {\textbf{Service}\\(Business Logic: Nutrition Core, Adaptive TDEE, Food Scoring, Health Insights, Meal Planner, Scanner, Report)};
+        \node[box, fill=orange!10, below=0.8cm of service] (sequelize) {\textbf{Sequelize ORM}};
 
+        % Backend Group
         \begin{scope}[on background layer]
-            \node[groupbox, fit=(api) (router) (middleware) (controller) (service) (sequelize)] (backend) {};
-            \node[grouptitle, anchor=south, yshift=5pt] at (backend.north) {BACKEND (Node.js + Express)};
+            \node[rectangle, draw=black, fill=yellow!10, inner sep=15pt, 
+                  fit=(express) (service) (sequelize)] (backend_box) {};
+            \node[grouptitle, anchor=south east, xshift=-10pt, yshift=2pt] at (backend_box.north) {BACKEND (Node.js)};
         \end{scope}
 
-        % --- CLIENT (Left) ---
-        \node[box, fill=cyan!10, left=2.5cm of api] (react) {React Frontend};
-        \node[box, fill=gray!10, above=1cm of react] (user) {Người dùng};
-        
-        \draw[arrow] (user) -- (react);
-        \draw[arrow] (react) -- node[above, font=\fontsize{10pt}{12pt}\selectfont] {Axios / HTTP Request} (api);
+        % Database
+        \node[box, fill=green!10, below=1cm of backend_box.south] (mysql) {\textbf{MySQL}\\(Database)};
 
-        % --- DATABASE (Right) ---
-        \node[box, fill=green!10, right=2cm of sequelize] (mysql) {MySQL Database};
-        \draw[arrow] (sequelize) -- (mysql);
+        % External Services
+        \node[extbox, fill=gray!10, right=1.5cm of express] (jwt) {JWT Authentication};
+        \node[extbox, fill=gray!10, right=1.5cm of service, yshift=0.8cm] (openfood) {Open Food Facts API};
+        \node[extbox, fill=gray!10, right=1.5cm of service, yshift=-0.8cm] (gemini) {Gemini AI Vision};
 
-        % --- EXTERNAL SERVICES (Top/Bottom) ---
-        \node[extbox, above=1.5cm of middleware] (jwt) {JWT Authentication};
-        \draw[dashedarrow, <->] (jwt) -- (middleware);
+        % Connections
+        \draw[arrow] (react) -- node[right, xshift=5pt, pos=0.45, font=\bfseries\fontsize{10pt}{12pt}\selectfont] {Axios gọi RESTful API} (backend_box.north);
+        \draw[arrow] (express) -- (service);
+        \draw[arrow] (service) -- (sequelize);
+        \draw[arrow] (backend_box.south) -- (mysql);
 
-        \node[extbox, below=1.5cm of service, xshift=-2.2cm] (openfood) {Open Food Facts API};
-        \node[extbox, below=1.5cm of service, xshift=2.2cm] (gemini) {Gemini AI Vision};
-        
-        \draw[dashedarrow, <->] (openfood) -- (service.south -| openfood);
-        \draw[dashedarrow, <->] (gemini) -- (service.south -| gemini);
+        \draw[arrow, dashed, <->] (express) -- (jwt);
+        \draw[arrow, dashed, <->] (service.east |- openfood) -- (openfood);
+        \draw[arrow, dashed, <->] (service.east |- gemini) -- (gemini);
 
     \end{tikzpicture}
     }
-    \caption{Kiến trúc tổng thể Client - Server của hệ thống}
-    \label{fig:kientruc_tongthe}
+    \caption{Mô hình liên kết các công nghệ trong hệ thống}
+    \label{fig:cac_cong_nghe}
 \end{figure}
-
-Hình \ref{fig:kientruc_tongthe} mô tả kiến trúc tổng thể của hệ thống theo mô hình Client - Server. Người dùng thao tác trên giao diện React Frontend, các yêu cầu được gửi đến Backend thông qua Axios và RESTful API. Tại Backend, yêu cầu lần lượt được tiếp nhận qua Router, xử lý tại Middleware, điều phối bởi Controller và thực hiện nghiệp vụ tại tầng Service. Tầng Service truy cập cơ sở dữ liệu thông qua Sequelize ORM hoặc gọi các dịch vụ bên ngoài như Open Food Facts API và Gemini AI Vision khi cần thiết. Dữ liệu được lưu trữ trong MySQL và kết quả xử lý được trả về Frontend dưới dạng JSON.
 
 \subsection{React}Giao diện người dùng của hệ thống được phát triển bằng React theo mô hình Single Page Application (SPA). Trong mô hình này, việc chuyển đổi giữa các chức năng được thực hiện trên cùng một trang web, chỉ những thành phần có thay đổi mới được cập nhật thay vì tải lại toàn bộ giao diện. Cách tiếp cận này giúp giảm thời gian phản hồi và cải thiện trải nghiệm sử dụng.
 
@@ -818,9 +808,67 @@ Kiến trúc này cho phép Frontend và Backend được phát triển độc l
 
 Trong mô hình này, người dùng thao tác trên giao diện được xây dựng bằng React thông qua trình duyệt web. Các yêu cầu như đăng nhập, cập nhật hồ sơ sức khỏe, ghi nhận nhật ký ăn uống, theo dõi cân nặng, xây dựng thực đơn hoặc quét thực phẩm được gửi đến Backend thông qua Axios dưới dạng các yêu cầu HTTP. Backend tiếp nhận yêu cầu, thực hiện xác thực người dùng, xử lý nghiệp vụ, truy xuất cơ sở dữ liệu hoặc gọi các dịch vụ bên ngoài khi cần thiết trước khi trả kết quả về cho Frontend dưới dạng dữ liệu JSON.
 
-\textbf{Gợi ý chèn Hình 1.5. Kiến trúc tổng thể của hệ thống}
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        node distance=1cm and 1cm,
+        box/.style={rectangle, draw=black, rounded corners=4pt, inner sep=6pt, align=center, fill=white, font=\bfseries\fontsize{10pt}{12pt}\selectfont},
+        extbox/.style={rectangle, draw=gray, rounded corners=4pt, inner sep=6pt, align=center, fill=gray!10, font=\fontsize{10pt}{12pt}\selectfont},
+        groupbox/.style={rectangle, draw=black, rounded corners=6pt, inner sep=15pt, align=center, fill=blue!5},
+        grouptitle/.style={font=\bfseries\fontsize{12pt}{14pt}\selectfont},
+        arrow/.style={-{Stealth[length=3mm]}, thick},
+        dashedarrow/.style={-{Stealth[length=3mm]}, thick, dashed}
+    ]
 
-\textit{Hình minh họa: Người dùng → React Frontend → Axios → RESTful API → Router → Middleware → Controller → Service → Sequelize ORM → MySQL. Bên cạnh Backend thể hiện JWT Authentication, Open Food Facts API và Gemini AI Vision.}
+        % --- BACKEND (Middle) ---
+        \node[box] (api) {RESTful API\\/api/v1};
+        \node[box, right=0.8cm of api] (router) {Router};
+        \node[box, right=0.8cm of router] (middleware) {Middleware};
+        
+        \node[box, below=1.5cm of api] (controller) {Controller};
+        \node[box, right=0.8cm of controller] (service) {Service\\{\normalfont\fontsize{9pt}{11pt}\selectfont Business Logic:\\Nutrition Core, Adaptive TDEE,\\Food Scoring, Health Insights,\\Meal Planner, Scanner, Report}};
+        \node[box, right=0.8cm of service] (sequelize) {Sequelize ORM};
+
+        \draw[arrow] (api) -- (router);
+        \draw[arrow] (router) -- (middleware);
+        \draw[arrow] (middleware.south) -- +(0,-0.75) -| (controller.north);
+        \draw[arrow] (controller) -- (service);
+        \draw[arrow] (service) -- (sequelize);
+
+        \begin{scope}[on background layer]
+            \node[groupbox, fit=(api) (router) (middleware) (controller) (service) (sequelize)] (backend) {};
+            \node[grouptitle, anchor=south, yshift=5pt] at (backend.north) {BACKEND (Node.js + Express)};
+        \end{scope}
+
+        % --- CLIENT (Left) ---
+        \node[box, fill=cyan!10, left=2.5cm of api] (react) {React Frontend};
+        \node[box, fill=gray!10, above=1cm of react] (user) {Người dùng};
+        
+        \draw[arrow] (user) -- (react);
+        \draw[arrow] (react) -- node[above, font=\fontsize{10pt}{12pt}\selectfont] {Axios / HTTP Request} (api);
+
+        % --- DATABASE (Right) ---
+        \node[box, fill=green!10, right=2cm of sequelize] (mysql) {MySQL Database};
+        \draw[arrow] (sequelize) -- (mysql);
+
+        % --- EXTERNAL SERVICES (Top/Bottom) ---
+        \node[extbox, above=1.5cm of middleware] (jwt) {JWT Authentication};
+        \draw[dashedarrow, <->] (jwt) -- (middleware);
+
+        \node[extbox, below=1.5cm of service, xshift=-2.2cm] (openfood) {Open Food Facts API};
+        \node[extbox, below=1.5cm of service, xshift=2.2cm] (gemini) {Gemini AI Vision};
+        
+        \draw[dashedarrow, <->] (openfood) -- (service.south -| openfood);
+        \draw[dashedarrow, <->] (gemini) -- (service.south -| gemini);
+
+    \end{tikzpicture}
+    }
+    \caption{Kiến trúc tổng thể Client - Server của hệ thống}
+    \label{fig:kientruc_tongthe}
+\end{figure}
+
+Hình \ref{fig:kientruc_tongthe} mô tả kiến trúc tổng thể của hệ thống theo mô hình Client - Server. Người dùng thao tác trên giao diện React Frontend, các yêu cầu được gửi đến Backend thông qua Axios và RESTful API. Tại Backend, yêu cầu lần lượt được tiếp nhận qua Router, xử lý tại Middleware, điều phối bởi Controller và thực hiện nghiệp vụ tại tầng Service. Tầng Service truy cập cơ sở dữ liệu thông qua Sequelize ORM hoặc gọi các dịch vụ bên ngoài như Open Food Facts API và Gemini AI Vision khi cần thiết. Dữ liệu được lưu trữ trong MySQL và kết quả xử lý được trả về Frontend dưới dạng JSON.
 
 \subsection{Mô hình kiến trúc Client - Server}Kiến trúc Client - Server được lựa chọn nhằm tách biệt phần giao diện người dùng và phần xử lý nghiệp vụ của hệ thống.
 
