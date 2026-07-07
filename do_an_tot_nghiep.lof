@@ -10,5 +10,6 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Biểu đồ Use Case tổng thể của hệ thống}}{30}{figure.2.1}%
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Sơ đồ ERD rút gọn của hệ thống}}{35}{figure.2.2}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Luồng request/response giữa Frontend và Backend}}{42}{figure.2.3}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }

@@ -1762,9 +1762,69 @@ Thứ tư, các API liên quan đến dữ liệu cá nhân yêu cầu người 
 
 Thứ năm, một số API nhạy cảm hoặc phụ thuộc dịch vụ bên ngoài cần được giới hạn tần suất gọi. Các API như đăng nhập, đăng ký và nhận dạng hình ảnh bằng AI Vision cần có cơ chế hạn chế số lượng yêu cầu trong một khoảng thời gian nhằm giảm rủi ro lạm dụng và hạn chế tải không cần thiết cho hệ thống.
 
-\textbf{Gợi ý chèn Hình 2.x. Luồng request/response giữa Frontend và Backend}
+\begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        box/.style={rectangle, draw=black, thick, fill=blue!5, rounded corners=4pt, 
+                    text width=4.5cm, align=center, font=\small\sffamily, inner sep=6pt},
+        req/.style={thick, -Latex, blue!80!black},
+        res/.style={thick, -Latex, red!80!black, dashed},
+        label_req/.style={font=\scriptsize\sffamily, text=blue!80!black, fill=white, inner sep=2pt},
+        label_res/.style={font=\scriptsize\sffamily, text=red!80!black, fill=white, inner sep=2pt}
+    ]
 
-\textit{Hình nên thể hiện: React Frontend → Axios/TanStack Query → RESTful API → Middleware xác thực → Controller → Service → Model → Database → Response JSON.}
+    % Titles
+    \node[font=\large\bfseries\sffamily, text=black] at (0, 6.5) {FRONTEND};
+    \node[font=\large\bfseries\sffamily, text=black] at (6, 6.5) {BACKEND};
+    \node[font=\large\bfseries\sffamily, text=black] at (12, 6.5) {DATABASE};
+
+    % Separators
+    \draw[thick, dashed, gray!50] (3, 7) -- (3, -6.5);
+    \draw[thick, dashed, gray!50] (9, 7) -- (9, -6.5);
+
+    % FRONTEND
+    \node[box, fill=blue!10] (react) at (0, 3) {\textbf{React Frontend}\\[1ex] \scriptsize Pages, Components, Forms, Modals};
+    \node[box] (axios) at (0, 0) {\textbf{Axios / TanStack Query}\\[1ex] \scriptsize Gửi HTTP request, quản lý cache, invalidate query};
+
+    % BACKEND
+    \node[box] (api) at (6, 5) {\textbf{RESTful API Route}\\[1ex] \scriptsize \texttt{/api/v1/auth}, \texttt{/api/v1/diary},\\[0.5ex] \texttt{/api/v1/dashboard}, ...};
+    \node[box] (middleware) at (6, 2.5) {\textbf{Middleware xác thực}\\[1ex] \scriptsize Kiểm tra Access Token / JWT\\Nếu sai $\rightarrow$ trả 401 JSON};
+    \node[box] (controller) at (6, 0) {\textbf{Controller}\\[1ex] \scriptsize Nhận request, gọi service, trả response};
+    \node[box] (service) at (6, -2.5) {\textbf{Service}\\[1ex] \scriptsize Xử lý nghiệp vụ, tính toán, tổng hợp dữ liệu};
+
+    % DATABASE
+    \node[box] (model) at (12, -2.5) {\textbf{Sequelize Model}};
+    \node[box] (db) at (12, -5) {\textbf{MySQL Database}};
+
+    % Request Flows (Blue)
+    \draw[req] ([xshift=-0.5cm]react.south) -- ([xshift=-0.5cm]axios.north);
+    \draw[req] ([yshift=0.2cm]axios.east) -- ++(0.75,0) |- node[label_req, near start, left] {HTTP Request} (api.west);
+    
+    \draw[req] (api.south) -- (middleware.north);
+    \draw[req] (middleware.south) -- (controller.north);
+    \draw[req] ([xshift=-0.5cm]controller.south) -- ([xshift=-0.5cm]service.north);
+    
+    \draw[req] ([yshift=0.2cm]service.east) -- ([yshift=0.2cm]model.west);
+    \draw[req] ([xshift=-0.5cm]model.south) -- ([xshift=-0.5cm]db.north);
+
+    % Response Flows (Red, Dashed)
+    \draw[res] ([xshift=0.5cm]db.north) -- ([xshift=0.5cm]model.south);
+    \draw[res] ([yshift=-0.2cm]model.west) -- ([yshift=-0.2cm]service.east);
+    
+    \draw[res] ([xshift=0.5cm]service.north) -- ([xshift=0.5cm]controller.south);
+    
+    \draw[res] (controller.west) -- node[label_res, above] {Response JSON} ([yshift=-0.2cm]axios.east);
+    \draw[res] ([xshift=0.5cm]axios.north) -- ([xshift=0.5cm]react.south);
+
+    \end{tikzpicture}
+    }
+    \caption{Luồng request/response giữa Frontend và Backend}
+    \label{fig:api_flow}
+    
+    \vspace{0.2cm}
+    \small \textit{* Ghi chú: Các API dữ liệu cá nhân yêu cầu Access Token trong header. Nếu xác thực hợp lệ, request được chuyển qua Controller, Service và Model để truy vấn cơ sở dữ liệu; kết quả được trả về Frontend dưới dạng JSON thống nhất.}
+\end{figure}
 
 \subsection{Cấu trúc phản hồi API}Để Frontend có thể xử lý dữ liệu một cách nhất quán, các API được thiết kế với cấu trúc phản hồi thống nhất. Khi xử lý thành công, API trả về trạng thái thành công, dữ liệu và thông báo nếu cần. Khi xử lý thất bại, API trả về trạng thái thất bại cùng thông báo lỗi. Đối với lỗi kiểm tra dữ liệu đầu vào, phản hồi có thể kèm theo danh sách trường dữ liệu không hợp lệ.
 
