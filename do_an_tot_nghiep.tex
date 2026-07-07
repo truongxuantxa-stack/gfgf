@@ -1554,21 +1554,19 @@ Trong phạm vi chương này, phần thiết kế cơ sở dữ liệu chỉ tr
             rounded corners=4pt, minimum width=3.2cm, minimum height=0.8cm, 
             align=center, font=\sffamily\bfseries\small
         },
-        rel/.style={thick, -Latex},
+        rel/.style={thick, -},
         dashed_rel/.style={thick, dashed, -Latex},
-        label_1/.style={font=\scriptsize\sffamily, near start, fill=white, inner sep=1pt},
-        label_n/.style={font=\scriptsize\sffamily, near end, fill=white, inner sep=1pt},
-        label_01/.style={font=\scriptsize\sffamily, near end, fill=white, inner sep=1pt}
+        label/.style={font=\scriptsize\sffamily, fill=white, inner sep=1pt}
     ]
 
     % User
     \node[table, fill=blue!15] (user) at (0, 0) {User};
 
     % Daily Logs
-    \node[table] (weight) at (-4, 2.25) {WeightLog};
-    \node[table] (water) at (-4, 0.75) {WaterLog};
-    \node[table] (exercise) at (-4, -0.75) {ExerciseLog};
-    \node[table] (tdee) at (-4, -2.25) {AdaptiveTDEELog};
+    \node[table] (weight) at (-5.5, 2.25) {WeightLog};
+    \node[table] (water) at (-5.5, 0.75) {WaterLog};
+    \node[table] (exercise) at (-5.5, -0.75) {ExerciseLog};
+    \node[table] (tdee) at (-5.5, -2.25) {AdaptiveTDEELog};
 
     % Food & Diary
     \node[table] (diary) at (4, 2.5) {DiaryEntry};
@@ -1579,31 +1577,31 @@ Trong phạm vi chương này, phần thiết kế cơ sở dữ liệu chỉ tr
     \node[table] (mealtpl) at (4, -3.5) {MealTemplate};
 
     % Scanner
-    \node[table] (scanner) at (8, 0.5) {ScannedProduct};
-    \node[table] (contrib) at (8, -1.5) {ProductContribution};
+    \node[table] (scanner) at (8.5, 0.5) {ScannedProduct};
+    \node[table] (contrib) at (8.5, -1.5) {ProductContribution};
 
     % User to Logs
-    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (weight);
-    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (water);
-    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (exercise);
-    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (tdee);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (weight);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (water);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (exercise);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (tdee);
 
     % Meal Planner
-    \draw[rel] (user) -- node[label_1] {1} node[label_01] {0..1} (mealconfig);
-    \draw[dashed_rel] (mealtpl) -- node[font=\scriptsize\sffamily, fill=white, inner sep=1pt, above] {Sử dụng} (mealconfig);
-    \draw[dashed_rel] (mealtpl) -- node[font=\scriptsize\sffamily, fill=white, inner sep=1pt, right] {Sử dụng} (food);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {0..1} (mealconfig);
+    \draw[dashed_rel] (mealtpl) -- node[label, above] {Sử dụng} (mealconfig);
+    \draw[dashed_rel] (mealtpl) -- node[label, right] {Sử dụng} (food);
 
     % User to Core
-    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (diary);
-    \draw[rel] (user) -- node[label_1] {1} node[label_n, pos=0.7] {N (tùy chọn)} (food);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (diary);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.65] {N (tùy chọn)} (food);
 
     % Food to Diary
-    \draw[rel] (food) -- node[label_1] {1} node[label_n] {N} (diary);
+    \draw[rel] (food) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (diary);
 
     % Scanner
-    \draw[rel] (food) -- node[label_1] {1} node[label_n, pos=0.75] {N (tùy chọn)} (scanner);
-    \draw[rel] (scanner) -- node[label_1] {1} node[label_n] {N} (contrib);
-    \draw[rel] (user) -- node[label_1, pos=0.1] {1} node[label_n, pos=0.85] {N} (contrib);
+    \draw[rel] (food) -- node[label, pos=0.25] {0..1} node[label, pos=0.85] {N} (scanner);
+    \draw[rel] (scanner) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (contrib);
+    \draw[rel] (user) -- node[label, pos=0.08] {1} node[label, pos=0.92] {N} (contrib);
 
     \end{tikzpicture}
     }
@@ -1611,7 +1609,7 @@ Trong phạm vi chương này, phần thiết kế cơ sở dữ liệu chỉ tr
     \label{fig:erd_rut_gon}
     
     \vspace{0.2cm}
-    \small \textit{* Ghi chú: Sơ đồ chỉ thể hiện các bảng trung tâm và quan hệ chính. Các trường dữ liệu chi tiết, ràng buộc và ERD đầy đủ được trình bày trong Phụ lục C.}
+    \small \textit{* Ghi chú: Sơ đồ chỉ thể hiện các bảng trung tâm và quan hệ chính. Đường nét đứt thể hiện quan hệ sử dụng ở mức nghiệp vụ, không nhất thiết là khóa ngoại trực tiếp. Các trường dữ liệu chi tiết, ràng buộc và ERD đầy đủ được trình bày trong Phụ lục C.}
 \end{figure}
 
 \subsection{Nguyên tắc thiết kế cơ sở dữ liệu}Thiết kế cơ sở dữ liệu của hệ thống được xây dựng dựa trên một số nguyên tắc chính.
