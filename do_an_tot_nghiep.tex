@@ -1311,27 +1311,27 @@ Gemini AI Vision & Hệ thống bên ngoài & Hỗ trợ nhận dạng bảng th
         }
 
         % --- CỘT 1 ---
-        \node[usecase] (uc_register) at (-4.5, 0) {Đăng ký tài khoản};
-        \node[usecase] (uc_profile) at (-4.5, -1.5) {Khởi tạo / cập nhật\\hồ sơ sức khỏe};
-        \node[usecase] (uc_log_water) at (-4.5, -3.0) {Ghi nhận nước uống};
-        \node[usecase] (uc_exercise) at (-4.5, -4.5) {Ghi nhận luyện tập};
-        \node[usecase] (uc_dashboard) at (-4.5, -6.5) {Xem Dashboard};
-        \node[usecase] (uc_report) at (-4.5, -8.25) {Xuất báo cáo PDF};
-        \node[usecase] (uc_meal) at (-4.5, -10.5) {Xây dựng thực đơn};
+        \node[usecase] (uc_register) at (-5.5, 0) {Đăng ký tài khoản};
+        \node[usecase] (uc_profile) at (-5.5, -1.5) {Khởi tạo / cập nhật\\hồ sơ sức khỏe};
+        \node[usecase] (uc_log_water) at (-5.5, -3.0) {Ghi nhận nước uống};
+        \node[usecase] (uc_exercise) at (-5.5, -4.5) {Ghi nhận luyện tập};
+        \node[usecase] (uc_dashboard) at (-5.5, -6.0) {Xem Dashboard};
+        \node[usecase] (uc_report) at (-5.5, -9.0) {Xuất báo cáo PDF};
+        \node[usecase] (uc_meal) at (-5.5, -11.5) {Xây dựng thực đơn};
 
         % --- CỘT 2 ---
-        \node[usecase] (uc_logout) at (0, 0.75) {Đăng xuất};
+        \node[usecase] (uc_logout) at (0, 1.0) {Đăng xuất};
         \node[usecase] (uc_login) at (0, -0.75) {Đăng nhập};
-        \node[usecase] (uc_log_food) at (0, -2.25) {Ghi nhật ký ăn uống};
-        \node[usecase] (uc_weight) at (0, -3.75) {Theo dõi cân nặng};
+        \node[usecase] (uc_log_food) at (0, -2.5) {Ghi nhật ký ăn uống};
+        \node[usecase] (uc_weight) at (0, -4.0) {Theo dõi cân nặng};
         \node[usecase] (uc_aggregate) at (0, -7.5) {Tính toán / tổng hợp\\dinh dưỡng};
-        \node[usecase] (uc_scanner) at (0, -9.25) {Sử dụng Hybrid\\Nutrition Scanner};
+        \node[usecase] (uc_scanner) at (0, -10.25) {Sử dụng Hybrid\\Nutrition Scanner};
 
         % --- CỘT 3 ---
-        \node[usecase] (uc_search) at (4.5, -2.25) {Tìm kiếm / bổ sung\\thực phẩm};
-        \node[usecase] (uc_analysis) at (4.5, -6.5) {Xem phân tích\\dinh dưỡng};
-        \node[usecase] (uc_barcode) at (4.5, -8.5) {Quét mã vạch};
-        \node[usecase] (uc_ocr) at (4.5, -10.0) {Nhận dạng bảng\\dinh dưỡng};
+        \node[usecase] (uc_search) at (5.5, -2.5) {Tìm kiếm / bổ sung\\thực phẩm};
+        \node[usecase] (uc_analysis) at (5.5, -6.0) {Xem phân tích\\dinh dưỡng};
+        \node[usecase] (uc_barcode) at (5.5, -9.25) {Quét mã vạch};
+        \node[usecase] (uc_ocr) at (5.5, -11.25) {Nhận dạng bảng\\dinh dưỡng};
 
         % --- SYSTEM BOUNDARY ---
         \node[sysbox, fit=(uc_logout) (uc_meal) (uc_register) (uc_search) (uc_ocr) (uc_barcode) (uc_scanner), label={[font=\bfseries, yshift=8pt]north:HỆ THỐNG QUẢN LÝ DINH DƯỠNG CÁ NHÂN HÓA}] (system) {};
@@ -1339,39 +1339,39 @@ Gemini AI Vision & Hệ thống bên ngoài & Hỗ trợ nhận dạng bảng th
         \node[anchor=south west, font=\itshape\scriptsize] at ([yshift=5pt, xshift=5pt]system.south west) {* Ghi chú: Các chức năng nghiệp vụ yêu cầu người dùng đã đăng nhập; riêng đăng ký và đăng nhập là chức năng công khai.};
 
         % --- ACTORS ---
-        \node[actor] (user) at (-8.5, -4.5) {Người dùng};
+        \node[actor] (user) at (-9.5, -5.0) {Người dùng};
         \pic at ([yshift=0.8cm]user.center) {stick figure};
 
-        \node[actor, draw=black, thick, fill=gray!10, minimum width=2.2cm, minimum height=0.8cm, align=center, rounded corners=5pt] (openfood) at (9.5, -8.5) {<<system>>\\Open Food Facts\\API};
-        \node[actor, draw=black, thick, fill=gray!10, minimum width=2.2cm, minimum height=0.8cm, align=center, rounded corners=5pt] (gemini) at (9.5, -10.0) {<<system>>\\Gemini AI\\Vision};
+        \node[actor, draw=black, thick, fill=gray!10, minimum width=2.2cm, minimum height=0.8cm, align=center, rounded corners=5pt] (openfood) at (10.5, -9.25) {<<system>>\\Open Food Facts\\API};
+        \node[actor, draw=black, thick, fill=gray!10, minimum width=2.2cm, minimum height=0.8cm, align=center, rounded corners=5pt] (gemini) at (10.5, -11.25) {<<system>>\\Gemini AI\\Vision};
 
         % --- INCLUDE ARROWS ---
         \draw[include] (uc_log_food) -- node[above, font=\scriptsize] {<<include>>} (uc_search);
-        \draw[include] (uc_dashboard) -- node[above, font=\scriptsize, pos=0.4] {<<include>>} (uc_analysis);
+        \draw[include] (uc_dashboard) -- node[above, font=\scriptsize] {<<include>>} (uc_analysis);
         
-        \draw[include] (uc_dashboard) -- node[below, sloped, font=\scriptsize, pos=0.6] {<<include>>} (uc_aggregate);
-        \draw[include] (uc_analysis) -- node[below, sloped, font=\scriptsize, pos=0.6] {<<include>>} (uc_aggregate);
-        \draw[include] (uc_report) -- node[above, sloped, font=\scriptsize, pos=0.6] {<<include>>} (uc_aggregate);
+        \draw[include] (uc_dashboard) -- node[above, sloped, font=\scriptsize, pos=0.35] {<<include>>} (uc_aggregate);
+        \draw[include] (uc_analysis) -- node[above, sloped, font=\scriptsize, pos=0.35] {<<include>>} (uc_aggregate);
+        \draw[include] (uc_report) -- node[above, sloped, font=\scriptsize, pos=0.35] {<<include>>} (uc_aggregate);
         
         % --- EXTEND ARROWS ---
-        \draw[extend] (uc_barcode) -- node[above, sloped, font=\scriptsize] {<<extend>>} (uc_scanner);
-        \draw[extend] (uc_ocr) -- node[below, sloped, font=\scriptsize] {<<extend>>} (uc_scanner);
+        \draw[extend] (uc_barcode) -- node[above, sloped, font=\scriptsize, pos=0.4] {<<extend>>} (uc_scanner);
+        \draw[extend] (uc_ocr) -- node[above, sloped, font=\scriptsize, pos=0.4] {<<extend>>} (uc_scanner);
 
         % --- EXTERNAL ARROWS ---
         \draw[-, thick] (openfood.west) -- (uc_barcode.east);
         \draw[-, thick] (gemini.west) -- (uc_ocr.east);
 
         % --- USER CONNECTIONS ---
-        \draw[-, thick] (user.east) -- (-7.0, -4.5);
-        \draw[-, thick] (-7.0, 0.75) -- (-7.0, -10.5);
+        \draw[-, thick] (user.east) -- (-8.0, -5.0);
+        \draw[-, thick] (-8.0, 1.0) -- (-8.0, -11.5);
 
         % Nối vào Cột 1
-        \foreach \y in {0, -1.5, -3.0, -4.5, -6.5, -8.25, -10.5} {
-            \draw[-, thick] (-7.0, \y) -- (-6.2, \y);
+        \foreach \y in {0, -1.5, -3.0, -4.5, -6.0, -9.0, -11.5} {
+            \draw[-, thick] (-8.0, \y) -- (-7.2, \y);
         }
         % Nối vào Cột 2
-        \foreach \y in {0.75, -0.75, -2.25, -3.75, -9.25} {
-            \draw[-, thick] (-7.0, \y) -- (-1.7, \y);
+        \foreach \y in {1.0, -0.75, -2.5, -4.0, -10.25} {
+            \draw[-, thick] (-8.0, \y) -- (-1.7, \y);
         }
 
     \end{tikzpicture}
@@ -1544,6 +1544,75 @@ Kết quả thiết kế chức năng là cơ sở để xây dựng mô hình d
 Hệ thống sử dụng MySQL làm hệ quản trị cơ sở dữ liệu. Các bảng dữ liệu được ánh xạ với các Model trong Sequelize ORM. Cách tổ chức này giúp quá trình thao tác dữ liệu trong mã nguồn được thống nhất, đồng thời hỗ trợ định nghĩa quan hệ giữa các bảng thông qua khóa chính, khóa ngoại và các Association giữa các Model.
 
 Trong phạm vi chương này, phần thiết kế cơ sở dữ liệu chỉ trình bày các nhóm bảng chính, quan hệ giữa các bảng và một số quyết định thiết kế quan trọng. Danh sách trường dữ liệu chi tiết, kiểu dữ liệu, ràng buộc cụ thể và ERD đầy đủ được trình bày trong Phụ lục C.
+
+\begin{figure}[htbp]
+    \centering
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tikzpicture}[
+        table/.style={
+            rectangle, draw=black, thick, fill=blue!5, 
+            rounded corners=4pt, minimum width=3.2cm, minimum height=0.8cm, 
+            align=center, font=\sffamily\bfseries\small
+        },
+        rel/.style={thick, -Latex},
+        dashed_rel/.style={thick, dashed, -Latex},
+        label_1/.style={font=\scriptsize\sffamily, near start, fill=white, inner sep=1pt},
+        label_n/.style={font=\scriptsize\sffamily, near end, fill=white, inner sep=1pt},
+        label_01/.style={font=\scriptsize\sffamily, near end, fill=white, inner sep=1pt}
+    ]
+
+    % User
+    \node[table, fill=blue!15] (user) at (0, 0) {User};
+
+    % Daily Logs
+    \node[table] (weight) at (-4, 2.25) {WeightLog};
+    \node[table] (water) at (-4, 0.75) {WaterLog};
+    \node[table] (exercise) at (-4, -0.75) {ExerciseLog};
+    \node[table] (tdee) at (-4, -2.25) {AdaptiveTDEELog};
+
+    % Food & Diary
+    \node[table] (diary) at (4, 2.5) {DiaryEntry};
+    \node[table] (food) at (4, 0.5) {Food};
+
+    % Meal Planner
+    \node[table] (mealconfig) at (0, -3.5) {UserMealConfig};
+    \node[table] (mealtpl) at (4, -3.5) {MealTemplate};
+
+    % Scanner
+    \node[table] (scanner) at (8, 0.5) {ScannedProduct};
+    \node[table] (contrib) at (8, -1.5) {ProductContribution};
+
+    % User to Logs
+    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (weight);
+    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (water);
+    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (exercise);
+    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (tdee);
+
+    % Meal Planner
+    \draw[rel] (user) -- node[label_1] {1} node[label_01] {0..1} (mealconfig);
+    \draw[dashed_rel] (mealtpl) -- node[font=\scriptsize\sffamily, fill=white, inner sep=1pt, above] {Sử dụng} (mealconfig);
+    \draw[dashed_rel] (mealtpl) -- node[font=\scriptsize\sffamily, fill=white, inner sep=1pt, right] {Sử dụng} (food);
+
+    % User to Core
+    \draw[rel] (user) -- node[label_1] {1} node[label_n] {N} (diary);
+    \draw[rel] (user) -- node[label_1] {1} node[label_n, pos=0.7] {N (tùy chọn)} (food);
+
+    % Food to Diary
+    \draw[rel] (food) -- node[label_1] {1} node[label_n] {N} (diary);
+
+    % Scanner
+    \draw[rel] (food) -- node[label_1] {1} node[label_n, pos=0.75] {N (tùy chọn)} (scanner);
+    \draw[rel] (scanner) -- node[label_1] {1} node[label_n] {N} (contrib);
+    \draw[rel] (user) -- node[label_1, pos=0.1] {1} node[label_n, pos=0.85] {N} (contrib);
+
+    \end{tikzpicture}
+    }
+    \caption{Sơ đồ ERD rút gọn của hệ thống}
+    \label{fig:erd_rut_gon}
+    
+    \vspace{0.2cm}
+    \small \textit{* Ghi chú: Sơ đồ chỉ thể hiện các bảng trung tâm và quan hệ chính. Các trường dữ liệu chi tiết, ràng buộc và ERD đầy đủ được trình bày trong Phụ lục C.}
+\end{figure}
 
 \subsection{Nguyên tắc thiết kế cơ sở dữ liệu}Thiết kế cơ sở dữ liệu của hệ thống được xây dựng dựa trên một số nguyên tắc chính.
 
