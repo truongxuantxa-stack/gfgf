@@ -2341,9 +2341,100 @@ Với luồng mã vạch, người dùng có thể quét hoặc nhập mã vạc
 
 Sau khi người dùng xác nhận thêm thực phẩm vào nhật ký, dữ liệu được gửi tới Backend để lưu lại. Các giá trị dinh dưỡng tại thời điểm ghi nhận cần được lưu cùng bản ghi nhật ký nhằm bảo toàn dữ liệu lịch sử khi thông tin thực phẩm gốc thay đổi.
 
-\textbf{Gợi ý chèn Hình 2.x. Giao diện nhật ký ăn uống và modal thêm thực phẩm}
+\begin{figure}[htbp]
+\centering
+\makebox[\textwidth][c]{
+\begin{tikzpicture}[
+    font=\sffamily,
+    panel/.style={draw=gray!30, rounded corners, fill=white, inner sep=0}
+]
 
-\textit{Ảnh nên thể hiện danh sách bữa ăn, modal thêm thực phẩm và khu vực Scanner trong modal.}
+% Background
+\fill[gray!5, rounded corners] (0, 0) rectangle (15.5, -11.0);
+\draw[gray!30, rounded corners] (0, 0) rectangle (15.5, -11.0);
+
+% Sidebar (Dimmed)
+\fill[white, rounded corners] (0, 0) rectangle (3.5, -11.0);
+\draw[gray!30] (3.5, 0) -- (3.5, -11.0);
+
+\node[circle, fill=blue!10, minimum size=1.0cm, font=\bfseries] at (1.75, -1.2) {B};
+\node[font=\bfseries\footnotesize] at (1.75, -2.1) {Nguyễn Thị B};
+\draw[gray!30] (0.5, -2.5) -- (3.0, -2.5);
+
+\node[fill=gray!5, rounded corners, anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray] at (0.35, -3.2) {\footnotesize Tổng quan};
+\node[fill=gray!10, rounded corners, anchor=west, minimum width=2.8cm, minimum height=0.6cm] at (0.35, -4.0) {\footnotesize \textbf{Nhật ký}};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray] at (0.35, -4.8) {\footnotesize Lập kế hoạch};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray] at (0.35, -5.6) {\footnotesize Cân nặng};
+
+% Main Content (Dimmed)
+\node[anchor=north west, font=\bfseries\small] at (3.8, -0.4) {Nhật ký ăn uống};
+\node[anchor=north east, draw=gray!50, rounded corners, fill=white, font=\scriptsize] at (15.2, -0.4) {$\leftarrow$ Hôm nay $\rightarrow$};
+
+% Meal List Background
+\node[panel, minimum width=11.4cm, minimum height=8.0cm, anchor=north west] at (3.8, -1.5) {};
+
+% Bữa sáng
+\node[anchor=north west, font=\bfseries] at (4.0, -1.7) {Bữa sáng};
+\node[anchor=north east, font=\bfseries, text=blue!80] at (15.0, -1.7) {450 kcal};
+\draw[gray!20] (4.0, -2.3) -- (15.0, -2.3);
+
+\node[anchor=west, font=\scriptsize] at (4.0, -2.8) {Phở bò};
+\node[anchor=west, font=\scriptsize, text=gray] at (4.0, -3.2) {1 bát lớn (500g)};
+\node[anchor=east, font=\scriptsize] at (15.0, -2.8) {450 kcal};
+
+\node[anchor=north west, font=\scriptsize, text=blue!80, draw=blue!50, rounded corners, inner sep=1.5mm] at (4.0, -3.8) {+ Thêm thực phẩm};
+
+% Bữa trưa
+\node[anchor=north west, font=\bfseries] at (4.0, -5.0) {Bữa trưa};
+\node[anchor=north east, font=\bfseries, text=blue!80] at (15.0, -5.0) {650 kcal};
+\draw[gray!20] (4.0, -5.6) -- (15.0, -5.6);
+
+\node[anchor=west, font=\scriptsize] at (4.0, -6.1) {Cơm tấm sườn bì};
+\node[anchor=west, font=\scriptsize, text=gray] at (4.0, -6.5) {1 đĩa (400g)};
+\node[anchor=east, font=\scriptsize] at (15.0, -6.1) {650 kcal};
+\node[anchor=north west, font=\scriptsize, text=blue!80, draw=blue!50, rounded corners, inner sep=1.5mm] at (4.0, -7.1) {+ Thêm thực phẩm};
+
+% Overlay (Darken background)
+\fill[black, opacity=0.5, rounded corners] (0, 0) rectangle (15.5, -11.0);
+
+% Modal Shadow
+\fill[black, opacity=0.2, rounded corners] (4.7, -1.1) rectangle (14.7, -8.1);
+
+% Modal Window
+\fill[white, rounded corners] (4.5, -1.0) rectangle (14.5, -8.0);
+\draw[gray!50, rounded corners] (4.5, -1.0) rectangle (14.5, -8.0);
+
+% Modal Header
+\node[anchor=north west, font=\bfseries\small] at (4.8, -1.3) {Thêm món ăn};
+\node[anchor=north east, font=\sffamily\large, text=gray] at (14.3, -1.3) {$\times$};
+\draw[gray!30] (4.5, -2.0) -- (14.5, -2.0);
+
+% Tabs
+\node[font=\scriptsize, text=gray] at (6.3, -2.4) {Tìm kiếm};
+\node[font=\scriptsize, text=gray] at (9.5, -2.4) {Tạo món mới};
+\node[font=\bfseries\scriptsize, text=black] at (12.7, -2.4) {[ Quét/Chụp ]};
+
+% Subtext
+\node[font=\scriptsize, text=gray!80, align=center] at (9.5, -3.2) {Chọn phương thức quét để thêm thông tin dinh dưỡng nhanh chóng};
+
+% Big Green Button
+\fill[green!50!black, rounded corners=2mm, opacity=0.75] (5.2, -3.8) rectangle (13.8, -5.8);
+\node[text=white, font=\bfseries\small] at (9.5, -4.5) {Chụp bảng thành phần};
+\node[text=white, font=\scriptsize] at (9.5, -5.1) {AI đọc nhãn dinh dưỡng tự động};
+
+% Small White Button
+\fill[white, rounded corners=1mm] (5.2, -6.1) rectangle (13.8, -7.0);
+\draw[gray!40, rounded corners=1mm] (5.2, -6.1) rectangle (13.8, -7.0);
+\node[text=black!80, font=\bfseries\scriptsize] at (9.5, -6.55) {Quét mã vạch sản phẩm};
+
+% Bottom Text
+\node[font=\scriptsize, text=gray!70] at (9.5, -7.5) {Dữ liệu bạn đóng góp sẽ giúp cộng đồng tìm kiếm dễ hơn};
+
+\end{tikzpicture}
+}
+\caption{Wireframe giao diện Nhật ký ăn uống và Modal Scanner}
+\label{fig:diary-scanner}
+\end{figure}
 
 \subsection{Thiết kế giao diện Meal Planner}Giao diện Meal Planner phục vụ chức năng xây dựng thực đơn dựa trên mục tiêu dinh dưỡng của người dùng. Màn hình này cho phép người dùng chọn bữa ăn, chọn mẫu bữa ăn, thiết lập một số tùy chọn liên quan đến nguyên liệu và nhận kết quả gợi ý từ hệ thống.
 
