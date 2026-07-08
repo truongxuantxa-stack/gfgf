@@ -16,22 +16,22 @@
 \contentsline {table}{\numberline {2.9}{Phân nhóm bảng dữ liệu của hệ thống}}{37}{table.2.9}%
 \contentsline {table}{\numberline {2.10}{Tóm tắt khóa chính và khóa ngoại của một số bảng chính}}{38}{table.2.10}%
 \contentsline {table}{\numberline {2.11}{\ignorespaces Cấu trúc phản hồi API}}{43}{table.2.11}%
-\contentsline {table}{\numberline {2.12}{Các nhóm API chính của hệ thống}}{44}{table.2.12}%
+\contentsline {table}{\numberline {2.12}{Các nhóm API chính của hệ thống}}{45}{table.2.12}%
 \contentsline {table}{\numberline {2.13}{Một số endpoint tiêu biểu của hệ thống}}{45}{table.2.13}%
 \contentsline {table}{\numberline {2.14}{Một số mã trạng thái API}}{46}{table.2.14}%
-\contentsline {table}{\numberline {2.15}{\ignorespaces Tổng hợp một số màn hình chức năng của hệ thống}}{52}{table.2.15}%
+\contentsline {table}{\numberline {2.15}{\ignorespaces Tổng hợp một số màn hình chức năng của hệ thống}}{53}{table.2.15}%
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {3.1}{Một số nhóm API chính của Backend}}{58}{table.3.1}%
 \contentsline {table}{\numberline {3.2}{Vai trò của một số thành phần chính trong Frontend}}{63}{table.3.2}%
-\contentsline {table}{\numberline {3.3}{Dữ liệu đầu vào và kết quả xử lý của Nutrition Core}}{65}{table.3.3}%
-\contentsline {table}{\numberline {3.4}{\ignorespaces Dữ liệu đầu vào của Adaptive TDEE}}{68}{table.3.4}%
-\contentsline {table}{\numberline {3.5}{Các trạng thái chính của log Adaptive TDEE}}{68}{table.3.5}%
-\contentsline {table}{\numberline {3.6}{trình bày các nhóm dữ liệu chính được sử dụng trong Food Scoring.}}{72}{table.3.6}%
-\contentsline {table}{\numberline {3.7}{trình bày các nhóm dữ liệu đầu vào chính của Health Insights.}}{75}{table.3.7}%
-\contentsline {table}{\numberline {3.8}{tóm tắt cơ chế phân tầng trong Health Insights.}}{76}{table.3.8}%
-\contentsline {table}{\numberline {3.9}{trình bày các nhóm xử lý chính trong Meal Planner.}}{79}{table.3.9}%
+\contentsline {table}{\numberline {3.3}{Dữ liệu đầu vào và kết quả xử lý của Nutrition Core}}{66}{table.3.3}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Dữ liệu đầu vào của Adaptive TDEE}}{69}{table.3.4}%
+\contentsline {table}{\numberline {3.5}{Các trạng thái chính của log Adaptive TDEE}}{69}{table.3.5}%
+\contentsline {table}{\numberline {3.6}{trình bày các nhóm dữ liệu chính được sử dụng trong Food Scoring.}}{73}{table.3.6}%
+\contentsline {table}{\numberline {3.7}{trình bày các nhóm dữ liệu đầu vào chính của Health Insights.}}{76}{table.3.7}%
+\contentsline {table}{\numberline {3.8}{tóm tắt cơ chế phân tầng trong Health Insights.}}{77}{table.3.8}%
+\contentsline {table}{\numberline {3.9}{trình bày các nhóm xử lý chính trong Meal Planner.}}{80}{table.3.9}%
 \contentsline {table}{\numberline {3.10}{\ignorespaces Luồng tra cứu mã vạch trong Hybrid Nutrition Scanner}}{84}{table.3.10}%
-\contentsline {table}{\numberline {3.11}{Một số cơ chế bảo mật và xử lý lỗi trong Backend}}{87}{table.3.11}%
+\contentsline {table}{\numberline {3.11}{Một số cơ chế bảo mật và xử lý lỗi trong Backend}}{88}{table.3.11}%
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {4.1}{Môi trường phần mềm và công cụ thực nghiệm}}{91}{table.4.1}%
 \contentsline {table}{\numberline {4.2}{Kết quả kiểm thử chức năng chính của hệ thống}}{92}{table.4.2}%

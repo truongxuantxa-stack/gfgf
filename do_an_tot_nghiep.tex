@@ -1,4 +1,4 @@
-﻿\documentclass[12pt, a4paper]{report} 
+\documentclass[12pt, a4paper]{report} 
 \usepackage[fontsize=13pt]{scrextend}
 
 % Cài đặt tiếng Việt và font chữ
@@ -2123,7 +2123,7 @@ Hình \ref{fig:request_auth_flow} mô tả chi tiết luồng xử lý bên tron
     \textbf{Chú thích:}~~
     \textcolor{blue!70!black}{$\longrightarrow$} Luồng Request (đường liền)
     \quad
-    \textcolor{red!70!black}{$\dashrightarrow$} Luồng Response (đường đứt)
+    \tikz[baseline=-0.5ex] \draw[dashed, ->, red!70!black, thick] (0,0) -- (0.4,0); Luồng Response (đường đứt)
 };
 
 \end{tikzpicture}%
@@ -2838,7 +2838,68 @@ Các phương thức HTTP được sử dụng theo ý nghĩa của từng thao 
 \hline
 \end{longtable}
 
-\textbf{Gợi ý chèn hình 3.2:} Sơ đồ luồng xử lý một request có xác thực: Frontend gửi request → middleware kiểm tra Access Token → controller → service → model truy vấn MySQL → response trả về Frontend.
+Chi tiết luồng xử lý một request có xác thực được minh họa trong Hình \ref{fig:auth_flow}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.5cm and 2.2cm,
+        box/.style={rectangle, draw, rounded corners, minimum width=2.6cm, minimum height=1.2cm, align=center, fill=blue!5, font=\small\sffamily},
+        db/.style={cylinder, draw, shape border rotate=90, aspect=0.25, minimum width=2cm, minimum height=2.5cm, align=center, fill=gray!10, font=\small\sffamily},
+        arrow/.style={->, >=stealth, thick},
+        dashed_arrow/.style={->, >=stealth, thick, dashed}
+        ]
+        
+        % Nodes
+        \node[box, fill=green!5] (frontend) {Frontend\\(Client)};
+        \node[box, right=3.4cm of frontend, fill=orange!5] (middleware) {Middleware\\(Xác thực Token)};
+        \node[box, right=2.2cm of middleware] (controller) {Controller\\(Xử lý)};
+        \node[box, below=2cm of controller] (service) {Service\\(Logic)};
+        \node[box, left=2.2cm of service] (model) {Model\\(ORM)};
+        \node[db, left=2cm of model] (mysql) {MySQL\\Database};
+        
+        % Background for Backend
+        \begin{pgfonlayer}{background}
+            \node[rectangle, draw, dashed, fill=blue!3, rounded corners, fit=(middleware) (controller) (service) (model), inner sep=0.6cm] (backend) {};
+            \node[anchor=south, font=\small\bfseries\sffamily, text=blue!80] at ([yshift=2mm]backend.north) {Backend Server (Express)};
+        \end{pgfonlayer}
+
+        % Frontend <-> Middleware
+        \draw[arrow] ([yshift=3mm]frontend.east) -- node[above, font=\scriptsize, pos=0.4] {1. Request + JWT} ([yshift=3mm]middleware.west);
+        \draw[dashed_arrow, red] ([yshift=-3mm]middleware.west) -- node[below, font=\scriptsize, pos=0.6] {Lỗi 401 (Invalid Token)} ([yshift=-3mm]frontend.east);
+        
+        % Middleware -> Controller
+        \draw[arrow] (middleware.east) -- node[above, font=\scriptsize] {2. Token hợp lệ} (controller.west);
+        
+        % Controller <-> Service
+        \draw[arrow] ([xshift=3mm]controller.south) -- node[right, font=\scriptsize] {3. Gọi hàm} ([xshift=3mm]service.north);
+        \draw[arrow] ([xshift=-3mm]service.north) -- node[left, font=\scriptsize] {8. Kết quả xử lý} ([xshift=-3mm]controller.south);
+        
+        % Service <-> Model
+        \draw[arrow] ([yshift=3mm]service.west) -- node[above, font=\scriptsize] {4. Truy vấn} ([yshift=3mm]model.east);
+        \draw[arrow] ([yshift=-3mm]model.east) -- node[below, font=\scriptsize] {7. Dữ liệu} ([yshift=-3mm]service.west);
+        
+        % Model <-> MySQL
+        \draw[arrow] ([yshift=3mm]model.west) -- node[above, font=\scriptsize] {5. SQL} ([yshift=3mm]mysql.east);
+        \draw[arrow] ([yshift=-3mm]mysql.east) -- node[below, font=\scriptsize] {6. Kết quả} ([yshift=-3mm]model.west);
+        
+        % Response from Backend to Frontend
+        \draw[arrow] (backend.north -| middleware.north) -- ++(0, 0.8) coordinate (tmp) -- (tmp -| frontend.70) node[midway, above, font=\scriptsize] {9. Response JSON (Thành công)} -- (frontend.70);
+        
+        % Lỗi 400/500
+        \draw[dashed_arrow, red] (backend.north -| controller.north) -- ++(0, 1.4) coordinate (tmp2) -- (tmp2 -| frontend.110) node[midway, above, font=\scriptsize] {Lỗi 400 (Bad Request) / 500 (Server Error)} -- (frontend.110);
+
+        % Legend
+        \node[font=\scriptsize\sffamily, text=gray!80!black, align=left, draw, fill=white, rounded corners, inner sep=1ex] at ([yshift=-0.5cm]mysql.south) [anchor=north, xshift=2cm] {
+            \textbf{Chú thích:}\\
+            \tikz[baseline=-0.5ex] \draw[arrow] (0,0) -- (0.5,0); Luồng xử lý chính (Thành công)\\
+            \tikz[baseline=-0.5ex] \draw[dashed_arrow, red] (0,0) -- (0.5,0); Luồng trả về lỗi (Thất bại)
+        };
+        
+    \end{tikzpicture}
+    \caption{Sơ đồ luồng xử lý một request có xác thực. \textit{(Ghi chú: Bước kiểm tra Token ở Middleware bao gồm giải mã JWT và kiểm tra tính hợp lệ của User trong cơ sở dữ liệu).}}
+    \label{fig:auth_flow}
+\end{figure}
 
 \subsection{Controller, service và xử lý nghiệp vụ}Controller được sử dụng làm lớp trung gian giữa route và service. Controller nhận dữ liệu từ request, kiểm tra một số điều kiện cơ bản, gọi service tương ứng và trả kết quả về client. Các xử lý phức tạp như tổng hợp dữ liệu, tính toán chỉ số, kiểm tra điều kiện nghiệp vụ hoặc gọi nguồn dữ liệu bên ngoài được chuyển xuống tầng service. Cách phân chia này giúp controller không bị trộn lẫn giữa xử lý HTTP và xử lý nghiệp vụ.
 
@@ -2872,8 +2933,60 @@ Nhìn chung, Backend của NutriTrack được triển khai theo hướng phân 
 
 Frontend không đảm nhiệm trực tiếp các thuật toán dinh dưỡng phức tạp. Các xử lý như Nutrition Core, Adaptive TDEE, Food Scoring, Health Insights và Meal Planner được thực hiện chủ yếu ở Backend để bảo đảm kết quả tính toán thống nhất giữa các màn hình. Frontend nhận dữ liệu đã được xử lý từ API, sau đó tổ chức hiển thị dưới dạng thẻ thông tin, biểu đồ, bảng dữ liệu, modal nhập liệu và thông báo trạng thái. Cách phân chia này làm rõ ranh giới giữa tầng giao diện và tầng nghiệp vụ, đồng thời hạn chế việc lặp lại công thức ở phía client.
 
-\textbf{Gợi ý chèn hình 3.x:} Sơ đồ tổng quan Frontend của NutriTrack, thể hiện các thành phần chính gồm React App, Router, Auth Context, Custom Hooks, Axios, TanStack Query và Backend API.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.5cm and 1.8cm,
+        box/.style={rectangle, draw, rounded corners, minimum width=2.6cm, minimum height=1.2cm, align=center, fill=blue!5, font=\small\sffamily},
+        db/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=2.5cm, align=center, fill=gray!10, font=\small\sffamily},
+        arrow/.style={->, >=stealth, thick},
+        dashed_arrow/.style={->, >=stealth, thick, dashed}
+        ]
 
+        % Nodes
+        \node[box, fill=green!5] (router) {React Router \& Pages\\(Lớp UI)};
+        \node[box, below=1.5cm of router, fill=yellow!10] (hooks) {Custom Hooks\\(Lớp Nghiệp vụ)};
+        
+        \node[box, right=1.5cm of router, fill=orange!5] (auth) {Auth Context\\(Quản lý Đăng nhập)};
+        \node[box, right=1.5cm of hooks, fill=cyan!5] (reactquery) {TanStack Query\\(Quản lý State \& Cache)};
+        
+        \node[box, right=1.5cm of reactquery, fill=purple!5] (axios) {Axios Instance\\(HTTP Client)};
+        
+        \node[db, right=1.5cm of axios] (backend) {Backend API\\(Express)};
+
+        % Background for Frontend
+        \begin{pgfonlayer}{background}
+            \node[rectangle, draw, dashed, fill=blue!2, rounded corners, fit=(router) (hooks) (auth) (reactquery) (axios), inner sep=0.6cm] (frontend) {};
+            \node[anchor=south west, font=\small\bfseries\sffamily, text=blue!80] at ([xshift=2mm, yshift=2mm]frontend.north west) {React Application (Frontend)};
+        \end{pgfonlayer}
+
+        % Arrows
+        % Router <-> Hooks
+        \draw[arrow] ([xshift=2mm]router.south) -- node[right, font=\scriptsize] {Gọi} ([xshift=2mm]hooks.north);
+        \draw[arrow] ([xshift=-2mm]hooks.north) -- node[left, font=\scriptsize] {Dữ liệu \& UI State} ([xshift=-2mm]router.south);
+
+        % Router -> Auth Context
+        \draw[dashed_arrow] (router.east) -- node[above, font=\scriptsize] {Kiểm tra User/Token} (auth.west);
+        
+        % Hooks <-> TanStack Query
+        \draw[arrow] ([yshift=2mm]hooks.east) -- node[above, font=\scriptsize] {Sử dụng useQuery/...} ([yshift=2mm]reactquery.west);
+        \draw[arrow] ([yshift=-2mm]reactquery.west) -- node[below, font=\scriptsize] {Trả Data/Loading/Error} ([yshift=-2mm]hooks.east);
+        
+        % TanStack Query <-> Axios
+        \draw[arrow] ([yshift=2mm]reactquery.east) -- node[above, font=\scriptsize] {Fetch/Mutate} ([yshift=2mm]axios.west);
+        \draw[arrow] ([yshift=-2mm]axios.west) -- node[below, font=\scriptsize] {Promise} ([yshift=-2mm]reactquery.east);
+        
+        % Axios -> Auth (Interceptor)
+        \draw[dashed_arrow] (axios.north) |- node[pos=0.75, above, font=\scriptsize] {Lấy Token gắn vào Header} (auth.east);
+        
+        % Axios <-> Backend
+        \draw[arrow] ([yshift=3mm]axios.east) -- node[above, font=\scriptsize] {HTTP Request} ([yshift=3mm]backend.west);
+        \draw[arrow] ([yshift=-3mm]backend.west) -- node[below, font=\scriptsize] {JSON Response} ([yshift=-3mm]axios.east);
+
+    \end{tikzpicture}
+    \caption{Sơ đồ tổng quan kiến trúc Frontend của NutriTrack}
+    \label{fig:frontend_architecture}
+\end{figure}
 \subsection{Tổ chức ứng dụng React}Ứng dụng Frontend được xây dựng bằng React kết hợp Vite. React được sử dụng để xây dựng giao diện theo component, còn Vite hỗ trợ quá trình phát triển, chạy giao diện cục bộ và tạo bản build khi triển khai. Trong mã nguồn, các thành phần được chia thành nhiều nhóm như pages, components, hooks, contexts và lib. Cách tổ chức này giúp phân tách rõ màn hình chức năng, thành phần giao diện dùng lại, logic gọi API, trạng thái xác thực và cấu hình dùng chung.
 
 File App.jsx giữ vai trò khai báo cấu trúc điều hướng chính của ứng dụng. Tại đây, ứng dụng được bao quanh bởi các provider và thành phần nền như QueryClientProvider, AuthProvider, BrowserRouter và Toaster. QueryClientProvider cung cấp cơ chế quản lý dữ liệu server cho toàn bộ cây component. AuthProvider cung cấp trạng thái đăng nhập và thông tin người dùng. BrowserRouter xử lý điều hướng theo URL, còn Toaster hỗ trợ hiển thị thông báo sau các thao tác như đăng nhập, thêm dữ liệu, cập nhật hoặc xóa bản ghi.

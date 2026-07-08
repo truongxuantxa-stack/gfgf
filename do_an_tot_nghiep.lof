@@ -12,10 +12,13 @@
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Sơ đồ ERD rút gọn của hệ thống}}{35}{figure.2.2}%
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Luồng request/response giữa Frontend và Backend}}{42}{figure.2.3}%
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Luồng xác thực API bằng JWT}}{43}{figure.2.4}%
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Sơ đồ điều hướng giao diện của hệ thống}}{48}{figure.2.5}%
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Wireframe giao diện Dashboard}}{49}{figure.2.6}%
-\contentsline {figure}{\numberline {2.7}{\ignorespaces Wireframe giao diện Nhật ký ăn uống và Modal Scanner}}{51}{figure.2.7}%
-\contentsline {figure}{\numberline {2.8}{\ignorespaces Wireframe giao diện chức năng Meal Planner}}{51}{figure.2.8}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Luồng xử lý một request có xác thực trong hệ thống}}{44}{figure.2.5}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Sơ đồ điều hướng giao diện của hệ thống}}{49}{figure.2.6}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Wireframe giao diện Dashboard}}{50}{figure.2.7}%
+\contentsline {figure}{\numberline {2.8}{\ignorespaces Wireframe giao diện Nhật ký ăn uống và Modal Scanner}}{51}{figure.2.8}%
+\contentsline {figure}{\numberline {2.9}{\ignorespaces Wireframe giao diện chức năng Meal Planner}}{52}{figure.2.9}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Sơ đồ kiến trúc phân lớp Backend của NutriTrack}}{56}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Sơ đồ luồng xử lý một request có xác thực. \textit {(Ghi chú: Bước kiểm tra Token ở Middleware bao gồm giải mã JWT và kiểm tra tính hợp lệ của User trong cơ sở dữ liệu).}}}{58}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Sơ đồ tổng quan kiến trúc Frontend của NutriTrack}}{61}{figure.3.3}%
 \addvspace {10\p@ }
