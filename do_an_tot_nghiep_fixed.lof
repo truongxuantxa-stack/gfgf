@@ -5,5 +5,7 @@
 \contentsline {figure}{\numberline {1.3}{\ignorespaces Kiến trúc truy cập dữ liệu thông qua Sequelize ORM}}{10}{figure.1.3}%
 \contentsline {figure}{\numberline {1.4}{\ignorespaces Kiến trúc tổng thể Client - Server của hệ thống}}{13}{figure.1.4}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Luồng xác thực API bằng JWT}}{36}{figure.2.1}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Wireframe giao diện chức năng Meal Planner}}{43}{figure.2.2}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
