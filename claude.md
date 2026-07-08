@@ -28,7 +28,7 @@
 2. **Sửa đổi cục bộ (Surgical Changes):** Dùng `replace_file_content` hoặc `multi_replace_file_content` (thay vì ghi đè cả file) để giữ an toàn cho các phần không liên quan.
 3. **Vẽ sơ đồ bằng TikZ / Chèn hình ảnh:**
    - **Tuyệt đối không dùng `\begin{figure}[H]`** để tránh tạo khoảng trắng lớn ở cuối trang. Luôn dùng `\begin{figure}[htbp]` để thả nổi hình (floating).
-   - **Tham chiếu chéo BẮT BUỘC:** Phải thêm câu dẫn tham chiếu (cross-reference) ở đoạn văn bản nằm ngay trước hình (VD: "Chi tiết được minh họa trong Hình \ref{tên_label}."). Điều này là bắt buộc để người đọc dễ theo dõi khi hình bị đẩy (float) sang trang sau.
+   - **Tham chiếu chéo BẮT BUỘC:** Mọi hình ảnh đều phải được gọi tên trong văn bản (VD: "Chi tiết được minh họa trong Hình \ref{tên_label}."), **bất kể hình nằm ở vị trí nào** (ngay sát chữ hay trôi sang trang sau). Đây là tiêu chuẩn học thuật bắt buộc để văn bản độc lập với hình.
    - Đảm bảo thiết kế gọn gàng, chia tầng (layer) rõ ràng bằng các khung `fit` hoặc `rectangle`.
    - Các chữ/nhãn trên mũi tên phải được tinh chỉnh `xshift`, `yshift`, `pos` để không đè lên các đối tượng khác.
    - Chương 1 chỉ vẽ khái quát (lược bỏ các chi tiết kỹ thuật quá sâu nếu không cần thiết).
