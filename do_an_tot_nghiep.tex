@@ -3291,67 +3291,71 @@ Chi tiết luồng xử lý Adaptive TDEE được minh họa trong Hình \ref{f
 
 \begin{figure}[htbp]
     \centering
+    \resizebox{\textwidth}{!}{%
     \begin{tikzpicture}[
-        box/.style={rectangle, draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.9cm, fill=blue!5, font=\footnotesize},
-        cond/.style={diamond, aspect=2.2, draw, align=center, fill=orange!10, inner sep=1pt, font=\footnotesize},
-        start/.style={ellipse, draw, align=center, fill=gray!20, font=\footnotesize, minimum height=0.8cm, inner sep=2pt},
-        core/.style={rectangle, draw, rounded corners, align=center, minimum width=2.6cm, minimum height=0.9cm, fill=green!10, thick, font=\footnotesize},
+        box/.style={rectangle, draw, rounded corners, align=center, minimum width=2.2cm, minimum height=0.8cm, fill=blue!5, font=\footnotesize},
+        cond/.style={diamond, aspect=2.5, draw, align=center, fill=orange!10, inner sep=1pt, font=\footnotesize},
+        startstop/.style={ellipse, draw, align=center, fill=gray!20, font=\footnotesize, minimum height=0.7cm, inner sep=2pt},
+        core/.style={rectangle, draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.8cm, fill=green!10, thick, font=\footnotesize},
         arrow/.style={-Latex, thick}
     ]
         
-        % Hàng 1 (y=0)
-        \node[start] (cron) at (0, 0) {Cron Job\\(Hàng tuần)};
-        \node[box] (get_data) at (2.8, 0) {Lấy dữ liệu\\tuần trước};
-        \node[cond] (check_data) at (6.6, 0) {Đủ dữ liệu?\\($\ge 5$ ngày, $\ge 2$ lần cân)?};
-        \node[box] (log_skip) at (10.8, 0) {Lưu log\\(skipped)};
-        \node[start] (end1) at (13.2, 0) {Kết thúc};
+        % === Hàng 1 (y=0): Cron → Lấy dữ liệu → Kiểm tra → [Không] → Log skip → Kết thúc ===
+        \node[startstop] (cron) at (0, 0) {Cron Job\\(Hàng tuần)};
+        \node[box] (get_data) at (3, 0) {Lấy dữ liệu\\tuần trước};
+        \node[cond] (check_data) at (7, 0) {Đủ dữ liệu?\\($\ge 5$ ngày,\\$\ge 2$ lần cân)?};
+        \node[box] (log_skip) at (11, 0) {Lưu log\\(skipped)};
+        \node[startstop] (end1) at (13.5, 0) {Kết thúc};
         
         \draw[arrow] (cron) -- (get_data);
         \draw[arrow] (get_data) -- (check_data);
         \draw[arrow] (check_data) -- node[above, font=\scriptsize] {Không} (log_skip);
         \draw[arrow] (log_skip) -- (end1);
         
-        % Hàng 2 (y=-2)
-        \node[box] (calc_cal) at (4.2, -2) {Tính calo\\trung bình};
-        \node[box] (calc_weight) at (9.0, -2) {Tính cân nặng\\EMA (làm mịn)};
+        % === Hàng 2 (y=-3): Song song tính calo + cân nặng EMA ===
+        \node[box] (calc_cal) at (4.5, -3) {Tính calo\\trung bình};
+        \node[box] (calc_weight) at (9.5, -3) {Tính cân nặng\\EMA (làm mịn)};
         
-        \coordinate (split) at (6.6, -1.1);
-        \draw[thick] (check_data.south) -- node[left, font=\scriptsize] {Có} (split);
+        % Mũi tên rẽ nhánh "Có" từ diamond xuống
+        \coordinate (split) at (7, -1.8);
+        \draw[thick] (check_data.south) -- node[right, font=\scriptsize] {Có} (split);
         \draw[arrow] (split) -| (calc_cal.north);
         \draw[arrow] (split) -| (calc_weight.north);
         
-        % Hàng 3 (y=-4)
-        \node[box] (calc_tdee) at (6.6, -4) {Tính TDEE\\tuần};
-        \node[box] (limit) at (2.5, -4) {Giới hạn biên $\pm 30\%$\\(so với TDEE tĩnh)};
-        \node[box] (calc_roll) at (-1.5, -4) {Tính rolling\\TDEE};
+        % === Hàng 3 (y=-5): Hội tụ → Tính TDEE tuần → Giới hạn biên → Rolling TDEE ===
+        \node[box] (calc_tdee) at (7, -5) {Tính TDEE\\tuần};
+        \node[box] (limit) at (3.5, -5) {Giới hạn biên\\$\pm 30\%$ (so với\\TDEE tĩnh)};
+        \node[box] (calc_roll) at (0, -5) {Tính rolling\\TDEE};
         
-        \coordinate (join_tdee) at (6.6, -3.1);
-        \draw[thick] (calc_cal.south) |- (join_tdee);
-        \draw[thick] (calc_weight.south) |- (join_tdee);
-        \draw[arrow] (join_tdee) -- (calc_tdee.north);
+        % Hội tụ calc_cal + calc_weight → calc_tdee
+        \coordinate (join) at (7, -4.2);
+        \draw[thick] (calc_cal.south) |- (join);
+        \draw[thick] (calc_weight.south) |- (join);
+        \draw[arrow] (join) -- (calc_tdee.north);
         
         \draw[arrow] (calc_tdee) -- (limit);
         \draw[arrow] (limit) -- (calc_roll);
         
-        % Hàng 4 (y=-6)
-        \node[box] (log_success) at (-1.5, -6) {Lưu log\\(AdaptiveTDEELog)};
-        \node[cond] (check_qualify) at (2.5, -6) {Đủ điều kiện\\($\ge 2$ tuần)?};
-        \node[box] (update_user) at (6.6, -6) {Cập nhật\\User.adaptiveTDEE};
-        \node[start] (end2) at (10.6, -6) {Kết thúc};
+        % === Hàng 4 (y=-7.2): Lưu log → Kiểm tra ≥2 tuần → Cập nhật → Kết thúc ===
+        \node[box] (log_ok) at (0, -7.2) {Lưu log\\(AdaptiveTDEELog)};
+        \node[cond] (check_q) at (4, -7.2) {Đủ điều kiện\\($\ge 2$ tuần)?};
+        \node[box] (update) at (8, -7.2) {Cập nhật\\User.adaptiveTDEE};
+        \node[startstop] (end2) at (11.5, -7.2) {Kết thúc};
         
-        \draw[arrow] (calc_roll) -- (log_success);
-        \draw[arrow] (log_success) -- (check_qualify);
-        \draw[arrow] (check_qualify) -- node[above, font=\scriptsize] {Có} (update_user);
-        \draw[arrow] (update_user) -- (end2);
+        \draw[arrow] (calc_roll) -- (log_ok);
+        \draw[arrow] (log_ok) -- (check_q);
+        \draw[arrow] (check_q) -- node[above, font=\scriptsize] {Có} (update);
+        \draw[arrow] (update) -- (end2);
         
-        \coordinate (c1) at (2.5, -7.2);
-        \draw[arrow] (check_qualify.south) -- node[left, font=\scriptsize] {Không} (c1) -| (end2.south);
+        % Nhánh "Không" vòng xuống rồi đi sang Kết thúc
+        \draw[arrow] (check_q.south) -- node[left, font=\scriptsize] {Không} ++(0,-1.2) -| (end2.south);
         
-        % Nutrition core (y=-8)
-        \node[core] (core) at (6.6, -8.2) {Nutrition Core\\(Đọc TDEE áp dụng)};
-        \draw[arrow, dashed] (update_user.south) -- node[right, align=left, font=\scriptsize] {Được áp dụng ở\\request kế tiếp} (core.north);
+        % === Hàng 5 (y=-10): Nutrition Core (mũi tên nét đứt) ===
+        \node[core] (core) at (8, -10) {Nutrition Core\\(Đọc TDEE áp dụng)};
+        \draw[arrow, dashed] (update.south) -- node[right, align=left, font=\scriptsize] {Áp dụng ở\\request kế tiếp} (core.north);
         
-    \end{tikzpicture}
+    \end{tikzpicture}%
+    }% end resizebox
     \caption{Sơ đồ luồng xử lý Adaptive TDEE}
     \label{fig:adaptive_tdee_flow}
 \end{figure}
