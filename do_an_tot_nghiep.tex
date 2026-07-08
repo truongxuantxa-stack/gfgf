@@ -6,7 +6,8 @@
 \usepackage[T5]{fontenc}
 \usepackage[vietnamese]{babel}
 \usepackage{mathptmx} % Font Times New Roman
-
+\usepackage{placeins}
+\usepackage{float}
 
 \usepackage[titles]{tocloft}
 % Đường chấm chấm cho chapter trong TOC
@@ -78,7 +79,7 @@
 \setcounter{LTchunksize}{10}
 
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta, positioning, fit, backgrounds}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds, shapes.geometric}
 
 \begin{document}
 
@@ -1891,7 +1892,105 @@ errors & Danh sách lỗi chi tiết khi dữ liệu đầu vào không hợp l�
 \hline
 \end{tabular}
 \end{table}
-\subsection{Thiết kế xác thực API}Các API của hệ thống được chia thành hai nhóm: API công khai và API yêu cầu xác thực.
+\subsection{Thiết kế xác thực API}
+
+\begin{figure}[htbp]
+\centering
+\makebox[\textwidth][c]{
+\begin{tikzpicture}[
+    node distance=1.2cm,
+    box/.style={
+        rectangle,
+        draw,
+        rounded corners,
+        align=center,
+        minimum width=3.0cm,
+        minimum height=0.9cm,
+        fill=blue!5,
+        font=\footnotesize
+    },
+    smallbox/.style={
+        rectangle,
+        draw,
+        rounded corners,
+        align=center,
+        minimum width=2.6cm,
+        minimum height=0.8cm,
+        fill=red!5,
+        draw=red,
+        font=\scriptsize
+    },
+    arrow/.style={->, thick},
+    dashedarrow/.style={->, thick, dashed},
+    note/.style={font=\scriptsize\itshape, align=center}
+]
+
+% Cột (x: 0, 5.5, 11.0)
+\node[font=\bfseries\small] (feTitle) at (0, 1.5) {Frontend (Client)};
+\node[font=\bfseries\small] (mwTitle) at (5.5, 1.5) {Router \& Middleware};
+\node[font=\bfseries\small] (svcTitle) at (11.0, 1.5) {Controller \& Service};
+
+% Đường phân cách cột
+\draw[dashed, gray] (2.75, 1.0) -- (2.75, -11.8);
+\draw[dashed, gray] (8.25, 1.0) -- (8.25, -11.8);
+
+% -- LUỒNG LOGIN --
+\node[box] (loginReq) at (0,0) {Gửi thông tin Login\\(Email, Password)};
+\node[box] (checkLogin) at (5.5,0) {POST {\ttfamily /auth/login}\\(Xác thực user)};
+\node[box] (dbCheck) at (11.0,0) {Kiểm tra DB \&\\Tạo Tokens};
+\node[box] (tokenReturn) at (5.5,-2.0) {Gắn Refresh Token vào\\{\ttfamily HttpOnly Cookie}};
+\node[box] (saveToken) at (0,-2.0) {Lưu Access Token\\vào bộ nhớ tạm};
+
+\draw[arrow] (loginReq) -- (checkLogin);
+\draw[arrow] (checkLogin) -- (dbCheck);
+\draw[arrow] (dbCheck) |- (tokenReturn);
+\draw[arrow] (tokenReturn) -- node[above, font=\scriptsize, align=center] {Trả Access\\Token (JSON)} (saveToken);
+
+% -- LUỒNG GỌI API --
+\node[box] (apiReq) at (0,-4.0) {Gọi API nghiệp vụ\\Header: Bearer Token};
+\node[box] (checkJwt) at (5.5,-4.0) {Middleware {\ttfamily verifyToken}\\Kiểm tra Access Token};
+\node[box] (business) at (11.0,-4.0) {Xử lý logic\\(Service)};
+\node[box] (successJson) at (0,-5.8) {Cập nhật giao diện\\(Data JSON)};
+
+\draw[arrow] (saveToken) -- (apiReq);
+\draw[arrow] (apiReq) -- (checkJwt);
+\draw[arrow] (checkJwt) -- node[above, font=\scriptsize] {Hợp lệ} (business);
+\draw[arrow] (business) |- (successJson);
+\node[above, font=\scriptsize] at (2.75, -5.8) {Trả Data (JSON)};
+
+% -- LUỒNG REFRESH TOKEN --
+\node[smallbox] (expired) at (5.5,-7.5) {Token hết hạn\\Trả về lỗi 401};
+\node[box] (refreshReq) at (0,-9.5) {Tự động gọi\\POST {\ttfamily /auth/refresh-token}};
+\node[box] (checkRefresh) at (5.5,-9.5) {Đọc {\ttfamily refreshToken}\\từ HttpOnly Cookie};
+\node[box] (verifyRefresh) at (11.0,-9.5) {Xác thực \&\\Tạo Access Token mới};
+\node[box] (newToken) at (5.5,-11.5) {Trả Access Token\\mới qua JSON};
+\node[box] (retryReq) at (0,-11.5) {Cập nhật Access Token \&\\Gửi lại request bị lỗi};
+
+\draw[dashedarrow] (checkJwt) -- (expired);
+\node[right, font=\scriptsize] at (5.5, -5.0) {Hết hạn};
+
+\draw[dashedarrow] (expired) -| (refreshReq);
+\draw[dashedarrow] (refreshReq) -- node[above, font=\scriptsize, align=center] {Gửi kèm\\Cookie} (checkRefresh);
+\draw[dashedarrow] (checkRefresh) -- (verifyRefresh);
+\draw[dashedarrow] (verifyRefresh) |- (newToken);
+\draw[dashedarrow] (newToken) -- (retryReq);
+
+\draw[dashedarrow] (retryReq.west) -- ++(-1.0,0) |- (apiReq.west);
+\node[left, font=\scriptsize, align=center] at (-2.5, -7.75) {Thử lại\\request};
+
+% Chú thích
+\node[note] at (5.5,-12.5) {
+Đường liền: Luồng đăng nhập và gọi API thành công.\\
+Đường nét đứt: Luồng xử lý khi Access Token hết hạn (Cơ chế Refresh Token).
+};
+
+\end{tikzpicture}
+}
+\caption{Luồng xác thực API bằng JWT}
+\label{fig:jwt-auth-flow}
+\end{figure}
+
+Các API của hệ thống được chia thành hai nhóm: API công khai và API yêu cầu xác thực.
 
 API công khai bao gồm đăng ký, đăng nhập, đăng xuất và làm mới Access Token. Đây là các API cần được truy cập trước khi người dùng có trạng thái xác thực hợp lệ hoặc trong quá trình duy trì phiên đăng nhập.
 
@@ -1901,9 +2000,6 @@ Hệ thống sử dụng Access Token cho các yêu cầu API và Refresh Token 
 
 Cách thiết kế này giúp bảo vệ các API nghiệp vụ, đồng thời giảm việc yêu cầu người dùng đăng nhập lại trong quá trình sử dụng.
 
-\textbf{Gợi ý chèn Hình 2.x. Luồng xác thực API bằng JWT}
-
-\textit{Hình nên thể hiện: Đăng nhập → nhận Access Token và Refresh Token → gọi API kèm Authorization Header → Middleware kiểm tra Token → xử lý nghiệp vụ. Có thể bổ sung nhánh làm mới Access Token khi Access Token hết hạn.}
 
 \subsection{Các nhóm API chính}Các API của hệ thống được tổ chức theo các nhóm nghiệp vụ chính. Bảng dưới đây trình bày các nhóm API và vai trò của từng nhóm.
 
@@ -2062,9 +2158,77 @@ Nhóm trang nghiệp vụ gồm Dashboard, nhật ký ăn uống, Meal Planner, 
 
 Thanh điều hướng được sử dụng để chuyển giữa các chức năng chính. Vùng nội dung chính thay đổi theo trang hiện tại. Các thành phần dùng chung như nút, thẻ thông tin, biểu đồ, modal và biểu mẫu được tái sử dụng giữa nhiều màn hình để giữ giao diện nhất quán.
 
-\textbf{Gợi ý chèn Hình 2.x. Sơ đồ điều hướng giao diện của hệ thống}
+\begin{figure}[htbp]
+\centering
+\makebox[\textwidth][c]{
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    public/.style={rectangle, draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.8cm, fill=blue!5, font=\footnotesize},
+    onboard/.style={rectangle, draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.8cm, fill=orange!10, font=\footnotesize},
+    layout/.style={rectangle, draw, rounded corners, align=center, minimum width=2.8cm, minimum height=0.8cm, fill=green!10, font=\footnotesize\bfseries},
+    page/.style={rectangle, draw, rounded corners, align=center, minimum width=2.6cm, minimum height=0.7cm, fill=gray!10, font=\footnotesize},
+    decision/.style={diamond, draw, align=center, fill=yellow!10, aspect=2, font=\scriptsize, inner sep=1pt},
+    arrow/.style={->, thick},
+    dashedarrow/.style={->, thick, dashed}
+]
 
-\textit{Hình nên thể hiện luồng: Landing/Login/Register → Onboarding → AppLayout → Dashboard, Diary, Meal Planner, Weight, Exercise, Profile.}
+% Nhóm công khai
+\node[public] (landing) at (0, 0) {Landing Page};
+\node[public] (login) at (3.2, 1) {Đăng nhập};
+\node[public] (register) at (3.2, -1) {Đăng ký};
+
+\draw[thick] (landing.east) -- ++(0.6,0) coordinate (forkPub);
+\draw[arrow] (forkPub) |- (login.west);
+\draw[arrow] (forkPub) |- (register.west);
+
+% Decision: có hồ sơ chưa?
+\node[decision] (checkProfile) at (6.5, 0) {Đã có\\hồ sơ?};
+
+\draw[thick] (login.east) -| ++(0.5, -1) coordinate (joinP);
+\draw[thick] (register.east) -| (joinP);
+\draw[arrow] (joinP) -- (checkProfile.west);
+
+% Onboarding
+\node[onboard] (onboarding) at (6.5, -2.5) {Onboarding\\(Nhập chỉ số)};
+\draw[arrow] (checkProfile.south) -- node[right, font=\scriptsize] {Chưa} (onboarding.north);
+
+% AppLayout
+\node[layout] (appLayout) at (10.2, 0) {App Layout};
+\draw[arrow] (checkProfile.east) -- node[above, font=\scriptsize] {Đã có} (appLayout.west);
+
+% Onboarding to AppLayout
+\draw[arrow] (onboarding.east) -| (appLayout.south);
+
+% Pages inside AppLayout
+\node[page] (dashboard) at (15.0, 3.0) {Dashboard};
+\node[page] (diary)     at (15.0, 2.0) {Nhật ký ăn uống};
+\node[page] (planner)   at (15.0, 1.0) {Meal Planner};
+\node[page] (weight)    at (15.0, 0.0) {Cân nặng};
+\node[page] (exercise)  at (15.0, -1.0) {Luyện tập};
+\node[page] (profile)   at (15.0, -2.0) {Hồ sơ cá nhân};
+\node[page] (report)    at (15.0, -3.0) {Báo cáo / Thống kê};
+
+\draw[thick] (appLayout.east) -- node[above, font=\scriptsize\itshape, text=black!70] {Sidebar Nav} ++(1.7,0) coordinate (forkApp);
+\draw[arrow] (forkApp) |- (dashboard.west);
+\draw[arrow] (forkApp) |- (diary.west);
+\draw[arrow] (forkApp) |- (planner.west);
+\draw[arrow] (forkApp) |- (weight.west);
+\draw[arrow] (forkApp) |- (exercise.west);
+\draw[arrow] (forkApp) |- (profile.west);
+\draw[arrow] (forkApp) |- (report.west);
+
+% Chú thích
+\node[fill=blue!5, draw, rounded corners, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Public}] at (1.5,-4.5) {};
+\node[fill=yellow!10, draw, diamond, aspect=2, inner sep=1pt, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Logic Server}] at (3.7,-4.5) {};
+\node[fill=orange!10, draw, rounded corners, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Khởi tạo}] at (6.7,-4.5) {};
+\node[fill=green!10, draw, rounded corners, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Bố cục chung}] at (9.0,-4.5) {};
+\node[fill=gray!10, draw, rounded corners, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Trang chức năng}] at (12.0,-4.5) {};
+
+\end{tikzpicture}
+}
+\caption{Sơ đồ điều hướng giao diện của hệ thống}
+\label{fig:ui-navigation}
+\end{figure}
 
 \subsection{Thiết kế giao diện Dashboard}Dashboard là màn hình tổng hợp dữ liệu chính của hệ thống. Mục tiêu của màn hình này là giúp người dùng theo dõi nhanh tình trạng dinh dưỡng và sức khỏe trong ngày hoặc tại thời điểm được chọn.
 
@@ -2074,9 +2238,98 @@ Ngoài các chỉ số theo dõi hằng ngày, Dashboard có thể hiển thị 
 
 Dashboard không chỉ hiển thị dữ liệu mà còn đóng vai trò là điểm truy cập nhanh tới một số thao tác thường dùng như thêm thực phẩm, ghi nhận nước uống hoặc xem báo cáo. Vì vậy, giao diện cần ưu tiên khả năng tổng hợp, dễ quan sát và hạn chế số bước thao tác.
 
-\textbf{Gợi ý chèn Hình 2.x. Giao diện Dashboard}
+\begin{figure}[htbp]
+\centering
+\makebox[\textwidth][c]{
+\begin{tikzpicture}[
+    font=\sffamily,
+    panel/.style={draw=gray!30, rounded corners, fill=white, inner sep=0},
+    card/.style={draw=gray!30, rounded corners, fill=white, align=center, inner sep=2mm, minimum width=2.6cm, font=\scriptsize},
+    title/.style={font=\bfseries\small, text=black!80}
+]
 
-\textit{Ảnh nên thể hiện các thẻ chỉ số, vòng tiến độ calo, macro, nước uống, hoạt động gần đây và khu vực nhận xét dinh dưỡng.}
+% Background
+\fill[gray!5, rounded corners] (0, 0) rectangle (15.5, -11.8);
+\draw[gray!30, rounded corners] (0, 0) rectangle (15.5, -11.8);
+
+% Sidebar
+\fill[white, rounded corners] (0, 0) rectangle (3.5, -11.8);
+\draw[gray!30] (3.5, 0) -- (3.5, -11.8);
+
+\node[circle, fill=blue!10, minimum size=1.0cm, font=\bfseries] (avatar) at (1.75, -1.2) {B};
+\node[font=\bfseries\footnotesize] at (1.75, -2.1) {Nguyễn Thị B};
+\draw[gray!30] (0.5, -2.5) -- (3.0, -2.5);
+
+\node[fill=gray!10, rounded corners, anchor=west, minimum width=2.8cm, minimum height=0.6cm] at (0.35, -3.2) {\footnotesize \textbf{Tổng quan}};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray!80!black] at (0.35, -4.0) {\footnotesize Nhật ký};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray!80!black] at (0.35, -4.8) {\footnotesize Lập kế hoạch};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray!80!black] at (0.35, -5.6) {\footnotesize Cân nặng};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray!80!black] at (0.35, -6.4) {\footnotesize Luyện tập};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray!80!black] at (0.35, -7.2) {\footnotesize Hồ sơ};
+
+% Main Header
+\node[anchor=north west, font=\bfseries\small] at (3.8, -0.4) {Chào buổi sáng, Nguyễn Thị B!};
+\node[anchor=north east, draw=gray!50, rounded corners, fill=white, font=\scriptsize] at (15.2, -0.4) {$\leftarrow$ Hôm nay $\rightarrow$};
+
+% Top Cards
+\node[card, anchor=north west] at (3.8, -1.2) {Protein\\[1mm] \textbf{\large 96g}};
+\node[card, anchor=north west] at (6.7, -1.2) {Carbs\\[1mm] \textbf{\large 86g}};
+\node[card, anchor=north west] at (9.6, -1.2) {Fat\\[1mm] \textbf{\large 43g}};
+\node[card, anchor=north west] at (12.5, -1.2) {Calo đốt\\[1mm] \textbf{\large 385} kcal};
+
+% Middle Row
+% Calo Hôm Nay
+\node[panel, minimum width=5.6cm, minimum height=4.5cm, anchor=north west] at (3.8, -2.7) {};
+\node[title, anchor=north west] at (4.0, -2.9) {Calo Hôm Nay};
+\draw[line width=4mm, gray!20] (6.6, -5.2) circle (1.2cm);
+\draw[line width=4mm, green!60!black] (6.6, -4.0) arc (90:-120:1.2cm); 
+\node[align=center, font=\scriptsize] at (6.6, -5.2) {\textbf{\large 1130}\\ kcal};
+
+% Nước uống
+\node[panel, minimum width=5.6cm, minimum height=2.0cm, anchor=north west] at (9.6, -2.7) {};
+\node[title, anchor=north west] at (9.8, -2.9) {Nước uống};
+\node[anchor=north east, font=\scriptsize] at (15.0, -2.9) {2.7 / 2.6 L};
+\foreach \x in {0,1,2,3,4} {
+    \fill[cyan!50] (10.4 + \x*0.6, -4.0) circle (2.5mm);
+}
+
+% Phân tích AI
+\node[panel, minimum width=5.6cm, minimum height=2.3cm, anchor=north west] at (9.6, -4.9) {};
+\node[title, anchor=north west] at (9.8, -5.1) {Phân tích AI};
+\node[anchor=north west, font=\scriptsize, align=left, text width=5.0cm, text=black!70] at (9.8, -5.6) {
+  $\bullet$ Hôm nay bạn nạp hơi ít Protein. Ưu tiên thịt nạc, trứng.\\[1mm]
+  $\bullet$ Calo đang thiếu, mới đạt 65\% mục tiêu.
+};
+
+% Bottom Row
+% Bữa ăn gần đây
+\node[panel, minimum width=5.6cm, minimum height=4.0cm, anchor=north west] at (3.8, -7.5) {};
+\node[title, anchor=north west] at (4.0, -7.7) {Bữa ăn gần đây};
+
+\node[anchor=west, font=\scriptsize] at (4.0, -8.6) {\textbf{Salad Trứng Luộc}};
+\node[anchor=east, font=\scriptsize, text=green!70!black] at (9.2, -8.6) {+220 kcal};
+\draw[gray!20] (4.0, -9.1) -- (9.2, -9.1);
+
+\node[anchor=west, font=\scriptsize] at (4.0, -9.6) {\textbf{Ức Gà Áp Chảo}};
+\node[anchor=east, font=\scriptsize, text=green!70!black] at (9.2, -9.6) {+220 kcal};
+\draw[gray!20] (4.0, -10.1) -- (9.2, -10.1);
+
+\node[anchor=west, font=\scriptsize] at (4.0, -10.6) {\textbf{Canh Bầu Nấu Tôm}};
+\node[anchor=east, font=\scriptsize, text=green!70!black] at (9.2, -10.6) {+90 kcal};
+
+% Hoạt động hôm nay
+\node[panel, minimum width=5.6cm, minimum height=4.0cm, anchor=north west] at (9.6, -7.5) {};
+\node[title, anchor=north west] at (9.8, -7.7) {Hoạt động hôm nay};
+
+\node[anchor=west, font=\scriptsize] at (9.8, -8.6) {\textbf{Chạy bộ}};
+\node[anchor=west, font=\scriptsize, text=gray] at (9.8, -9.0) {Thời gian: 40 phút};
+\node[anchor=east, font=\scriptsize, text=orange] at (15.0, -8.6) {-385 kcal};
+
+\end{tikzpicture}
+}
+\caption{Wireframe giao diện Dashboard}
+\label{fig:dashboard-ui}
+\end{figure}
 
 \subsection{Thiết kế giao diện nhật ký ăn uống và luồng thêm thực phẩm}Giao diện nhật ký ăn uống được thiết kế để người dùng ghi nhận thực phẩm theo từng bữa trong ngày. Các bữa ăn được chia thành các nhóm như bữa sáng, bữa trưa, bữa tối và bữa phụ. Cách phân chia này phù hợp với thói quen sử dụng và thuận tiện cho việc tổng hợp dinh dưỡng theo ngày.
 
