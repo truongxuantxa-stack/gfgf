@@ -3287,7 +3287,74 @@ Mỗi lần xử lý một tuần, hệ thống tạo mới hoặc cập nhật 
 
 Adaptive TDEE được tích hợp với Nutrition Core thông qua giá trị TDEE áp dụng. Khi hàm tổng hợp chỉ số dinh dưỡng được gọi, hệ thống kiểm tra người dùng có bật useAdaptiveTDEE và có giá trị adaptiveTDEE hợp lệ hay không. Nếu có, hệ thống dùng Adaptive TDEE làm TDEE áp dụng. Nếu không, hệ thống dùng TDEE tĩnh. Nhờ vậy, các module phụ thuộc vào Nutrition Core như Dashboard, Meal Planner và PDF Report có thể sử dụng cùng một giá trị TDEE đang có hiệu lực mà không cần tự xử lý lại logic lựa chọn.
 
-\textbf{Gợi ý chèn hình 3.x:} Sơ đồ luồng Adaptive TDEE gồm các bước: lấy dữ liệu tuần trước → tính calo trung bình → lấy cân nặng đầu/cuối tuần → tính TDEE tuần → giới hạn biên ±30\% → tính rolling TDEE → lưu log → cập nhật User.adaptiveTDEE nếu đủ điều kiện → cung cấp lại cho Nutrition Core.
+Chi tiết luồng xử lý Adaptive TDEE được minh họa trong Hình \ref{fig:adaptive_tdee_flow}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        box/.style={rectangle, draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.9cm, fill=blue!5, font=\footnotesize},
+        cond/.style={diamond, aspect=2.2, draw, align=center, fill=orange!10, inner sep=1pt, font=\footnotesize},
+        start/.style={ellipse, draw, align=center, fill=gray!20, font=\footnotesize, minimum height=0.8cm, inner sep=2pt},
+        core/.style={rectangle, draw, rounded corners, align=center, minimum width=2.6cm, minimum height=0.9cm, fill=green!10, thick, font=\footnotesize},
+        arrow/.style={-Latex, thick}
+    ]
+        
+        % Hàng 1 (y=0)
+        \node[start] (cron) at (0, 0) {Cron Job\\(Hàng tuần)};
+        \node[box] (get_data) at (2.8, 0) {Lấy dữ liệu\\tuần trước};
+        \node[cond] (check_data) at (6.6, 0) {Đủ dữ liệu?\\($\ge 5$ ngày, $\ge 2$ lần cân)?};
+        \node[box] (log_skip) at (10.8, 0) {Lưu log\\(skipped)};
+        \node[start] (end1) at (13.2, 0) {Kết thúc};
+        
+        \draw[arrow] (cron) -- (get_data);
+        \draw[arrow] (get_data) -- (check_data);
+        \draw[arrow] (check_data) -- node[above, font=\scriptsize] {Không} (log_skip);
+        \draw[arrow] (log_skip) -- (end1);
+        
+        % Hàng 2 (y=-2)
+        \node[box] (calc_cal) at (4.2, -2) {Tính calo\\trung bình};
+        \node[box] (calc_weight) at (9.0, -2) {Tính cân nặng\\EMA (làm mịn)};
+        
+        \coordinate (split) at (6.6, -1.1);
+        \draw[thick] (check_data.south) -- node[left, font=\scriptsize] {Có} (split);
+        \draw[arrow] (split) -| (calc_cal.north);
+        \draw[arrow] (split) -| (calc_weight.north);
+        
+        % Hàng 3 (y=-4)
+        \node[box] (calc_tdee) at (6.6, -4) {Tính TDEE\\tuần};
+        \node[box] (limit) at (2.5, -4) {Giới hạn biên $\pm 30\%$\\(so với TDEE tĩnh)};
+        \node[box] (calc_roll) at (-1.5, -4) {Tính rolling\\TDEE};
+        
+        \coordinate (join_tdee) at (6.6, -3.1);
+        \draw[thick] (calc_cal.south) |- (join_tdee);
+        \draw[thick] (calc_weight.south) |- (join_tdee);
+        \draw[arrow] (join_tdee) -- (calc_tdee.north);
+        
+        \draw[arrow] (calc_tdee) -- (limit);
+        \draw[arrow] (limit) -- (calc_roll);
+        
+        % Hàng 4 (y=-6)
+        \node[box] (log_success) at (-1.5, -6) {Lưu log\\(AdaptiveTDEELog)};
+        \node[cond] (check_qualify) at (2.5, -6) {Đủ điều kiện\\($\ge 2$ tuần)?};
+        \node[box] (update_user) at (6.6, -6) {Cập nhật\\User.adaptiveTDEE};
+        \node[start] (end2) at (10.6, -6) {Kết thúc};
+        
+        \draw[arrow] (calc_roll) -- (log_success);
+        \draw[arrow] (log_success) -- (check_qualify);
+        \draw[arrow] (check_qualify) -- node[above, font=\scriptsize] {Có} (update_user);
+        \draw[arrow] (update_user) -- (end2);
+        
+        \coordinate (c1) at (2.5, -7.2);
+        \draw[arrow] (check_qualify.south) -- node[left, font=\scriptsize] {Không} (c1) -| (end2.south);
+        
+        % Nutrition core (y=-8)
+        \node[core] (core) at (6.6, -8.2) {Nutrition Core\\(Đọc TDEE áp dụng)};
+        \draw[arrow, dashed] (update_user.south) -- node[right, align=left, font=\scriptsize] {Được áp dụng ở\\request kế tiếp} (core.north);
+        
+    \end{tikzpicture}
+    \caption{Sơ đồ luồng xử lý Adaptive TDEE}
+    \label{fig:adaptive_tdee_flow}
+\end{figure}
 
 Nhìn chung, Adaptive TDEE được triển khai như cơ chế điều chỉnh TDEE theo dữ liệu thực tế, không thay thế hoàn toàn Nutrition Core. Nutrition Core vẫn cung cấp TDEE tĩnh làm giá trị nền, còn Adaptive TDEE chỉ được áp dụng khi có đủ dữ liệu và người dùng bật cấu hình tương ứng. Các bước kiểm tra số ngày ghi nhận, kiểm tra dữ liệu cân nặng, gán trạng thái log, giới hạn biên so với TDEE tĩnh, làm mượt theo các tuần hợp lệ và chỉ cập nhật sau ít nhất hai tuần hợp lệ giúp kết quả ít bị phụ thuộc vào một bản ghi đơn lẻ hoặc một tuần dữ liệu bất thường.
 
