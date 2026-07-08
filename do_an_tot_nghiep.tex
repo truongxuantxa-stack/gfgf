@@ -3161,7 +3161,47 @@ Từ TDEE áp dụng, hệ thống tính năng lượng mục tiêu theo mục t
 Sau khi có năng lượng mục tiêu, hệ thống chuyển đổi sang lượng protein, carbohydrate và lipid theo đơn vị gram. Tỷ lệ mặc định trong mã nguồn là protein 30\%, carbohydrate 40\% và lipid 30\%. Nếu người dùng thiết lập tỷ lệ riêng trong hồ sơ, hệ thống sử dụng tỷ lệ tùy chỉnh; nếu không, hệ thống quay về tỷ lệ mặc định. Quy tắc chuyển đổi được tính như sau: \textbf{proteinGram = targetCalories × proteinRate / 4}, \textbf{carbGram = targetCalories × carbRate / 4}, \textbf{fatGram = targetCalories × fatRate / 9}. Các hệ số 4, 4 và 9 tương ứng với năng lượng sinh ra từ 1g protein, 1g carbohydrate và 1g lipid.
 Thay vì để các module gọi từng hàm rời rạc, hệ thống có hàm tổng hợp để tính toàn bộ chỉ số dinh dưỡng cho một người dùng. Hàm này trả về các thông tin như tuổi, BMI, phân loại BMI, BMR, staticTDEE, TDEE áp dụng, trạng thái dùng Adaptive TDEE, năng lượng mục tiêu, lượng macro theo gram, tỷ lệ macro và mục tiêu nước. Các dữ liệu này được dùng trực tiếp cho API hoặc các service khác.
 
-\textbf{Gợi ý chèn hình 3.x:} Sơ đồ luồng xử lý Nutrition Core: Hồ sơ người dùng → BMI/BMR → TDEE tĩnh → chọn TDEE áp dụng → targetCalories → macro và waterGoal → cung cấp dữ liệu cho Dashboard, Meal Planner và PDF Report.
+Quá trình tính toán này được mô tả tổng quan qua Hình \ref{fig:luong-xu-ly-nutrition-core}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.6cm,
+        box/.style={rectangle, draw, rounded corners, minimum width=4cm, minimum height=1.0cm, align=center, fill=blue!5, font=\small\sffamily},
+        arrow/.style={->, >=stealth, thick}
+        ]
+
+        % Nodes
+        \node[box, fill=green!5] (profile) {Hồ sơ người dùng\\(Cân nặng, chiều cao, tuổi, giới tính,\\mức vận động, mục tiêu)};
+        \node[box] (bmi) [below=of profile] {Tính BMI\\(Cân nặng / Chiều cao$^2$)};
+        \node[box] (bmr) [below=of bmi] {Tính BMR\\(Mifflin-St Jeor)};
+        \node[box] (tdee) [below=of bmr] {Tính TDEE tĩnh\\(BMR $\times$ PAL)};
+        
+        \node[box, fill=yellow!10] (choose) [below=of tdee] {Chọn TDEE áp dụng\\(TDEE tĩnh hoặc Adaptive TDEE)};
+        \node[box, fill=purple!5] (adaptive) [right=0.8cm of choose] {Dữ liệu Adaptive TDEE\\(từ quá trình theo dõi)};
+        
+        \node[box] (adjust) [below=of choose] {Điều chỉnh theo Mục tiêu\\(Giảm cân: $-500$ kcal | Duy trì: $\pm 0$ | Tăng cân: $+300$ kcal)};
+        
+        \node[box] (target) [below=of adjust] {Xác định Năng lượng mục tiêu\\(targetCalories)};
+        \node[box] (macro) [below=of target] {Tính toán Macro (Protein 30\%, Carbs 40\%, Fat 30\%)\\ \& Mục tiêu nước (Cân nặng $\times$ 35 ml)};
+        
+        \node[box, fill=gray!10, minimum width=6cm] (output) [below=of macro] {Cung cấp dữ liệu cho:\\Dashboard, Meal Planner, PDF Report};
+
+        % Arrows
+        \draw[arrow] (profile) -- (bmi);
+        \draw[arrow] (bmi) -- (bmr);
+        \draw[arrow] (bmr) -- (tdee);
+        \draw[arrow] (tdee) -- (choose);
+        \draw[arrow] (adaptive) -- (choose);
+        \draw[arrow] (choose) -- (adjust);
+        \draw[arrow] (adjust) -- (target);
+        \draw[arrow] (target) -- (macro);
+        \draw[arrow] (macro) -- (output);
+
+    \end{tikzpicture}
+    \caption{Sơ đồ luồng xử lý Nutrition Core}
+    \label{fig:luong-xu-ly-nutrition-core}
+\end{figure}
 
 Nhìn chung, Nutrition Core được triển khai như lớp xử lý nền cho toàn bộ hệ thống dinh dưỡng cá nhân. Phạm vi của nhóm xử lý này được giữ ở mức tính toán chỉ số cơ bản và mục tiêu cá nhân. Các xử lý có tính thích ứng theo thời gian, đánh giá chất lượng món ăn, sinh cảnh báo sức khỏe hoặc lập thực đơn không được đặt trong Nutrition Core, mà được tách sang các module chuyên biệt ở các mục tiếp theo.
 
