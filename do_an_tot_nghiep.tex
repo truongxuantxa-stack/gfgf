@@ -3057,40 +3057,42 @@ Components & Hiển thị giao diện và xử lý tương tác tại từng mà
     \centering
     \resizebox{\textwidth}{!}{
     \begin{tikzpicture}[
-        node distance=3cm,
-        box/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=1.2cm, align=center, fill=blue!5, font=\small\sffamily},
+        box/.style={rectangle, draw, rounded corners, minimum width=2.6cm, minimum height=1.4cm, align=center, fill=blue!5, font=\small\sffamily},
         arrow/.style={->, >=stealth, thick}
         ]
 
         % Nodes
         \node[box, fill=green!5] (comp) at (0, 0) {React Component\\(Giao diện)};
-        \node[box, fill=yellow!10] (hook) at (3.5, 0) {Custom Hook\\(Logic)};
-        \node[box, fill=cyan!5] (tanstack) at (7.5, 0) {TanStack Query\\(State \& Cache)};
-        \node[box, fill=purple!5] (axios) at (11.5, 0) {Axios\\(HTTP Client)};
-        \node[box, fill=gray!10] (backend) at (15.5, 0) {Backend API\\(Server)};
+        \node[box, fill=yellow!10] (hook) at (5.0, 0) {Custom Hook\\(Logic)};
+        \node[box, fill=cyan!5] (tanstack) at (10.5, 0) {TanStack Query\\(State \& Cache)};
+        \node[box, fill=purple!5] (axios) at (15.0, 0) {Axios\\(HTTP Client)};
+        \node[box, fill=gray!10] (backend) at (19.5, 0) {Backend API\\(Server)};
 
         % Background highlighting the "Frontend"
         \begin{pgfonlayer}{background}
-            \node[rectangle, draw, dashed, fill=blue!2, rounded corners, fit=(comp) (hook) (tanstack) (axios), inner sep=0.4cm] (frontend) {};
+            \node[rectangle, draw, dashed, fill=blue!2, rounded corners, fit=(comp) (hook) (tanstack) (axios), inner sep=0.5cm] (frontend) {};
             \node[anchor=south west, font=\small\bfseries\sffamily, text=blue!80] at ([xshift=2mm, yshift=2mm]frontend.north west) {Frontend};
         \end{pgfonlayer}
 
         % Arrows forward (top)
-        \draw[arrow] ([yshift=3mm]comp.east) -- node[above, font=\scriptsize] {Gọi hook} ([yshift=3mm]hook.west);
-        \draw[arrow] ([yshift=3mm]hook.east) -- node[above, font=\scriptsize, align=center] {useQuery /\\useMutation} ([yshift=3mm]tanstack.west);
-        \draw[arrow] ([yshift=3mm]tanstack.east) -- node[above, font=\scriptsize] {Gửi Request} ([yshift=3mm]axios.west);
-        \draw[arrow] ([yshift=3mm]axios.east) -- node[above, font=\scriptsize] {HTTP GET/POST} ([yshift=3mm]backend.west);
+        \draw[arrow] ([yshift=4mm]comp.east) -- node[above, font=\scriptsize] {Gọi hook} ([yshift=4mm]hook.west);
+        \draw[arrow] ([yshift=4mm]hook.east) -- node[above, font=\scriptsize, align=center] {Gọi useQuery() /\\useMutation()} ([yshift=4mm]tanstack.west);
+        \draw[arrow] ([yshift=4mm]tanstack.east) -- node[above, font=\scriptsize] {Gọi queryFn()} ([yshift=4mm]axios.west);
+        \draw[arrow] ([yshift=4mm]axios.east) -- node[above, font=\scriptsize] {HTTP GET/POST} ([yshift=4mm]backend.west);
 
         % Arrows backward (bottom)
-        \draw[arrow] ([yshift=-3mm]backend.west) -- node[below, font=\scriptsize] {JSON Response} ([yshift=-3mm]axios.east);
-        \draw[arrow] ([yshift=-3mm]axios.west) -- node[below, font=\scriptsize] {Promise (Data)} ([yshift=-3mm]tanstack.east);
+        \draw[arrow] ([yshift=-4mm]backend.west) -- node[below, font=\scriptsize] {JSON Response} ([yshift=-4mm]axios.east);
+        \draw[arrow] ([yshift=-4mm]axios.west) -- node[below, font=\scriptsize] {Promise (Data)} ([yshift=-4mm]tanstack.east);
         
-        \draw[arrow] ([yshift=-3mm]tanstack.west) -- node[below, font=\scriptsize, align=center] {Cập nhật Cache\\\& Trạng thái} ([yshift=-3mm]hook.east);
-        \draw[arrow] ([yshift=-3mm]hook.west) -- node[below, font=\scriptsize, align=center] {Hiển thị lại\\dữ liệu} ([yshift=-3mm]comp.east);
+        \draw[arrow] ([yshift=-4mm]tanstack.west) -- node[below, font=\scriptsize, align=center] {Cập nhật\\Cache \& State} ([yshift=-4mm]hook.east);
+        \draw[arrow] ([yshift=-4mm]hook.west) -- node[below, font=\scriptsize, align=center] {data / isLoading\\/ error} ([yshift=-4mm]comp.east);
+
+        % Note below frontend
+        \node[anchor=north, font=\scriptsize\itshape, text=gray, yshift=-3mm] at (frontend.south) {(Luồng xử lý lỗi 401 và Auto Refresh Token chi tiết xem Hình 3.3)};
 
     \end{tikzpicture}
     }
-    \caption{Sơ đồ luồng gọi API ở Frontend}
+    \caption{Sơ đồ luồng gọi API ở Frontend (Happy Path)}
     \label{fig:luong-goi-api-frontend}
 \end{figure}
 
