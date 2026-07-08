@@ -3066,11 +3066,11 @@ Components & Hiển thị giao diện và xử lý tương tác tại từng mà
         \node[box, fill=yellow!10] (hook) at (5.0, 0) {Custom Hook\\(Logic)};
         \node[box, fill=cyan!5] (tanstack) at (10.5, 0) {TanStack Query\\(State \& Cache)};
         \node[box, fill=purple!5] (axios) at (15.0, 0) {Axios\\(HTTP Client)};
-        \node[box, fill=gray!10] (backend) at (19.5, 0) {Backend API\\(Server)};
+        \node[box, fill=gray!10] (backend) at (20.5, 0) {Backend API\\(Server)};
 
         % Background highlighting the "Frontend"
         \begin{pgfonlayer}{background}
-            \node[rectangle, draw, dashed, fill=blue!2, rounded corners, fit=(comp) (hook) (tanstack) (axios), inner sep=0.5cm] (frontend) {};
+            \node[rectangle, draw, dashed, fill=blue!2, rounded corners, fit=(comp) (hook) (tanstack) (axios), inner ysep=0.9cm, inner xsep=0.3cm] (frontend) {};
             \node[anchor=south west, font=\small\bfseries\sffamily, text=blue!80] at ([xshift=2mm, yshift=2mm]frontend.north west) {Frontend};
         \end{pgfonlayer}
 
