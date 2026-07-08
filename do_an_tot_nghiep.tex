@@ -2952,10 +2952,10 @@ Frontend không đảm nhiệm trực tiếp các thuật toán dinh dưỡng ph
         \node[box, fill=cyan!5] (reactquery) at (5.5, -2.4) {TanStack Query\\(State \& Cache)};
         
         \node[box, fill=purple!5] (axios) at (11.0, -2.4) {Axios Instance\\(HTTP Client)};
-        \node[smbox, fill=gray!15] (localstorage) at (11.0, -0.8) {localStorage};
-        \node[smbox, fill=red!10] (toaster) at (11.0, 0.6) {react-hot-toast\\(Global Error)};
+        \node[smbox, fill=gray!15] (localstorage) at (11.0, 0) {localStorage};
+        \node[smbox, fill=red!10] (toaster) at (11.0, 1.4) {react-hot-toast\\(Global Error)};
         
-        \node[db] (backend) at (15.5, -2.4) {Backend API\\(Express)};
+        \node[db] (backend) at (16.5, -2.4) {Backend API\\(Express)};
 
         % Background for Frontend
         \begin{pgfonlayer}{background}
@@ -2981,13 +2981,13 @@ Frontend không đảm nhiệm trực tiếp các thuật toán dinh dưỡng ph
         \draw[arrow] ([yshift=-3mm]axios.west) -- node[below, font=\scriptsize] {Promise} ([yshift=-3mm]reactquery.east);
         
         % Auth -> localStorage
-        \draw[dashed_arrow] (auth.east) -| node[pos=0.25, above, font=\scriptsize] {Lưu Token} (localstorage.north);
+        \draw[dashed_arrow] (auth.east) -- node[above, font=\scriptsize, pos=0.3] {Lưu Token} (localstorage.west);
         
         % Axios -> localStorage
-        \draw[dashed_arrow] (axios.north) -- node[right, font=\scriptsize, align=center] {Đọc Token\\(Interceptor)} (localstorage.south);
+        \draw[dashed_arrow] (axios.north) -- node[left, font=\scriptsize, align=center] {Đọc Token\\(Interceptor)} (localstorage.south);
         
         % Axios -> Toaster (Báo lỗi Global)
-        \draw[dashed_arrow, orange] (axios.north west) to[out=150, in=180] node[left, font=\scriptsize, align=center, xshift=-1mm] {Báo lỗi\\Global} (toaster.west);
+        \draw[dashed_arrow, orange] (axios.north west) to[out=150, in=180] node[left, font=\scriptsize, align=center, pos=0.85] {Báo lỗi\\Global} (toaster.west);
         
         % Axios <-> Backend
         \draw[arrow] ([yshift=6mm]axios.east) -- node[above, font=\scriptsize] {HTTP Request} ([yshift=6mm]backend.west);
@@ -3053,7 +3053,46 @@ Components & Hiển thị giao diện và xử lý tương tác tại từng mà
 \hline
 \end{longtable}
 
-\textbf{Gợi ý chèn hình 3.x:} Sơ đồ luồng gọi API ở Frontend: Component sử dụng custom hook → TanStack Query quản lý trạng thái → Axios gửi request → Backend API trả response → cache được cập nhật → giao diện hiển thị lại dữ liệu.
+\begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        node distance=3cm,
+        box/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=1.2cm, align=center, fill=blue!5, font=\small\sffamily},
+        arrow/.style={->, >=stealth, thick}
+        ]
+
+        % Nodes
+        \node[box, fill=green!5] (comp) at (0, 0) {React Component\\(Giao diện)};
+        \node[box, fill=yellow!10] (hook) at (3.5, 0) {Custom Hook\\(Logic)};
+        \node[box, fill=cyan!5] (tanstack) at (7.5, 0) {TanStack Query\\(State \& Cache)};
+        \node[box, fill=purple!5] (axios) at (11.5, 0) {Axios\\(HTTP Client)};
+        \node[box, fill=gray!10] (backend) at (15.5, 0) {Backend API\\(Server)};
+
+        % Background highlighting the "Frontend"
+        \begin{pgfonlayer}{background}
+            \node[rectangle, draw, dashed, fill=blue!2, rounded corners, fit=(comp) (hook) (tanstack) (axios), inner sep=0.4cm] (frontend) {};
+            \node[anchor=south west, font=\small\bfseries\sffamily, text=blue!80] at ([xshift=2mm, yshift=2mm]frontend.north west) {Frontend};
+        \end{pgfonlayer}
+
+        % Arrows forward (top)
+        \draw[arrow] ([yshift=3mm]comp.east) -- node[above, font=\scriptsize] {Gọi hook} ([yshift=3mm]hook.west);
+        \draw[arrow] ([yshift=3mm]hook.east) -- node[above, font=\scriptsize, align=center] {useQuery /\\useMutation} ([yshift=3mm]tanstack.west);
+        \draw[arrow] ([yshift=3mm]tanstack.east) -- node[above, font=\scriptsize] {Gửi Request} ([yshift=3mm]axios.west);
+        \draw[arrow] ([yshift=3mm]axios.east) -- node[above, font=\scriptsize] {HTTP GET/POST} ([yshift=3mm]backend.west);
+
+        % Arrows backward (bottom)
+        \draw[arrow] ([yshift=-3mm]backend.west) -- node[below, font=\scriptsize] {JSON Response} ([yshift=-3mm]axios.east);
+        \draw[arrow] ([yshift=-3mm]axios.west) -- node[below, font=\scriptsize] {Promise (Data)} ([yshift=-3mm]tanstack.east);
+        
+        \draw[arrow] ([yshift=-3mm]tanstack.west) -- node[below, font=\scriptsize, align=center] {Cập nhật Cache\\\& Trạng thái} ([yshift=-3mm]hook.east);
+        \draw[arrow] ([yshift=-3mm]hook.west) -- node[below, font=\scriptsize, align=center] {Hiển thị lại\\dữ liệu} ([yshift=-3mm]comp.east);
+
+    \end{tikzpicture}
+    }
+    \caption{Sơ đồ luồng gọi API ở Frontend}
+    \label{fig:luong-goi-api-frontend}
+\end{figure}
 
 \subsection{Xây dựng giao diện theo component}Giao diện Frontend được tổ chức theo hướng component-based. Mỗi màn hình lớn được chia thành nhiều component nhỏ hơn, tương ứng với từng khối hiển thị hoặc thao tác cụ thể. Dashboard gồm các thẻ tổng quan, biểu đồ, tiến trình nước uống và danh sách insight. Diary gồm danh sách bữa ăn, modal thêm món, tìm kiếm thực phẩm và phần hỗ trợ scanner. Weight và Exercise được chia thành khu vực nhập dữ liệu, biểu đồ và danh sách lịch sử. Meal Planner có các thành phần phục vụ cấu hình bữa ăn, tạo khẩu phần và thay thế nguyên liệu.
 
