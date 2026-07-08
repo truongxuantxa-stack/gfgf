@@ -2935,55 +2935,70 @@ Frontend không đảm nhiệm trực tiếp các thuật toán dinh dưỡng ph
 
 \begin{figure}[htbp]
     \centering
+    \resizebox{\textwidth}{!}{
     \begin{tikzpicture}[
-        node distance=1.5cm and 1.8cm,
-        box/.style={rectangle, draw, rounded corners, minimum width=2.6cm, minimum height=1.2cm, align=center, fill=blue!5, font=\small\sffamily},
-        db/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=2.5cm, align=center, fill=gray!10, font=\small\sffamily},
+        box/.style={rectangle, draw, rounded corners, minimum width=3.2cm, minimum height=1.4cm, align=center, fill=blue!5, font=\small\sffamily},
+        smbox/.style={rectangle, draw, rounded corners, minimum width=2.6cm, minimum height=0.8cm, align=center, fill=gray!10, font=\scriptsize\sffamily},
+        db/.style={rectangle, draw, rounded corners, minimum width=2.4cm, minimum height=2.6cm, align=center, fill=gray!10, font=\small\sffamily},
         arrow/.style={->, >=stealth, thick},
         dashed_arrow/.style={->, >=stealth, thick, dashed}
         ]
 
         % Nodes
-        \node[box, fill=green!5] (router) {React Router \& Pages\\(Lớp UI)};
-        \node[box, below=1.5cm of router, fill=yellow!10] (hooks) {Custom Hooks\\(Lớp Nghiệp vụ)};
+        \node[box, fill=green!5] (router) at (0, 0) {React Router \& Pages\\(Lớp UI)};
+        \node[box, fill=yellow!10] (hooks) at (0, -2.4) {Custom Hooks\\(Lớp Nghiệp vụ)};
         
-        \node[box, right=1.5cm of router, fill=orange!5] (auth) {Auth Context\\(Quản lý Đăng nhập)};
-        \node[box, right=1.5cm of hooks, fill=cyan!5] (reactquery) {TanStack Query\\(Quản lý State \& Cache)};
+        \node[box, fill=orange!5] (auth) at (5.5, 0) {Auth Context\\(Quản lý Đăng nhập)};
+        \node[box, fill=cyan!5] (reactquery) at (5.5, -2.4) {TanStack Query\\(State \& Cache)};
         
-        \node[box, right=1.5cm of reactquery, fill=purple!5] (axios) {Axios Instance\\(HTTP Client)};
+        \node[box, fill=purple!5] (axios) at (11.0, -2.4) {Axios Instance\\(HTTP Client)};
+        \node[smbox, fill=gray!15] (localstorage) at (11.0, -0.8) {localStorage};
+        \node[smbox, fill=red!10] (toaster) at (11.0, 0.6) {react-hot-toast\\(Global Error)};
         
-        \node[db, right=1.5cm of axios] (backend) {Backend API\\(Express)};
+        \node[db] (backend) at (15.5, -2.4) {Backend API\\(Express)};
 
         % Background for Frontend
         \begin{pgfonlayer}{background}
-            \node[rectangle, draw, dashed, fill=blue!2, rounded corners, fit=(router) (hooks) (auth) (reactquery) (axios), inner sep=0.6cm] (frontend) {};
+            \node[rectangle, draw, dashed, fill=blue!2, rounded corners, fit=(router) (hooks) (auth) (reactquery) (axios) (localstorage) (toaster), inner sep=0.4cm] (frontend) {};
             \node[anchor=south west, font=\small\bfseries\sffamily, text=blue!80] at ([xshift=2mm, yshift=2mm]frontend.north west) {React Application (Frontend)};
         \end{pgfonlayer}
 
         % Arrows
         % Router <-> Hooks
-        \draw[arrow] ([xshift=2mm]router.south) -- node[right, font=\scriptsize] {Gọi} ([xshift=2mm]hooks.north);
-        \draw[arrow] ([xshift=-2mm]hooks.north) -- node[left, font=\scriptsize] {Dữ liệu \& UI State} ([xshift=-2mm]router.south);
+        \draw[arrow] ([xshift=4mm]router.south) -- node[right, font=\scriptsize] {Gọi} ([xshift=4mm]hooks.north);
+        \draw[arrow] ([xshift=-4mm]hooks.north) -- node[left, font=\scriptsize, align=center] {Dữ liệu \&\\UI State} ([xshift=-4mm]router.south);
 
-        % Router -> Auth Context
-        \draw[dashed_arrow] (router.east) -- node[above, font=\scriptsize] {Kiểm tra User/Token} (auth.west);
+        % Router <-> Auth Context
+        \draw[arrow] ([yshift=3mm]router.east) -- node[above, font=\scriptsize, align=center] {Gọi\\ \texttt{useAuth()}} ([yshift=3mm]auth.west);
+        \draw[arrow] ([yshift=-3mm]auth.west) -- node[below, font=\scriptsize, align=center] {user,\\isAuthenticated} ([yshift=-3mm]router.east);
         
         % Hooks <-> TanStack Query
-        \draw[arrow] ([yshift=2mm]hooks.east) -- node[above, font=\scriptsize] {Sử dụng useQuery/...} ([yshift=2mm]reactquery.west);
-        \draw[arrow] ([yshift=-2mm]reactquery.west) -- node[below, font=\scriptsize] {Trả Data/Loading/Error} ([yshift=-2mm]hooks.east);
+        \draw[arrow] ([yshift=3mm]hooks.east) -- node[above, font=\scriptsize, align=center] {Sử dụng\\useQuery/...} ([yshift=3mm]reactquery.west);
+        \draw[arrow] ([yshift=-3mm]reactquery.west) -- node[below, font=\scriptsize, align=center] {Trả Data,\\Loading, Error} ([yshift=-3mm]hooks.east);
         
         % TanStack Query <-> Axios
-        \draw[arrow] ([yshift=2mm]reactquery.east) -- node[above, font=\scriptsize] {Fetch/Mutate} ([yshift=2mm]axios.west);
-        \draw[arrow] ([yshift=-2mm]axios.west) -- node[below, font=\scriptsize] {Promise} ([yshift=-2mm]reactquery.east);
+        \draw[arrow] ([yshift=3mm]reactquery.east) -- node[above, font=\scriptsize] {Fetch/Mutate} ([yshift=3mm]axios.west);
+        \draw[arrow] ([yshift=-3mm]axios.west) -- node[below, font=\scriptsize] {Promise} ([yshift=-3mm]reactquery.east);
         
-        % Axios -> Auth (Interceptor)
-        \draw[dashed_arrow] (axios.north) |- node[pos=0.75, above, font=\scriptsize] {Lấy Token gắn vào Header} (auth.east);
+        % Auth -> localStorage
+        \draw[dashed_arrow] (auth.east) -| node[pos=0.25, above, font=\scriptsize] {Lưu Token} (localstorage.north);
+        
+        % Axios -> localStorage
+        \draw[dashed_arrow] (axios.north) -- node[right, font=\scriptsize, align=center] {Đọc Token\\(Interceptor)} (localstorage.south);
+        
+        % Axios -> Toaster (Báo lỗi Global)
+        \draw[dashed_arrow, orange] (axios.north west) to[out=150, in=180] node[left, font=\scriptsize, align=center, xshift=-1mm] {Báo lỗi\\Global} (toaster.west);
         
         % Axios <-> Backend
-        \draw[arrow] ([yshift=3mm]axios.east) -- node[above, font=\scriptsize] {HTTP Request} ([yshift=3mm]backend.west);
-        \draw[arrow] ([yshift=-3mm]backend.west) -- node[below, font=\scriptsize] {JSON Response} ([yshift=-3mm]axios.east);
+        \draw[arrow] ([yshift=6mm]axios.east) -- node[above, font=\scriptsize] {HTTP Request} ([yshift=6mm]backend.west);
+        \draw[arrow] (backend.west) -- node[above, font=\scriptsize, pos=0.4] {JSON Response} (axios.east);
+        \draw[dashed_arrow, red] ([yshift=-6mm]backend.west) -- node[below, font=\scriptsize, pos=0.6] {Lỗi 401} ([yshift=-6mm]axios.east);
+        
+        % Auto Refresh Token
+        \draw[dashed_arrow, red] (axios.south) to[out=-20, in=200] node[below, font=\scriptsize, align=center] {Tự động gọi /refresh-token \& Retry} (backend.south);
 
     \end{tikzpicture}
+    }
     \caption{Sơ đồ tổng quan kiến trúc Frontend của NutriTrack}
     \label{fig:frontend_architecture}
 \end{figure}
