@@ -4217,15 +4217,20 @@ Báo cáo PDF mới tập trung vào dữ liệu theo tuần và tháng & Bổ s
 \end{longtable}
 
 
-\section{Kết luận chương}Chương 4 đã trình bày quá trình thực nghiệm và đánh giá hệ thống NutriTrack sau giai đoạn triển khai. Nội dung chương tập trung vào môi trường thực nghiệm, kiểm thử chức năng, thực nghiệm các thuật toán chính, đánh giá kết quả, đồng thời nêu ra một số hạn chế và hướng phát triển tiếp theo. Trong phạm vi kiểm thử cục bộ, các nhóm chức năng chính của hệ thống đã hoạt động theo luồng nghiệp vụ đã thiết kế, bao gồm xác thực tài khoản, quản lý hồ sơ, ghi nhận nhật ký dinh dưỡng, theo dõi nước uống, cân nặng, luyện tập, thống kê dashboard, lập kế hoạch bữa ăn, quét thông tin sản phẩm và xuất báo cáo PDF.
+\section{Kết luận chương}Chương 4 đã trình bày quá trình thực nghiệm và đánh giá hệ thống NutriTrack sau giai đoạn triển khai. Nội dung chương tập trung vào môi trường thực nghiệm, kiểm thử chức năng, thực nghiệm các thuật toán chính, đánh giá kết quả, đồng thời nêu ra một số hạn chế và hướng phát triển tiếp theo. Trong phạm vi kiểm thử cục bộ, các nhóm chức năng chính của hệ thống đã hoạt động theo luồng nghiệp vụ đã thiết kế, bao gồm xác thực tài khoản, quản lý hồ sơ, ghi nhận nhật ký dinh dưỡng, theo dõi nước uống, cân nặng, luyện tập, thống kê dashboard, lập kế hoạch bữa ăn, quét thông tin sản phẩm và xuất báo cáo PDF (Chi tiết xem Bảng \ref{tab:tong_hop_chuong_4}).
 
-\begin{table}[htbp]
-\centering
+\begin{longtable}{|p{5cm}|p{10cm}|}
 \caption{Tổng hợp nội dung đánh giá trong Chương 4}
-\begin{tabular}{|p{5cm}|p{10cm}|}
+\label{tab:tong_hop_chuong_4} \\
 \hline
 \textbf{Nội dung đánh giá} & \textbf{Kết quả tổng quát} \\
 \hline
+\endfirsthead
+\hline
+\textbf{Nội dung đánh giá} & \textbf{Kết quả tổng quát} \\
+\hline
+\endhead
+
 Môi trường thực nghiệm & Hệ thống được kiểm thử trên môi trường cục bộ với backend, frontend và cơ sở dữ liệu \\
 \hline
 Kiểm thử chức năng & Các chức năng chính có thể thực hiện theo luồng người dùng đã xây dựng \\
@@ -4236,8 +4241,7 @@ Xử lý lỗi & API phản hồi lỗi theo cấu trúc JSON thống nhất \\
 \hline
 Hạn chế & Kết quả còn phụ thuộc vào dữ liệu đầu vào, phạm vi kiểm thử và chất lượng dữ liệu thực phẩm \\
 \hline
-\end{tabular}
-\end{table}
+\end{longtable}
 
 \chapter*{KẾT LUẬN}
 \addcontentsline{toc}{chapter}{KẾT LUẬN}
@@ -4255,43 +4259,6 @@ Trong hướng phát triển tiếp theo, hệ thống có thể được mở r
 
 Tổng thể, đồ án đã hoàn thành mục tiêu xây dựng một hệ thống quản lý dinh dưỡng cá nhân có khả năng ghi nhận, tính toán, tổng hợp và đánh giá dữ liệu dựa trên thông tin người dùng cung cấp. Kết quả đạt được cho thấy hệ thống có thể đáp ứng các nghiệp vụ chính của bài toán, đồng thời tạo nền tảng để tiếp tục phát triển các chức năng phân tích và gợi ý dinh dưỡng trong các phiên bản sau.
 
-TÀI LIỆU THAM KHẢO
-
-Tiếng Việt
-
-[1] Viện Dinh dưỡng Quốc gia ...
-
-Tiếng Anh
-
-[2] Cloudinary ...
-
-[3] Drewnowski ...
-
-[4] EFSA ...
-
-[5] FAO/WHO/UNU ...
-
-[6] Google ...
-
-[7] Hall ...
-
-[8] Hyndman ...
-
-[9] Jones ...
-
-[10] Mifflin ...
-
-[11] Open Food Facts ...
-
-[12] React ...
-
-[13] Sequelize ...
-
-[14] World Health Organization ...
-
-...
-
-\clearpage
 \addcontentsline{toc}{chapter}{TÀI LIỆU THAM KHẢO}
 \renewcommand{\bibname}{\centering TÀI LIỆU THAM KHẢO}
 \begin{thebibliography}{9}
