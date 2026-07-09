@@ -32,8 +32,11 @@
    - Đảm bảo thiết kế gọn gàng, chia tầng (layer) rõ ràng bằng các khung `fit` hoặc `rectangle`.
    - Các chữ/nhãn trên mũi tên phải được tinh chỉnh `xshift`, `yshift`, `pos` để không đè lên các đối tượng khác.
    - Chương 1 chỉ vẽ khái quát (lược bỏ các chi tiết kỹ thuật quá sâu nếu không cần thiết).
-4. **Ngôn ngữ:** Luôn giao tiếp, giải thích, và comment code bằng tiếng Việt.
-5. **Đồng bộ Git:** Luôn kết thúc một task quan trọng bằng việc tạo commit rõ ràng và push lên repository.
+4. **Xử lý Bảng biểu (Tables):**
+   - Tránh dùng `[H]` cho môi trường `table` tương tự như `figure`.
+   - Khi dùng `longtable` cho các bảng dài, nếu bảng bị đẩy sang trang sau và để lại khoảng trắng lớn ở cuối trang trước: **Tuyệt đối không đổi thành `table` float** (vì bảng dài sẽ bị văng mất khỏi luồng văn bản). Cách xử lý đúng là **giữ nguyên `longtable`** nhưng dời toàn bộ khối code của bảng xuống bên dưới đoạn/tiểu mục tiếp theo trong source code. Điều này giúp chữ tự động trôi lên lấp đầy khoảng trắng, còn bảng sẽ xuất hiện ở trang sau một cách tự nhiên. Bắt buộc dùng `\ref{}` để tham chiếu thay vì dùng từ "bảng sau".
+5. **Ngôn ngữ:** Luôn giao tiếp, giải thích, và comment code bằng tiếng Việt.
+6. **Đồng bộ Git:** Luôn kết thúc một task quan trọng bằng việc tạo commit rõ ràng và push lên repository.
 
 ## 5. LỊCH SỬ CẬP NHẬT GẦN NHẤT
 - Đã quyết định **KHÔNG CHIA TÁCH** file LaTeX (`do_an_tot_nghiep.tex`) để đảm bảo an toàn tuyệt đối trước thềm bảo vệ.
@@ -41,6 +44,7 @@
 - Đã hoàn thiện **Hình 1.5**: Sơ đồ Kiến trúc tổng thể Client - Server. 
   - Giao diện trải ngang trực quan: `Router → Middleware → Controller → Service → Sequelize ORM`.
   - Tách RESTful API làm cầu nối, thêm luồng JWT Authentication một chiều vào Middleware, và các dịch vụ ngoài (Open Food Facts, Gemini AI) giao tiếp nét đứt 2 chiều với tầng Service.
+- Đã chèn quy tắc xử lý lỗi khoảng trắng khổng lồ do `longtable` gây ra bằng cách dời vị trí code để text chảy lên lấp khoảng trống.
 
 ---
-*(Cập nhật lần cuối: Tháng 7/2026 - Kết thúc phiên tinh chỉnh sơ đồ kiến trúc tổng thể)*
+*(Cập nhật lần cuối: Tháng 7/2026 - Cập nhật quy tắc xử lý bảng longtable)*

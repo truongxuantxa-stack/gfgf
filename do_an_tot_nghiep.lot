@@ -8,18 +8,18 @@
 \contentsline {table}{\numberline {2.1}{Tổng hợp yêu cầu chức năng của hệ thống}}{23}{table.2.1}%
 \contentsline {table}{\numberline {2.2}{Tổng hợp yêu cầu phi chức năng của hệ thống}}{24}{table.2.2}%
 \contentsline {table}{\numberline {2.3}{Tổng hợp các luồng nghiệp vụ chính của hệ thống}}{26}{table.2.3}%
-\contentsline {table}{\numberline {2.4}{\ignorespaces Tác nhân và hệ thống liên quan}}{30}{table.2.4}%
-\contentsline {table}{\numberline {2.5}{Danh sách Use Case chính}}{31}{table.2.5}%
+\contentsline {table}{\numberline {2.4}{\ignorespaces Tác nhân và hệ thống liên quan}}{29}{table.2.4}%
+\contentsline {table}{\numberline {2.5}{Danh sách Use Case chính}}{30}{table.2.5}%
 \contentsline {table}{\numberline {2.6}{Đặc tả rút gọn Use Case đăng nhập}}{32}{table.2.6}%
 \contentsline {table}{\numberline {2.7}{Đặc tả rút gọn Use Case ghi nhật ký ăn uống}}{33}{table.2.7}%
-\contentsline {table}{\numberline {2.8}{Đặc tả rút gọn Use Case sử dụng Hybrid Nutrition Scanner}}{34}{table.2.8}%
+\contentsline {table}{\numberline {2.8}{Đặc tả rút gọn Use Case sử dụng Hybrid Nutrition Scanner}}{33}{table.2.8}%
 \contentsline {table}{\numberline {2.9}{Phân nhóm bảng dữ liệu của hệ thống}}{37}{table.2.9}%
 \contentsline {table}{\numberline {2.10}{Tóm tắt khóa chính và khóa ngoại của một số bảng chính}}{38}{table.2.10}%
-\contentsline {table}{\numberline {2.11}{\ignorespaces Cấu trúc phản hồi API}}{43}{table.2.11}%
-\contentsline {table}{\numberline {2.12}{Các nhóm API chính của hệ thống}}{45}{table.2.12}%
+\contentsline {table}{\numberline {2.11}{\ignorespaces Cấu trúc phản hồi API}}{42}{table.2.11}%
+\contentsline {table}{\numberline {2.12}{Các nhóm API chính của hệ thống}}{44}{table.2.12}%
 \contentsline {table}{\numberline {2.13}{Một số endpoint tiêu biểu của hệ thống}}{45}{table.2.13}%
 \contentsline {table}{\numberline {2.14}{Một số mã trạng thái API}}{46}{table.2.14}%
-\contentsline {table}{\numberline {2.15}{\ignorespaces Tổng hợp một số màn hình chức năng của hệ thống}}{53}{table.2.15}%
+\contentsline {table}{\numberline {2.15}{\ignorespaces Tổng hợp một số màn hình chức năng của hệ thống}}{52}{table.2.15}%
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {3.1}{Một số nhóm API chính của Backend}}{58}{table.3.1}%
 \contentsline {table}{\numberline {3.2}{Vai trò của một số thành phần chính trong Frontend}}{63}{table.3.2}%
