@@ -3720,7 +3720,57 @@ Kết quả đầu ra của Meal Planner là một cấu trúc dữ liệu mô t
 
 Meal Planner có liên hệ trực tiếp với Nutrition Core vì cần targetCalories và mục tiêu macro làm dữ liệu đầu vào. Trong phạm vi triển khai hiện tại, Meal Planner ưu tiên các ràng buộc về năng lượng, protein, carbohydrate, chất béo, vai trò nguyên liệu, tính khả thi của khối lượng và dữ liệu thực phẩm hiện có. Food Scoring có thể được xem là hướng mở rộng nếu hệ thống cần bổ sung tiêu chí về chất lượng thực phẩm trong các phiên bản sau.
 
-Gợi ý chèn hình 3.x: Sơ đồ luồng Meal Planner gồm các bước: lấy mục tiêu từ Nutrition Core → phân bổ mục tiêu theo bữa → chọn mẫu nguyên liệu → áp dụng preferences và danh sách loại trừ → cố định phần rau 200g → trừ macro của rau khỏi mục tiêu → lập hệ phương trình 3x3 → giải bằng khử Gauss → kiểm tra nghiệm → Smart Swap nếu không khả thi → trả về khẩu phần.
+Chi tiết sơ đồ luồng Meal Planner được thể hiện trong Hình \ref{fig:meal_planner_flow}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.5cm and 1.5cm,
+        process/.style={rectangle, draw, rounded corners, text width=3.8cm, align=center, minimum height=1cm, fill=blue!5},
+        decision/.style={diamond, draw, text width=2.5cm, align=center, fill=orange!10, inner sep=0pt, aspect=1.2},
+        arrow/.style={thick, ->, >=stealth}
+        ]
+        
+        % Cột chính (Trái)
+        \node (n1) [process] {1. Lấy mục tiêu từ Nutrition Core};
+        \node (n2) [process, below=of n1] {2. Phân bổ mục tiêu theo bữa};
+        \node (n3) [process, below=of n2] {3. Chọn mẫu nguyên liệu};
+        \node (n4) [process, below=of n3] {4. Áp dụng preferences\\\& loại trừ};
+        \node (n5) [process, below=of n4] {5. Cố định phần rau 200g};
+        \node (n6) [process, below=of n5] {6. Trừ macro rau khỏi mục tiêu};
+        \node (n7) [process, below=of n6] {7. Lập hệ phương trình 3x3};
+        \node (n8) [process, below=of n7] {8. Giải bằng khử Gauss};
+        \node (n9) [decision, below=of n8] {9. Kiểm tra nghiệm};
+        \node (n10) [process, fill=green!10, below=of n9] {10. Trả về khẩu phần};
+        
+        % Cột phụ (Phải)
+        \node (n12) [decision, right=1.5cm of n9] {Hết 15 lần thử?};
+        \node (n11) [process, fill=red!10, above=of n12] {Smart Swap\\(Thay nguyên liệu)};
+        \node (n13) [process, fill=gray!20, below=of n12] {Trả về lỗi \& gợi ý};
+        
+        % Đường đi cột chính
+        \draw [arrow] (n1) -- (n2);
+        \draw [arrow] (n2) -- (n3);
+        \draw [arrow] (n3) -- (n4);
+        \draw [arrow] (n4) -- (n5);
+        \draw [arrow] (n5) -- (n6);
+        \draw [arrow] (n6) -- (n7);
+        \draw [arrow] (n7) -- (n8);
+        \draw [arrow] (n8) -- (n9);
+        \draw [arrow] (n9) -- node[left] {Khả thi} (n10);
+        
+        % Nhánh rẽ và vòng lặp
+        \draw [arrow] (n9) -- node[above] {Không} (n12);
+        \draw [arrow] (n12) -- node[right] {Không} (n11);
+        \draw [arrow] (n12) -- node[right] {Có} (n13);
+        
+        % Đường lặp về n3
+        \draw [arrow] (n11.north) |- (n3.east);
+        
+    \end{tikzpicture}
+    \caption{Sơ đồ luồng xử lý của Meal Planner}
+    \label{fig:meal_planner_flow}
+\end{figure}
 
 \section{Hybrid Nutrition Scanner}Hybrid Nutrition Scanner là chức năng hỗ trợ người dùng ghi nhận thông tin dinh dưỡng của thực phẩm đóng gói thông qua hai hướng xử lý: tra cứu bằng mã vạch và trích xuất thông tin từ ảnh nhãn dinh dưỡng. Chức năng này được xây dựng nhằm giảm thao tác nhập liệu thủ công khi người dùng cần ghi lại các chỉ số như năng lượng, protein, carbohydrate, chất béo, chất xơ, đường và natri. Nếu phải nhập từng chỉ số bằng tay, người dùng dễ mất thời gian và có thể nhập sai dữ liệu, làm ảnh hưởng đến kết quả tổng hợp trong nhật ký ăn uống.
 
@@ -3792,7 +3842,71 @@ Kết quả trả về của scanner thường gồm trạng thái tìm thấy, 
 
 Hybrid Nutrition Scanner có vai trò kết nối giữa dữ liệu sản phẩm đóng gói và các module dinh dưỡng khác. Sau khi sản phẩm được xác nhận và thêm vào nhật ký, dữ liệu năng lượng và chất dinh dưỡng sẽ ảnh hưởng đến Dashboard, Health Insights, PDF Report và các thống kê theo ngày. Vì vậy, việc kiểm tra dữ liệu scanner không chỉ quan trọng cho riêng chức năng quét, mà còn ảnh hưởng đến độ chính xác của toàn bộ hệ thống theo dõi dinh dưỡng.
 
-Gợi ý chèn hình 3.x: Sơ đồ luồng Hybrid Nutrition Scanner gồm các bước: quét mã vạch → tìm Local Verified → tìm Local Unverified → gọi Open Food Facts và lưu lại nếu có → nếu không tìm thấy thì chuyển AI Vision → trích xuất dữ liệu từ ảnh → người dùng kiểm tra và xác nhận → Physics Validation → lưu ProductContribution → cập nhật confidenceScore → thêm sản phẩm vào nhật ký.
+Chi tiết sơ đồ luồng Hybrid Nutrition Scanner được thể hiện trong Hình \ref{fig:hybrid_scanner_flow}.
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.6cm and 1.2cm,
+        process/.style={rectangle, draw, rounded corners, text width=4.5cm, align=center, minimum height=0.8cm, fill=blue!5},
+        decision/.style={diamond, draw, text width=2.5cm, align=center, fill=orange!10, inner sep=0pt, aspect=1.2},
+        arrow/.style={thick, ->, >=stealth}
+        ]
+        
+        % Cột phải: Luồng Barcode
+        \node (n1) [process] {1. Quét mã vạch};
+        \node (n2) [decision, below=of n1] {2. Local Verified?};
+        \node (n3) [decision, below=of n2] {3. Local Unverified?};
+        \node (n4) [decision, below=of n3] {4. Open Food Facts?};
+        \node (n4a) [process, below=of n4] {Lưu lại CSDL};
+        
+        % Cột trái: Luồng AI Vision
+        \node (n5) [process, fill=yellow!20, left=of n4] {5. Chuyển sang AI Vision};
+        \node (n6) [process, below=of n5] {6. Trích xuất dữ liệu từ ảnh};
+        \node (n7) [process, below=of n6] {7. Người dùng kiểm tra \& xác nhận};
+        \node (n8) [decision, below=of n7, text width=2.5cm] {8. Physics\\Validation?};
+        \node (n9) [process, below=of n8] {9. Lưu \mbox{ProductContribution}};
+        \node (n10) [process, below=of n9] {10. Cập nhật \mbox{confidenceScore}};
+        \node (n11) [process, fill=green!10, below=of n10] {11. Thêm sản phẩm vào nhật ký};
+        
+        % Nhánh báo lỗi
+        \node (err) [process, fill=red!10, right=of n8, text width=3.5cm] {Báo lỗi \& Yêu cầu chụp lại};
+        
+        % Đường nối cột phải
+        \draw [arrow] (n1) -- (n2);
+        \draw [arrow] (n2) -- node[left] {Không} (n3);
+        \draw [arrow] (n3) -- node[left] {Không} (n4);
+        \draw [arrow] (n4) -- node[right] {Có} (n4a);
+        
+        % Đường nối sang cột trái
+        \draw [arrow] (n4) -- node[above] {Không} (n5);
+        
+        % Đường nối cột trái
+        \draw [arrow] (n5) -- (n6);
+        \draw [arrow] (n6) -- (n7);
+        \draw [arrow] (n7) -- (n8);
+        \draw [arrow] (n8) -- node[left] {Hợp lệ} (n9);
+        \draw [arrow] (n8) -- node[above] {Không} (err);
+        \draw [arrow] (n9) -- (n10);
+        \draw [arrow] (n10) -- (n11);
+        
+        % Bus nối các nhánh 'Có' về đích
+        \coordinate (b2) at ([xshift=1.5cm]n2.east);
+        \coordinate (b3) at (b2 |- n3);
+        \coordinate (b4) at (b2 |- n4a);
+        
+        \draw [arrow] (n2.east) -- node[above] {Có} (b2);
+        \draw [arrow] (n3.east) -- node[above] {Có} (b3);
+        \draw [arrow] (n4a.east) -- (b4);
+        
+        \draw [arrow] (b2) -- (b3);
+        \draw [arrow] (b3) -- (b4);
+        \draw [arrow] (b4) |- (n11.east);
+        
+    \end{tikzpicture}
+    \caption{Sơ đồ luồng xử lý của Hybrid Nutrition Scanner}
+    \label{fig:hybrid_scanner_flow}
+\end{figure}
 
 Nhìn chung, Hybrid Nutrition Scanner được triển khai như một luồng xử lý kết hợp giữa tra cứu mã vạch, nguồn dữ liệu bên ngoài, AI Vision và cơ chế kiểm tra độ tin cậy. Thiết kế nhiều tầng giúp hệ thống ưu tiên dữ liệu nhanh và tin cậy trước, đồng thời vẫn có phương án xử lý khi gặp sản phẩm mới. Physics Validation, bước xác nhận của người dùng và cơ chế cập nhật confidenceScore giúp hạn chế việc lưu dữ liệu bất thường, từ đó làm cho chức năng scanner phù hợp hơn với mục tiêu theo dõi dinh dưỡng cá nhân của NutriTrack.
 \section{Bảo mật và xử lý lỗi}Bảo mật và xử lý lỗi là phần hỗ trợ quan trọng trong quá trình vận hành Backend của hệ thống NutriTrack. Do hệ thống lưu trữ dữ liệu cá nhân liên quan đến hồ sơ người dùng, nhật ký ăn uống, cân nặng và mục tiêu dinh dưỡng, các API cần có cơ chế xác thực người dùng, giới hạn truy cập và trả lỗi nhất quán. Trong phạm vi triển khai, hệ thống tập trung vào một số nhóm xử lý chính: xác thực bằng token, bảo vệ mật khẩu, giới hạn request, chuẩn hóa phản hồi API và xử lý lỗi tập trung.
@@ -3951,15 +4065,25 @@ Xử lý lỗi & Gửi dữ liệu sai, thiếu token, gọi sai endpoint hoặc
 
 Đối với nhóm hồ sơ người dùng, kiểm thử tập trung vào luồng onboarding và cập nhật thông tin cá nhân. Người dùng cần cung cấp các thông tin cơ bản như giới tính, ngày sinh, chiều cao, cân nặng, mức độ vận động và mục tiêu. Đây là các dữ liệu đầu vào cần thiết để hệ thống tính BMI, BMR, TDEE, mục tiêu năng lượng và mục tiêu nước. Khi dữ liệu hợp lệ, thông tin được lưu vào cơ sở dữ liệu và trạng thái hoàn thành onboarding được chuyển sang true. Khi dữ liệu nằm ngoài khoảng cho phép, hệ thống trả về thông báo lỗi và không cập nhật bản ghi.
 
-Đối với nhóm nhật ký dinh dưỡng và dashboard, kiểm thử được thực hiện bằng cách thêm món ăn vào từng bữa trong ngày, thay đổi khẩu phần và xóa bản ghi đã thêm. Khi một món ăn được ghi nhận, hệ thống lưu khẩu phần, bữa ăn, ngày sử dụng và các giá trị dinh dưỡng tại thời điểm thêm. Cách lưu này giúp dữ liệu nhật ký giữ nguyên giá trị đã ghi nhận, kể cả khi thông tin món ăn trong cơ sở dữ liệu được chỉnh sửa sau đó. Sau khi nhật ký thay đổi, dashboard cần cập nhật lại tổng năng lượng, protein, carbohydrate, chất béo, lượng nước, năng lượng tiêu hao từ luyện tập và các chỉ số cơ thể liên quan. Kết quả kiểm thử cho thấy dữ liệu hiển thị trên dashboard thay đổi tương ứng với các bản ghi đã thêm hoặc xóa trong nhật ký.
+Đối với nhóm nhật ký dinh dưỡng và dashboard, kiểm thử được thực hiện bằng cách thêm món ăn vào từng bữa trong ngày, thay đổi khẩu phần và xóa bản ghi đã thêm. Khi một món ăn được ghi nhận, hệ thống lưu khẩu phần, bữa ăn, ngày sử dụng và các giá trị dinh dưỡng tại thời điểm thêm. Cách lưu này giúp dữ liệu nhật ký giữ nguyên giá trị đã ghi nhận, kể cả khi thông tin món ăn trong cơ sở dữ liệu được chỉnh sửa sau đó. Sau khi nhật ký thay đổi, dashboard cần cập nhật lại tổng năng lượng, protein, carbohydrate, chất béo, lượng nước, năng lượng tiêu hao từ luyện tập và các chỉ số cơ thể liên quan. Kết quả kiểm thử cho thấy dữ liệu hiển thị trên dashboard thay đổi tương ứng với các bản ghi đã thêm hoặc xóa trong nhật ký (chi tiết được minh họa trong Hình \ref{fig:nhat_ky_dinh_duong}).
 
-Gợi ý chèn \textbf{Hình 4.2. Màn hình nhật ký dinh dưỡng sau khi thêm món ăn vào bữa trong ngày}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/nhat_ky_dinh_duong.png}
+    \caption{Màn hình nhật ký dinh dưỡng sau khi thêm món ăn vào bữa trong ngày}
+    \label{fig:nhat_ky_dinh_duong}
+\end{figure}
 
 Đối với nhóm cân nặng, nước uống và luyện tập, kiểm thử được thực hiện theo các thao tác ghi nhận dữ liệu hằng ngày. Chức năng cân nặng cho phép thêm hoặc cập nhật cân nặng theo ngày, đồng thời đồng bộ cân nặng hiện tại của người dùng theo bản ghi mới nhất. Các trường hợp nhập cân nặng ngoài khoảng cho phép, chọn ngày trong tương lai hoặc nhập giá trị chênh lệch lớn so với xu hướng gần nhất được xử lý bằng thông báo lỗi hoặc yêu cầu xác nhận. Chức năng nước uống cho phép ghi nhận lượng nước theo đơn vị ml và cập nhật mục tiêu nước/ngày. Chức năng luyện tập cho phép chọn môn thể thao, nhập thời lượng và tính năng lượng tiêu hao dựa trên cân nặng người dùng. Sau mỗi thao tác hợp lệ, dữ liệu tổng hợp trong ngày được cập nhật để giao diện hiển thị lại trạng thái mới.
 
-Đối với nhóm Meal Planner, kiểm thử tập trung vào các thao tác lấy cấu hình bữa ăn, cập nhật cấu hình, sinh gợi ý bữa ăn và thay thế nguyên liệu. Kết quả trả về cần có cấu trúc rõ ràng để frontend hiển thị, bao gồm danh sách nguyên liệu, khối lượng hoặc khẩu phần ước tính, tổng năng lượng và các chất dinh dưỡng chính. Trường hợp thay thế nguyên liệu được kiểm tra nhằm bảo đảm hệ thống vẫn trả về một phương án bữa ăn có thể hiển thị sau khi người dùng thay đổi thành phần trong gợi ý ban đầu.
+Đối với nhóm Meal Planner, kiểm thử tập trung vào các thao tác lấy cấu hình bữa ăn, cập nhật cấu hình, sinh gợi ý bữa ăn và thay thế nguyên liệu. Kết quả trả về cần có cấu trúc rõ ràng để frontend hiển thị, bao gồm danh sách nguyên liệu, khối lượng hoặc khẩu phần ước tính, tổng năng lượng và các chất dinh dưỡng chính. Trường hợp thay thế nguyên liệu được kiểm tra nhằm bảo đảm hệ thống vẫn trả về một phương án bữa ăn có thể hiển thị sau khi người dùng thay đổi thành phần trong gợi ý ban đầu (xem minh họa trong Hình \ref{fig:meal_planner}).
 
-Gợi ý chèn \textbf{Hình 4.3. Màn hình gợi ý bữa ăn từ chức năng Meal Planner}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/meal_planner.png}
+    \caption{Màn hình gợi ý bữa ăn từ chức năng Meal Planner}
+    \label{fig:meal_planner}
+\end{figure}
 
 Đối với nhóm Hybrid Nutrition Scanner, các trường hợp kiểm thử gồm tra cứu sản phẩm bằng barcode, giải mã barcode từ ảnh, trích xuất thông tin dinh dưỡng từ ảnh, xác nhận đóng góp dữ liệu sản phẩm, tải ảnh sản phẩm và báo cáo dữ liệu sản phẩm sai. Khi dữ liệu ảnh hoặc barcode không đủ điều kiện xử lý, hệ thống trả về thông báo lỗi thay vì ghi nhận dữ liệu chưa được xác nhận. Đối với dữ liệu sản phẩm mới, hệ thống yêu cầu người dùng xác nhận trước khi lưu đóng góp vào cơ sở dữ liệu. Cách xử lý này giúp hạn chế việc lưu các bản ghi sản phẩm thiếu thông tin hoặc chưa đủ độ tin cậy.
 

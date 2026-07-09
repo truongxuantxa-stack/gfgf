@@ -2104,30 +2104,30 @@ Chi tiết sơ đồ luồng Meal Planner được thể hiện trong Hình \ref
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}[
-        node distance=0.8cm and 1.8cm,
-        process/.style={rectangle, draw, rounded corners, text width=3.5cm, align=center, minimum height=1.2cm, fill=blue!5},
+        node distance=0.5cm and 1.5cm,
+        process/.style={rectangle, draw, rounded corners, text width=3.8cm, align=center, minimum height=1cm, fill=blue!5},
         decision/.style={diamond, draw, text width=2.5cm, align=center, fill=orange!10, inner sep=0pt, aspect=1.2},
         arrow/.style={thick, ->, >=stealth}
         ]
         
-        % Cột trái
+        % Cột chính (Trái)
         \node (n1) [process] {1. Lấy mục tiêu từ Nutrition Core};
         \node (n2) [process, below=of n1] {2. Phân bổ mục tiêu theo bữa};
         \node (n3) [process, below=of n2] {3. Chọn mẫu nguyên liệu};
-        \node (n4) [process, below=of n3] {4. Áp dụng preferences \& loại trừ};
+        \node (n4) [process, below=of n3] {4. Áp dụng preferences\\\& loại trừ};
         \node (n5) [process, below=of n4] {5. Cố định phần rau 200g};
+        \node (n6) [process, below=of n5] {6. Trừ macro rau khỏi mục tiêu};
+        \node (n7) [process, below=of n6] {7. Lập hệ phương trình 3x3};
+        \node (n8) [process, below=of n7] {8. Giải bằng khử Gauss};
+        \node (n9) [decision, below=of n8] {9. Kiểm tra nghiệm};
+        \node (n10) [process, fill=green!10, below=of n9] {10. Trả về khẩu phần};
         
-        % Cột phải
-        \node (n6) [process, right=of n5] {6. Trừ macro rau khỏi mục tiêu};
-        \node (n7) [process, above=of n6] {7. Lập hệ phương trình 3x3};
-        \node (n8) [process, above=of n7] {8. Giải bằng khử Gauss};
-        \node (n9) [decision, above=0.5cm of n8] {9. Kiểm tra nghiệm};
-        \node (n10) [process, fill=green!10, above=0.5cm of n9] {10. Trả về khẩu phần};
+        % Cột phụ (Phải)
+        \node (n12) [decision, right=1.5cm of n9] {Hết 15 lần thử?};
+        \node (n11) [process, fill=red!10, above=of n12] {Smart Swap\\(Thay nguyên liệu)};
+        \node (n13) [process, fill=gray!20, below=of n12] {Trả về lỗi \& gợi ý};
         
-        % Nút Smart Swap
-        \node (n11) [process, fill=red!10, right=1.2cm of n8] {Smart Swap\\(Thay nguyên liệu)};
-        
-        % Đường đi
+        % Đường đi cột chính
         \draw [arrow] (n1) -- (n2);
         \draw [arrow] (n2) -- (n3);
         \draw [arrow] (n3) -- (n4);
@@ -2138,8 +2138,13 @@ Chi tiết sơ đồ luồng Meal Planner được thể hiện trong Hình \ref
         \draw [arrow] (n8) -- (n9);
         \draw [arrow] (n9) -- node[left] {Khả thi} (n10);
         
-        \draw [arrow] (n9) -| node[above, pos=0.25] {Không} (n11);
-        \draw [arrow] (n11) |- (n7);
+        % Nhánh rẽ và vòng lặp
+        \draw [arrow] (n9) -- node[above] {Không} (n12);
+        \draw [arrow] (n12) -- node[right] {Không} (n11);
+        \draw [arrow] (n12) -- node[right] {Có} (n13);
+        
+        % Đường lặp về n3
+        \draw [arrow] (n11.north) |- (n3.east);
         
     \end{tikzpicture}
     \caption{Sơ đồ luồng xử lý của Meal Planner}
@@ -2211,7 +2216,71 @@ Kết quả trả về của scanner thường gồm trạng thái tìm thấy, 
 
 Hybrid Nutrition Scanner có vai trò kết nối giữa dữ liệu sản phẩm đóng gói và các module dinh dưỡng khác. Sau khi sản phẩm được xác nhận và thêm vào nhật ký, dữ liệu năng lượng và chất dinh dưỡng sẽ ảnh hưởng đến Dashboard, Health Insights, PDF Report và các thống kê theo ngày. Vì vậy, việc kiểm tra dữ liệu scanner không chỉ quan trọng cho riêng chức năng quét, mà còn ảnh hưởng đến độ chính xác của toàn bộ hệ thống theo dõi dinh dưỡng.
 
-Gợi ý chèn hình 3.x: Sơ đồ luồng Hybrid Nutrition Scanner gồm các bước: quét mã vạch → tìm Local Verified → tìm Local Unverified → gọi Open Food Facts và lưu lại nếu có → nếu không tìm thấy thì chuyển AI Vision → trích xuất dữ liệu từ ảnh → người dùng kiểm tra và xác nhận → Physics Validation → lưu ProductContribution → cập nhật confidenceScore → thêm sản phẩm vào nhật ký.
+Chi tiết sơ đồ luồng Hybrid Nutrition Scanner được thể hiện trong Hình \ref{fig:hybrid_scanner_flow}.
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.6cm and 1.2cm,
+        process/.style={rectangle, draw, rounded corners, text width=4.5cm, align=center, minimum height=0.8cm, fill=blue!5},
+        decision/.style={diamond, draw, text width=2.5cm, align=center, fill=orange!10, inner sep=0pt, aspect=1.2},
+        arrow/.style={thick, ->, >=stealth}
+        ]
+        
+        % Cột phải: Luồng Barcode
+        \node (n1) [process] {1. Quét mã vạch};
+        \node (n2) [decision, below=of n1] {2. Local Verified?};
+        \node (n3) [decision, below=of n2] {3. Local Unverified?};
+        \node (n4) [decision, below=of n3] {4. Open Food Facts?};
+        \node (n4a) [process, below=of n4] {Lưu lại CSDL};
+        
+        % Cột trái: Luồng AI Vision
+        \node (n5) [process, fill=yellow!20, left=of n4] {5. Chuyển sang AI Vision};
+        \node (n6) [process, below=of n5] {6. Trích xuất dữ liệu từ ảnh};
+        \node (n7) [process, below=of n6] {7. Người dùng kiểm tra \& xác nhận};
+        \node (n8) [decision, below=of n7, text width=2.5cm] {8. Physics\\Validation?};
+        \node (n9) [process, below=of n8] {9. Lưu \mbox{ProductContribution}};
+        \node (n10) [process, below=of n9] {10. Cập nhật \mbox{confidenceScore}};
+        \node (n11) [process, fill=green!10, below=of n10] {11. Thêm sản phẩm vào nhật ký};
+        
+        % Nhánh báo lỗi
+        \node (err) [process, fill=red!10, right=of n8, text width=3.5cm] {Báo lỗi \& Yêu cầu chụp lại};
+        
+        % Đường nối cột phải
+        \draw [arrow] (n1) -- (n2);
+        \draw [arrow] (n2) -- node[left] {Không} (n3);
+        \draw [arrow] (n3) -- node[left] {Không} (n4);
+        \draw [arrow] (n4) -- node[right] {Có} (n4a);
+        
+        % Đường nối sang cột trái
+        \draw [arrow] (n4) -- node[above] {Không} (n5);
+        
+        % Đường nối cột trái
+        \draw [arrow] (n5) -- (n6);
+        \draw [arrow] (n6) -- (n7);
+        \draw [arrow] (n7) -- (n8);
+        \draw [arrow] (n8) -- node[left] {Hợp lệ} (n9);
+        \draw [arrow] (n8) -- node[above] {Không} (err);
+        \draw [arrow] (n9) -- (n10);
+        \draw [arrow] (n10) -- (n11);
+        
+        % Bus nối các nhánh 'Có' về đích
+        \coordinate (b2) at ([xshift=1.5cm]n2.east);
+        \coordinate (b3) at (b2 |- n3);
+        \coordinate (b4) at (b2 |- n4a);
+        
+        \draw [arrow] (n2.east) -- node[above] {Có} (b2);
+        \draw [arrow] (n3.east) -- node[above] {Có} (b3);
+        \draw [arrow] (n4a.east) -- (b4);
+        
+        \draw [arrow] (b2) -- (b3);
+        \draw [arrow] (b3) -- (b4);
+        \draw [arrow] (b4) |- (n11.east);
+        
+    \end{tikzpicture}
+    \caption{Sơ đồ luồng xử lý của Hybrid Nutrition Scanner}
+    \label{fig:hybrid_scanner_flow}
+\end{figure}
 
 Nhìn chung, Hybrid Nutrition Scanner được triển khai như một luồng xử lý kết hợp giữa tra cứu mã vạch, nguồn dữ liệu bên ngoài, AI Vision và cơ chế kiểm tra độ tin cậy. Thiết kế nhiều tầng giúp hệ thống ưu tiên dữ liệu nhanh và tin cậy trước, đồng thời vẫn có phương án xử lý khi gặp sản phẩm mới. Physics Validation, bước xác nhận của người dùng và cơ chế cập nhật confidenceScore giúp hạn chế việc lưu dữ liệu bất thường, từ đó làm cho chức năng scanner phù hợp hơn với mục tiêu theo dõi dinh dưỡng cá nhân của NutriTrack.
 
