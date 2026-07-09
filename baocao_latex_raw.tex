@@ -1913,9 +1913,86 @@ Cách tính này giúp tránh trường hợp người dùng đạt điểm cao 
 
 Kết quả đầu ra của Health Insights gồm hai phần chính: danh sách insight và điểm sức khỏe trong ngày. Mỗi insight chứa các trường như severity, icon, title và message. Điểm sức khỏe gồm điểm số, nhãn đánh giá, biểu tượng và danh sách bonus nếu có. Frontend sử dụng các dữ liệu này để hiển thị trên Dashboard hoặc các khu vực liên quan đến phân tích trong ngày.
 
-Health Insights đóng vai trò chuyển dữ liệu định lượng thành thông tin diễn giải ngắn. Các con số như tổng calo, lượng protein, chất xơ hoặc nước uống sẽ có ý nghĩa hơn khi được so sánh với mục tiêu cá nhân. Nhờ đó, người dùng không chỉ xem dữ liệu đã ghi nhận mà còn biết chỉ số nào đang cần chú ý hơn trong ngày.
+Health Insights đóng vai trò chuyển dữ liệu định lượng thành thông tin diễn giải ngắn. Các con số như tổng calo, lượng protein, chất xơ hoặc nước uống sẽ có ý nghĩa hơn khi được so sánh với mục tiêu cá nhân. Nhờ đó, người dùng không chỉ xem dữ liệu đã ghi nhận mà còn biết chỉ số nào đang cần chú ý hơn trong ngày (chi tiết luồng xử lý được minh họa trong Hình \ref{fig:health_insights_flow}).
 
-Gợi ý chèn hình 3.x: Sơ đồ luồng Health Insights gồm các bước: tổng hợp dữ liệu trong ngày → lấy mục tiêu từ Nutrition Core → áp dụng Triage theo mức calo → kiểm tra ngữ cảnh thời gian → tạo insight theo severity → tính điểm sức khỏe → trả về Dashboard.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.6cm and 0.6cm,
+        process/.style={rectangle, minimum width=3cm, minimum height=1cm, text centered, text width=2.8cm, draw=black, fill=blue!10, rounded corners},
+        decision/.style={diamond, aspect=2, text centered, text width=2cm, draw=black, fill=orange!20},
+        merge/.style={ellipse, minimum width=2.5cm, minimum height=0.7cm, text centered, draw=black, fill=gray!15},
+        arrow/.style={thick,->,>=stealth}
+        ]
+        
+        % Center Column
+        \node (step1) [process] {1. Tổng hợp dữ liệu trong ngày};
+        \node (step2) [process, below=0.6cm of step1] {2. Lấy mục tiêu từ Nutrition Core};
+        
+        \node (triage) [decision, below=0.8cm of step2] {3. Triage mức calo};
+        \node (adeq) [process, below=0.8cm of triage] {Tầng Vi Lượng\\(Check toàn bộ)};
+        
+        \node (context) [decision, below=0.8cm of adeq] {4. Ngữ cảnh thời gian};
+        \node (def_on) [process, fill=green!10, below=0.8cm of context] {Đánh giá THIẾU};
+        
+        % Merge node before step 5
+        \node (merge) [merge, below=0.7cm of def_on] {Hội tụ kết quả};
+        
+        \node (insight) [process, below=0.6cm of merge] {5. Tạo insight theo severity};
+        \node (score) [process, below=0.6cm of insight] {6. Tính điểm sức khỏe};
+        \node (dashboard) [process, below=0.6cm of score] {7. Trả về Dashboard};
+        
+        % Right Column
+        \node (low) [process, right=0.6cm of triage] {Tầng Đa Lượng\\(Chỉ check Macro)};
+        \node (excess) [process, fill=red!10, right=0.6cm of low, yshift=1.4cm] {Đánh giá THỪA\\(Mọi lúc)};
+        
+        % Left Column
+        \node (crit) [process, left=0.6cm of triage] {Tầng Sinh Tồn\\(Bỏ qua THIẾU)};
+        \node (def_off) [process, left=0.6cm of context] {Bỏ qua THIẾU\\(Chưa đủ đ.kiện)};
+        
+        % Connections
+        \draw [arrow] (step1) -- (step2);
+        
+        % Split to excess and triage
+        \draw [thick] (step2.south) -- ++(0,-0.3) coordinate (split);
+        \draw [arrow] (split) -- (triage.north);
+        \draw [arrow] (split) -| (excess.north);
+        
+        % Triage to levels
+        \draw [arrow] (triage.south) -- node[left] {Adequate} (adeq.north);
+        \draw [arrow] (triage.west) -- node[above] {Critical} (crit.east);
+        \draw [arrow] (triage.east) -- node[above] {Low} (low.west);
+        
+        % Levels to context
+        \draw [arrow] (adeq.south) -- (context.north);
+        \draw [arrow] (low.south) |- (context.east);
+        
+        % Context to def_on / def_off
+        \draw [arrow] (context.south) -- node[left] {Đủ ĐK} (def_on.north);
+        \draw [arrow] (context.west) -- node[above] {Chưa đủ} (def_off.east);
+        
+        % def_on -> merge
+        \draw [arrow] (def_on.south) -- (merge.north);
+        
+        % crit -> merge (bypassing context)
+        \draw [arrow] (crit.west) -- ++(-0.5,0) |- (merge.west);
+        
+        % def_off -> merge
+        \draw [arrow] (def_off.south) |- (merge.west);
+        
+        % excess -> merge
+        \draw [arrow] (excess.east) -- ++(0.5,0) |- (merge.east);
+        
+        % merge -> insight
+        \draw [arrow] (merge.south) -- (insight.north);
+        
+        \draw [arrow] (insight.south) -- (score.north);
+        \draw [arrow] (score.south) -- (dashboard.north);
+        
+    \end{tikzpicture}
+    \caption{Sơ đồ luồng xử lý của module Health Insights}
+    \label{fig:health_insights_flow}
+\end{figure}
 
 Nhìn chung, Health Insights được triển khai như một lớp phân tích nhẹ trên dữ liệu nhật ký dinh dưỡng. Module này không thay thế tư vấn chuyên môn, mà cung cấp các nhận xét tự động dựa trên dữ liệu người dùng đã ghi nhận và mục tiêu cá nhân trong hệ thống. Việc đặt Health Insights trong tầng service giúp các quy tắc phân tích được quản lý tập trung, đồng thời tạo cơ sở để mở rộng thêm điều kiện đánh giá khi hệ thống cần bổ sung chức năng.
 
