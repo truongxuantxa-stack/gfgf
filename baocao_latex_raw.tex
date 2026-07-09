@@ -2400,7 +2400,16 @@ Xử lý lỗi & Gửi dữ liệu sai, thiếu token, gọi sai endpoint hoặc
 
 Đối với nhóm chức năng xác thực, hệ thống được kiểm thử với các tình huống đăng ký tài khoản mới, đăng nhập tài khoản đã tồn tại, đăng nhập sai thông tin và làm mới access token. Khi đăng nhập thành công, backend trả về access token trong phần thân phản hồi và thiết lập refresh token dưới dạng HttpOnly Cookie. Frontend sử dụng access token để gọi các API yêu cầu đăng nhập. Khi token không hợp lệ hoặc không được gửi kèm request, các route được bảo vệ không trả về dữ liệu nghiệp vụ. Ngoài ra, các trường hợp lỗi như đăng nhập sai, thiếu dữ liệu đầu vào hoặc gọi endpoint không tồn tại đều được phản hồi bằng cấu trúc JSON thống nhất.
 
-Đối với nhóm hồ sơ người dùng, kiểm thử tập trung vào luồng onboarding và cập nhật thông tin cá nhân. Người dùng cần cung cấp các thông tin cơ bản như giới tính, ngày sinh, chiều cao, cân nặng, mức độ vận động và mục tiêu. Đây là các dữ liệu đầu vào cần thiết để hệ thống tính BMI, BMR, TDEE, mục tiêu năng lượng và mục tiêu nước. Khi dữ liệu hợp lệ, thông tin được lưu vào cơ sở dữ liệu và trạng thái hoàn thành onboarding được chuyển sang true. Khi dữ liệu nằm ngoài khoảng cho phép, hệ thống trả về thông báo lỗi và không cập nhật bản ghi.
+Đối với nhóm hồ sơ người dùng, kiểm thử tập trung vào luồng onboarding và cập nhật thông tin cá nhân. Người dùng cần cung cấp các thông tin cơ bản như giới tính, ngày sinh, chiều cao, cân nặng, mức độ vận động và mục tiêu (chi tiết được minh họa trong Hình \ref{fig:onboarding_tdee}). Đây là các dữ liệu đầu vào cần thiết để hệ thống tính BMI, BMR, TDEE, mục tiêu năng lượng và mục tiêu nước. Khi dữ liệu hợp lệ, thông tin được lưu vào cơ sở dữ liệu và trạng thái hoàn thành onboarding được chuyển sang true. Khi dữ liệu nằm ngoài khoảng cho phép, hệ thống trả về thông báo lỗi và không cập nhật bản ghi.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.32\textwidth]{images/screencapture-localhost-5173-onboarding-2026-07-09-21_34_41.png}\hfill
+    \includegraphics[width=0.32\textwidth]{images/screencapture-localhost-5173-onboarding-2026-07-09-21_35_01.png}\hfill
+    \includegraphics[width=0.32\textwidth]{images/screencapture-localhost-5173-onboarding-2026-07-09-21_35_20.png}
+    \caption{Màn hình Onboarding / Tính TDEE}
+    \label{fig:onboarding_tdee}
+\end{figure}
 
 Đối với nhóm nhật ký dinh dưỡng và dashboard, kiểm thử được thực hiện bằng cách thêm món ăn vào từng bữa trong ngày, thay đổi khẩu phần và xóa bản ghi đã thêm. Khi một món ăn được ghi nhận, hệ thống lưu khẩu phần, bữa ăn, ngày sử dụng và các giá trị dinh dưỡng tại thời điểm thêm. Cách lưu này giúp dữ liệu nhật ký giữ nguyên giá trị đã ghi nhận, kể cả khi thông tin món ăn trong cơ sở dữ liệu được chỉnh sửa sau đó. Sau khi nhật ký thay đổi, dashboard cần cập nhật lại tổng năng lượng, protein, carbohydrate, chất béo, lượng nước, năng lượng tiêu hao từ luyện tập và các chỉ số cơ thể liên quan. Kết quả kiểm thử cho thấy dữ liệu hiển thị trên dashboard thay đổi tương ứng với các bản ghi đã thêm hoặc xóa trong nhật ký.
 
