@@ -4076,7 +4076,12 @@ Xử lý lỗi & Gửi dữ liệu sai, thiếu token, gọi sai endpoint hoặc
 
 Đối với nhóm nhật ký dinh dưỡng và dashboard, kiểm thử được thực hiện bằng cách thêm món ăn vào từng bữa trong ngày, thay đổi khẩu phần và xóa bản ghi đã thêm. Khi một món ăn được ghi nhận, hệ thống lưu khẩu phần, bữa ăn, ngày sử dụng và các giá trị dinh dưỡng tại thời điểm thêm. Cách lưu này giúp dữ liệu nhật ký giữ nguyên giá trị đã ghi nhận, kể cả khi thông tin món ăn trong cơ sở dữ liệu được chỉnh sửa sau đó. Sau khi nhật ký thay đổi, dashboard cần cập nhật lại tổng năng lượng, protein, carbohydrate, chất béo, lượng nước, năng lượng tiêu hao từ luyện tập và các chỉ số cơ thể liên quan. Kết quả kiểm thử cho thấy dữ liệu hiển thị trên dashboard thay đổi tương ứng với các bản ghi đã thêm hoặc xóa trong nhật ký (chi tiết màn hình Nhật ký và Dashboard được minh họa lần lượt trong Hình \ref{fig:nhat_ky_dinh_duong} và Hình \ref{fig:dashboard}).
 
-Gợi ý chèn \textbf{Hình 4.X: Màn hình Dashboard (Tổng quan)}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/dashboard_overview.png}
+    \caption{Màn hình Dashboard (Tổng quan)}
+    \label{fig:dashboard}
+\end{figure}
 
 \begin{figure}[htbp]
     \centering
@@ -4098,7 +4103,13 @@ Gợi ý chèn \textbf{Hình 4.X: Màn hình Dashboard (Tổng quan)}.
 
 Đối với nhóm Hybrid Nutrition Scanner, các trường hợp kiểm thử gồm tra cứu sản phẩm bằng barcode, giải mã barcode từ ảnh, trích xuất thông tin dinh dưỡng từ ảnh, xác nhận đóng góp dữ liệu sản phẩm, tải ảnh sản phẩm và báo cáo dữ liệu sản phẩm sai. Khi dữ liệu ảnh hoặc barcode không đủ điều kiện xử lý, hệ thống trả về thông báo lỗi thay vì ghi nhận dữ liệu chưa được xác nhận. Đối với dữ liệu sản phẩm mới, hệ thống yêu cầu người dùng xác nhận trước khi lưu đóng góp vào cơ sở dữ liệu. Cách xử lý này giúp hạn chế việc lưu các bản ghi sản phẩm thiếu thông tin hoặc chưa đủ độ tin cậy (xem minh họa trong Hình \ref{fig:scanner}).
 
-Gợi ý chèn \textbf{Hình 4.X: Màn hình Hybrid Nutrition Scanner (Quét đồ ăn bằng AI)}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.48\textwidth]{images/scanner_step1.png}\hfill
+    \includegraphics[width=0.48\textwidth]{images/scanner_step2.png}
+    \caption{Màn hình Hybrid Nutrition Scanner (Quét đồ ăn bằng AI)}
+    \label{fig:scanner}
+\end{figure}
 
 Nhìn chung, các nhóm chức năng chính của hệ thống đã đáp ứng được các luồng kiểm thử cơ bản trong phạm vi môi trường cục bộ. Các route yêu cầu đăng nhập chỉ được xử lý khi request có access token hợp lệ. Các thao tác thêm, sửa, xóa dữ liệu được kiểm tra theo phạm vi người dùng hiện tại, qua đó hạn chế truy cập dữ liệu của tài khoản khác. Các lỗi thường gặp như thiếu dữ liệu đầu vào, dữ liệu ngoài khoảng cho phép, token không hợp lệ, endpoint không tồn tại và gửi request vượt giới hạn đều được phản hồi bằng cấu trúc JSON thống nhất. Kết quả kiểm thử chức năng là cơ sở để tiếp tục đánh giá các thuật toán xử lý chính trong mục 4.3.
 
