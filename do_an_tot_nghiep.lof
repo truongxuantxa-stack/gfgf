@@ -9,13 +9,13 @@
 \contentsline {figure}{\numberline {1.7}{\ignorespaces Kiến trúc tổng quan cơ sở dữ liệu}}{20}{figure.caption.18}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Biểu đồ Use Case tổng thể của hệ thống}}{30}{figure.caption.20}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Sơ đồ ERD rút gọn của hệ thống}}{35}{figure.caption.21}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Sơ đồ ERD rút gọn của hệ thống}}{36}{figure.caption.21}%
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Luồng request/response giữa Frontend và Backend}}{42}{figure.caption.22}%
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Luồng xác thực API bằng JWT}}{43}{figure.caption.24}%
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Luồng xử lý một request có xác thực trong hệ thống}}{44}{figure.caption.25}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Luồng xác thực API bằng JWT}}{44}{figure.caption.24}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Luồng xử lý một request có xác thực trong hệ thống}}{48}{figure.caption.25}%
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Sơ đồ điều hướng giao diện của hệ thống}}{49}{figure.caption.26}%
 \contentsline {figure}{\numberline {2.7}{\ignorespaces Wireframe giao diện Dashboard}}{50}{figure.caption.27}%
-\contentsline {figure}{\numberline {2.8}{\ignorespaces Wireframe giao diện Nhật ký ăn uống và Modal Scanner}}{51}{figure.caption.28}%
+\contentsline {figure}{\numberline {2.8}{\ignorespaces Wireframe giao diện Nhật ký ăn uống và Modal Scanner}}{52}{figure.caption.28}%
 \contentsline {figure}{\numberline {2.9}{\ignorespaces Wireframe giao diện chức năng Meal Planner}}{52}{figure.caption.29}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Sơ đồ kiến trúc phân lớp Backend của NutriTrack}}{56}{figure.caption.31}%

@@ -60,13 +60,28 @@
 
 > ⚠️ **Lưu ý quan trọng về Liêm chính học thuật:** Mọi ý tưởng, số liệu, hình ảnh, hay thuật toán không phải do bạn tự tạo ra đều bắt buộc phải có trích dẫn nguồn rõ ràng để tránh vi phạm đạo văn khi trường quét bằng phần mềm trước bảo vệ M3.
 
-## 6. LỊCH SỬ CẬP NHẬT GẦN NHẤT
+## 6. QUY ĐỊNH VỀ PHONG CÁCH VÀ GIỌNG VĂN THUYẾT MINH (Theo HUCE)
+**1. Tính khách quan và Giọng văn khoa học (Academic Tone):**
+- **Không dùng ngôi thứ nhất:** Thuyết minh đồ án là văn bản nghiên cứu kỹ thuật/khoa học. Tuyệt đối không sử dụng các từ xưng hô mang tính cá nhân như "Tôi nghĩ rằng...", "Em nhận thấy...", "Chúng ta nên..." trong các chương nội dung chính.
+- **Sử dụng câu bị động hoặc ẩn ngôi:** Viết theo lối khách quan. Thay vì viết "Tôi đã xây dựng mô hình...", phải viết: "Mô hình hệ thống đã được xây dựng...", hoặc "Qua quá trình nghiên cứu, giải pháp được đề xuất là...".
+- **Ngoại lệ duy nhất:** Chỉ được phép xưng "Em" hoặc "Tôi" ở Lời nói đầu (Lời cảm ơn) và Lời cam đoan.
+
+**2. Sự rõ ràng, mạch lạc và chuẩn xác về mặt thuật ngữ:**
+- **Ngôn từ định lượng:** Lối viết phải chính xác, có căn cứ số liệu rõ ràng. Tránh các tính từ cảm tính, mơ hồ như "rất nhanh", "khá mạnh", "công nghệ rất hiện đại". Phải dùng số liệu chứng minh (Ví dụ: "Tốc độ phản hồi đạt dưới 200ms", "Hàm lượng dinh dưỡng đáp ứng 85% tiêu chuẩn").
+- **Thống nhất thuật ngữ chuyên ngành:** Các thuật ngữ kỹ thuật (mã nguồn, cơ sở dữ liệu, vi chất, năng lượng...) phải viết đúng danh pháp khoa học và thống nhất xuyên suốt. Viết tắt bắt buộc phải xuất hiện trong danh mục viết tắt ở phần đầu.
+
+**3. Tính nghiêm túc và Liêm chính học thuật (Plagiarism-free):**
+- **Giọng văn cam đoan quyết liệt:** Tại Mẫu ĐATN-14, phải dùng giọng văn khẳng định 100% về tính độc lập: "Đồ án này là công trình nghiên cứu của riêng tôi, các số liệu... là trung thực và chưa từng được công bố".
+- **Tuyệt đối khách quan (Lạnh lùng, lý tính):** Tập trung hoàn toàn vào số liệu và sự thật kỹ thuật, không đưa cảm xúc cá nhân. Nếu copy nội dung do AI sinh ra, **bắt buộc phải sửa lại** những câu có giọng điệu quá bay bổng, quảng cáo (kiểu "Giải pháp tuyệt vời này sẽ mang lại...") thành giọng văn báo cáo kỹ thuật trung lập. Mọi ý tưởng "mượn" đều phải trích dẫn (như đã quy định ở Mục 5).
+
+## 7. LỊCH SỬ CẬP NHẬT GẦN NHẤT
 - Đã quyết định **KHÔNG CHIA TÁCH** file LaTeX (`do_an_tot_nghiep.tex`) để đảm bảo an toàn tuyệt đối trước thềm bảo vệ.
 - Đã fix triệt để lỗi biên dịch LaTeX (crash do ngoặc nhọn `{` nằm ngay sau ký tự xuống dòng `\\` bên trong TikZ node).
 - Đã hoàn thiện **Hình 1.5**: Sơ đồ Kiến trúc tổng thể Client - Server. 
 - Đã chèn quy tắc xử lý lỗi khoảng trắng khổng lồ do `longtable` gây ra bằng cách dời vị trí code để text chảy lên lấp khoảng trống.
 - Đã bổ sung quy tắc số 7 (Kiểm chứng file thực tế) để chống tình trạng hallucinate.
 - Đã bổ sung Quy định trích dẫn tài liệu tham khảo theo Mẫu ĐATN-14 của trường ĐHXDHN.
+- Bổ sung quy định chặt chẽ về phong cách và giọng văn học thuật theo tiêu chuẩn HUCE (tính khách quan, ngôn từ định lượng, liêm chính).
 
 ---
-*(Cập nhật lần cuối: Tháng 7/2026 - Thêm quy định trích dẫn ĐHXDHN)*
+*(Cập nhật lần cuối: Tháng 7/2026 - Thêm quy định giọng văn học thuật HUCE)*

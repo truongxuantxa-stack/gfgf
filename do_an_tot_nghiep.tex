@@ -1212,7 +1212,7 @@ Trong phạm vi đề tài, các nghiệp vụ chính của hệ thống đượ
 
 \subsection{Nghiệp vụ đăng nhập và khởi tạo hồ sơ sức khỏe}Nghiệp vụ đăng nhập là bước đầu để người dùng truy cập hệ thống. Người dùng nhập email và mật khẩu trên giao diện. Frontend gửi dữ liệu tới Backend để kiểm tra thông tin tài khoản. Nếu dữ liệu hợp lệ, hệ thống cấp Access Token để xác thực các yêu cầu API và thiết lập Refresh Token dưới dạng HttpOnly Cookie nhằm hỗ trợ làm mới phiên đăng nhập khi Access Token hết hạn.
 
-Sau khi đăng nhập thành công, hệ thống kiểm tra trạng thái khởi tạo hồ sơ của người dùng. Nếu người dùng chưa hoàn tất hồ sơ sức khỏe ban đầu, giao diện sẽ điều hướng tới trang Onboarding. Tại đây, người dùng khai báo các thông tin như giới tính, tuổi hoặc ngày sinh, chiều cao, cân nặng, mức độ vận động và mục tiêu cá nhân. Trường mức độ vận động được thu thập trong hồ sơ sức khỏe vì đây là dữ liệu cần thiết để quy đổi thành hệ số hoạt động thể chất khi ước lượng TDEE từ BMR \cite{fao_who_unu_2001}.
+Sau khi đăng nhập thành công, hệ thống kiểm tra trạng thái khởi tạo hồ sơ của người dùng. Nếu người dùng chưa hoàn tất hồ sơ sức khỏe ban đầu, giao diện sẽ điều hướng tới trang Onboarding. Tại đây, người dùng khai báo các thông tin như giới tính, tuổi hoặc ngày sinh, chiều cao, cân nặng, mức độ vận động và mục tiêu cá nhân. Mức độ vận động được thu thập trong hồ sơ ban đầu vì hoạt động thể chất thường xuyên là một trong những yếu tố chính quyết định nhu cầu năng lượng ở người trưởng thành. Thông tin này được ánh xạ thành hệ số PAL và kết hợp với BMR để ước lượng TDEE tĩnh \cite{fao_who_unu_2001}.
 
 Dữ liệu hồ sơ được Backend kiểm tra và lưu vào cơ sở dữ liệu. Từ các thông tin này, hệ thống tính toán các chỉ số nền tảng như BMI, BMR, TDEE, mục tiêu năng lượng, tỷ lệ chất đa lượng và mục tiêu nước. BMR được sử dụng để ước lượng mức năng lượng cơ thể tiêu hao trong trạng thái nghỉ, làm cơ sở cho việc tính toán TDEE và mục tiêu năng lượng cá nhân \cite{mifflin1990}. Sau khi hoàn tất Onboarding, người dùng được chuyển tới các màn hình chức năng chính như Dashboard, nhật ký ăn uống, Meal Planner, cân nặng, luyện tập và hồ sơ cá nhân. Tổng hợp các luồng nghiệp vụ chính của hệ thống được trình bày trong Bảng \ref{tab:nghiep_vu_chinh}.
 
@@ -3179,7 +3179,7 @@ Chỉ số khối cơ thể BMI được xác định theo công thức \textbf{
 
 Trong phạm vi hệ thống, giá trị BMR/REE được ước lượng bằng công thức Mifflin-St Jeor dựa trên giới tính, tuổi, chiều cao và cân nặng của người dùng \cite{mifflin1990}. Cụ thể, đối với nam giới, $\text{BMR} = 10 \times \text{cân nặng} + 6,25 \times \text{chiều cao} - 5 \times \text{tuổi} + 5$; đối với nữ giới, $\text{BMR} = 10 \times \text{cân nặng} + 6,25 \times \text{chiều cao} - 5 \times \text{tuổi} - 161$. Trong đó, cân nặng tính bằng kg, chiều cao tính bằng cm và tuổi tính bằng năm. Việc tách công thức theo giới tính được xử lý ở Backend dựa trên dữ liệu hồ sơ người dùng.
 
-Sau khi có BMR, hệ thống tính TDEE tĩnh theo công thức: \textbf{TDEE = BMR × PAL}. Trong đó, \textbf{PAL} là hệ số hoạt động thể chất tương ứng với mức độ vận động do người dùng khai báo. Cách tính này phù hợp với cách tiếp cận trong báo cáo FAO/WHO/UNU về nhu cầu năng lượng, trong đó PAL được sử dụng để biểu diễn tổng năng lượng tiêu hao hằng ngày như một bội số của mức năng lượng nền \cite{fao_who_unu_2001}. Nếu người dùng bật Adaptive TDEE và đã có giá trị adaptiveTDEE hợp lệ, hệ thống có thể sử dụng adaptiveTDEE làm TDEE áp dụng. Nếu chưa có dữ liệu phù hợp, hệ thống dùng staticTDEE được tính từ BMR và hệ số vận động. Phần tính toán Adaptive TDEE được tách riêng và trình bày ở mục 3.3.2.
+Sau khi ước lượng BMR, hệ thống tính TDEE tĩnh theo công thức \textbf{TDEE = BMR × PAL}. PAL, viết tắt của Physical Activity Level, biểu diễn tổng năng lượng tiêu hao trong 24 giờ dưới dạng bội số của BMR và được xác định về mặt khái niệm theo quan hệ \textbf{PAL = TEE/BMR}. Theo báo cáo FAO/WHO/UNU, khi biết BMR và PAL có thể ước lượng tổng nhu cầu năng lượng hằng ngày; PAL cần phản ánh lối sống hoạt động thường xuyên, bao gồm cả hoạt động nghề nghiệp và hoạt động trong thời gian rảnh \cite{fao_who_unu_2001}. Trong NutriTrack, mức vận động do người dùng khai báo được ánh xạ thành một hệ số triển khai để tạo staticTDEE ban đầu. Giá trị này là ước lượng tham khảo và có thể được thay thế bằng Adaptive TDEE khi hệ thống đã thu thập đủ dữ liệu thực tế. Phần tính toán Adaptive TDEE được tách riêng và trình bày ở mục 3.3.2.
 
 Từ TDEE áp dụng, hệ thống tính năng lượng mục tiêu theo mục tiêu cá nhân. Trong phạm vi triển khai của NutriTrack, nếu mục tiêu là giảm cân thì \textbf{targetCalories = max(TDEE - 500, BMR)}; nếu mục tiêu là duy trì cân nặng thì \textbf{targetCalories = TDEE}; nếu mục tiêu là tăng cân thì \textbf{targetCalories = TDEE + 300}. Việc chặn dưới bằng BMR trong trường hợp giảm cân giúp hệ thống không đề xuất mức năng lượng thấp hơn năng lượng nền.
 
@@ -4313,6 +4313,12 @@ Jankau, J., Rogoń, I., Kaczmarek, M., et al. (2025).
 "The Challenges of Postoperative Tissue Flap Vitality Monitoring in Obese Individuals".
 \textit{Journal of Clinical Medicine}, 14.
 Truy cập ngày 11/07/2026, từ \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC12610855/}
+
+\bibitem{fao_who_unu_2001}
+FAO/WHO/UNU. (2004).
+"Human Energy Requirements: Report of a Joint FAO/WHO/UNU Expert Consultation, Rome, 17–24 October 2001".
+\textit{FAO Food and Nutrition Technical Report Series No. 1}.
+Rome: Food and Agriculture Organization of the United Nations. Truy cập ngày 11/07/2026, từ \url{https://www.fao.org/4/y5686e/y5686e07.htm}
 
 \end{thebibliography}
 \end{document}
