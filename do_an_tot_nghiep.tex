@@ -3175,7 +3175,7 @@ Tỷ lệ macro tùy chỉnh & Phân bổ năng lượng sang gram & protein, ca
 
 Chuỗi xử lý của Nutrition Core được thực hiện theo thứ tự: tính tuổi từ ngày sinh, tính BMI, tính BMR, tính TDEE tĩnh, chọn TDEE áp dụng, tính năng lượng mục tiêu, sau đó chuyển năng lượng mục tiêu thành lượng protein, carbohydrate, lipid và mục tiêu nước. Cách xử lý theo chuỗi giúp kết quả đầu ra của bước trước trở thành dữ liệu đầu vào cho bước sau, đồng thời làm rõ quan hệ giữa các chỉ số.
 
-Chỉ số BMI được tính theo công thức: \textbf{BMI = W / H²}. Trong đó, \textbf{W} là cân nặng tính bằng kilogram và \textbf{H} là chiều cao tính bằng mét. Kết quả BMI có đơn vị kg/m². Trong hệ thống, BMI được dùng để mô tả sơ bộ tình trạng cơ thể như thiếu cân, bình thường, thừa cân hoặc béo phì. Backend trả về cả giá trị BMI và nhãn phân loại để Frontend hiển thị thống nhất, không cần tự viết lại quy tắc phân loại ở từng màn hình.
+Chỉ số khối cơ thể BMI được xác định theo công thức \textbf{BMI = W / H²}, trong đó \textbf{W} là cân nặng tính bằng kilogram và \textbf{H} là chiều cao tính bằng mét; kết quả có đơn vị kg/m². Theo hệ thống phân loại BMI dành cho người trưởng thành của WHO và NHLBI, BMI dưới 18,5 được xếp vào nhóm thiếu cân, từ 18,5 đến 24,9 là bình thường, từ 25,0 đến 29,9 là thừa cân và từ 30,0 trở lên là béo phì \cite{jankau2025}. Trong NutriTrack, kết quả BMI được làm tròn đến một chữ số thập phân và ánh xạ thành một trong bốn nhãn trên để Frontend hiển thị thống nhất. Tuy nhiên, do BMI không phản ánh trực tiếp tỷ lệ khối mỡ, khối cơ và sự phân bố mỡ, hệ thống chỉ sử dụng chỉ số này để mô tả sơ bộ tình trạng cân nặng, không xem đây là kết luận chẩn đoán y khoa \cite{jankau2025}.
 
 Trong phạm vi hệ thống, giá trị BMR/REE được ước lượng bằng công thức Mifflin-St Jeor dựa trên giới tính, tuổi, chiều cao và cân nặng của người dùng \cite{mifflin1990}. Cụ thể, đối với nam giới, $\text{BMR} = 10 \times \text{cân nặng} + 6,25 \times \text{chiều cao} - 5 \times \text{tuổi} + 5$; đối với nữ giới, $\text{BMR} = 10 \times \text{cân nặng} + 6,25 \times \text{chiều cao} - 5 \times \text{tuổi} - 161$. Trong đó, cân nặng tính bằng kg, chiều cao tính bằng cm và tuổi tính bằng năm. Việc tách công thức theo giới tính được xử lý ở Backend dựa trên dữ liệu hồ sơ người dùng.
 
@@ -4310,17 +4310,11 @@ Mifflin, M. D., St Jeor, S. T., Hill, L. A., et al. (1990).
 The American Journal of Clinical Nutrition.
 Truy cập ngày 30/06/2026, từ \url{https://pubmed.ncbi.nlm.nih.gov/2305711/}
 
-\bibitem{who_healthy_lifestyle}
-World Health Organization (WHO) (n.d.).
-\textit{A healthy lifestyle - WHO recommendations}.
-World Health Organization.
-Truy cập ngày 30/06/2026, từ \url{https://www.who.int/europe/news-room/fact-sheets/item/a-healthy-lifestyle---who-recommendations}
-
-\bibitem{fao_who_unu_2001}
-Joint FAO/WHO/UNU Expert Consultation (2001).
-\textit{Human energy requirements: Report of a Joint FAO/WHO/UNU Expert Consultation}.
-Food and Agriculture Organization (FAO).
-Truy cập ngày 30/06/2026, từ \url{https://www.fao.org/3/y5686e/y5686e07.htm}
+\bibitem{jankau2025}
+Jankau, J., Rogoń, I., Kaczmarek, M., et al. (2025).
+"The Challenges of Postoperative Tissue Flap Vitality Monitoring in Obese Individuals".
+\textit{Journal of Clinical Medicine}, 14.
+Truy cập ngày 11/07/2026, từ \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC12610855/}
 
 \end{thebibliography}
 \end{document}
