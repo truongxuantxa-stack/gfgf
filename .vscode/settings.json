@@ -22,10 +22,9 @@
     ],
     "latex-workshop.latex.recipes": [
         {
-            "name": "pdflatex ➞ bibtex ➞ pdflatex × 2",
+            "name": "pdflatex ➞ pdflatex ➞ pdflatex",
             "tools": [
                 "pdflatex",
-                "bibtex",
                 "pdflatex",
                 "pdflatex"
             ]
