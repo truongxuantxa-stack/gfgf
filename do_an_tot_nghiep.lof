@@ -18,19 +18,19 @@
 \contentsline {figure}{\numberline {2.8}{\ignorespaces Wireframe giao diện Nhật ký ăn uống và Modal Scanner}}{52}{figure.caption.28}%
 \contentsline {figure}{\numberline {2.9}{\ignorespaces Wireframe giao diện chức năng Meal Planner}}{52}{figure.caption.29}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Sơ đồ kiến trúc phân lớp Backend của NutriTrack}}{56}{figure.caption.31}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Sơ đồ luồng xử lý một request có xác thực. \textit {(Ghi chú: Bước kiểm tra Token ở Middleware bao gồm giải mã JWT và kiểm tra tính hợp lệ của User trong cơ sở dữ liệu).}}}{58}{figure.caption.32}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Sơ đồ tổng quan kiến trúc Frontend của NutriTrack}}{61}{figure.caption.33}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Sơ đồ luồng gọi API ở Frontend (Happy Path)}}{64}{figure.caption.34}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Sơ đồ luồng xử lý Nutrition Core}}{69}{figure.caption.35}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Sơ đồ luồng xử lý Adaptive TDEE}}{73}{figure.caption.37}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng xử lý của module Health Insights}}{81}{figure.caption.38}%
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Sơ đồ luồng xử lý của Meal Planner}}{86}{figure.caption.39}%
-\contentsline {figure}{\numberline {3.9}{\ignorespaces Sơ đồ luồng xử lý của Hybrid Nutrition Scanner}}{91}{figure.caption.41}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Sơ đồ kiến trúc phân lớp Backend của NutriTrack}}{57}{figure.caption.31}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Sơ đồ luồng xử lý một request có xác thực. \textit {(Ghi chú: Bước kiểm tra Token ở Middleware bao gồm giải mã JWT và kiểm tra tính hợp lệ của User trong cơ sở dữ liệu).}}}{59}{figure.caption.32}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Sơ đồ tổng quan kiến trúc Frontend của NutriTrack}}{62}{figure.caption.33}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Sơ đồ luồng gọi API ở Frontend (Happy Path)}}{65}{figure.caption.34}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Sơ đồ luồng xử lý Nutrition Core}}{70}{figure.caption.35}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Sơ đồ luồng xử lý Adaptive TDEE}}{74}{figure.caption.37}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng xử lý của module Health Insights}}{82}{figure.caption.38}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Sơ đồ luồng xử lý của Meal Planner}}{87}{figure.caption.39}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Sơ đồ luồng xử lý của Hybrid Nutrition Scanner}}{92}{figure.caption.41}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Màn hình Onboarding / Tính TDEE}}{98}{figure.caption.42}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Màn hình Dashboard (Tổng quan)}}{99}{figure.caption.43}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Màn hình nhật ký dinh dưỡng sau khi thêm món ăn vào bữa trong ngày}}{100}{figure.caption.44}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Màn hình gợi ý bữa ăn từ chức năng Meal Planner}}{101}{figure.caption.45}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Màn hình Hybrid Nutrition Scanner (Quét đồ ăn bằng AI)}}{102}{figure.caption.46}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Màn hình Food Scoring (Chấm điểm thực phẩm)}}{107}{figure.caption.47}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Màn hình Onboarding / Tính TDEE}}{99}{figure.caption.42}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Màn hình Dashboard (Tổng quan)}}{100}{figure.caption.43}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Màn hình nhật ký dinh dưỡng sau khi thêm món ăn vào bữa trong ngày}}{101}{figure.caption.44}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Màn hình gợi ý bữa ăn từ chức năng Meal Planner}}{102}{figure.caption.45}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Màn hình Hybrid Nutrition Scanner (Quét đồ ăn bằng AI)}}{103}{figure.caption.46}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Màn hình Food Scoring (Chấm điểm thực phẩm)}}{108}{figure.caption.47}%

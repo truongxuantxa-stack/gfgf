@@ -13,29 +13,29 @@
 \contentsline {table}{\numberline {2.6}{\ignorespaces Đặc tả rút gọn Use Case đăng nhập}}{33}{table.2.6}%
 \contentsline {table}{\numberline {2.7}{\ignorespaces Đặc tả rút gọn Use Case ghi nhật ký ăn uống}}{33}{table.2.7}%
 \contentsline {table}{\numberline {2.8}{\ignorespaces Đặc tả rút gọn Use Case sử dụng Hybrid Nutrition Scanner}}{34}{table.2.8}%
-\contentsline {table}{\numberline {2.9}{\ignorespaces Phân nhóm bảng dữ liệu của hệ thống}}{37}{table.2.9}%
-\contentsline {table}{\numberline {2.10}{\ignorespaces Tóm tắt khóa chính và khóa ngoại của một số bảng chính}}{38}{table.2.10}%
+\contentsline {table}{\numberline {2.9}{\ignorespaces Phân nhóm bảng dữ liệu của hệ thống}}{38}{table.2.9}%
+\contentsline {table}{\numberline {2.10}{\ignorespaces Tóm tắt khóa chính và khóa ngoại của một số bảng chính}}{39}{table.2.10}%
 \contentsline {table}{\numberline {2.11}{\ignorespaces Cấu trúc phản hồi API}}{43}{table.caption.23}%
 \contentsline {table}{\numberline {2.12}{\ignorespaces Các nhóm API chính của hệ thống}}{44}{table.2.12}%
 \contentsline {table}{\numberline {2.13}{\ignorespaces Một số endpoint tiêu biểu của hệ thống}}{45}{table.2.13}%
 \contentsline {table}{\numberline {2.14}{\ignorespaces Một số mã trạng thái API}}{46}{table.2.14}%
 \contentsline {table}{\numberline {2.15}{\ignorespaces Tổng hợp một số màn hình chức năng của hệ thống}}{53}{table.caption.30}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Một số nhóm API chính của Backend}}{58}{table.3.1}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces Vai trò của một số thành phần chính trong Frontend}}{63}{table.3.2}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces Dữ liệu đầu vào và kết quả xử lý của Nutrition Core}}{66}{table.3.3}%
-\contentsline {table}{\numberline {3.4}{\ignorespaces Dữ liệu đầu vào của Adaptive TDEE}}{70}{table.caption.36}%
-\contentsline {table}{\numberline {3.5}{\ignorespaces Các trạng thái chính của log Adaptive TDEE}}{70}{table.3.5}%
-\contentsline {table}{\numberline {3.6}{\ignorespaces Các nhóm dữ liệu chính trong Food Scoring}}{74}{table.3.6}%
-\contentsline {table}{\numberline {3.7}{\ignorespaces Các nhóm dữ liệu đầu vào của Health Insights}}{77}{table.3.7}%
-\contentsline {table}{\numberline {3.8}{\ignorespaces Cơ chế phân tầng trong Health Insights}}{78}{table.3.8}%
-\contentsline {table}{\numberline {3.9}{\ignorespaces Các nhóm xử lý chính trong Meal Planner}}{83}{table.3.9}%
-\contentsline {table}{\numberline {3.10}{\ignorespaces Luồng tra cứu mã vạch trong Hybrid Nutrition Scanner}}{88}{table.caption.40}%
-\contentsline {table}{\numberline {3.11}{\ignorespaces Một số cơ chế bảo mật và xử lý lỗi trong Backend}}{92}{table.3.11}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Một số nhóm API chính của Backend}}{59}{table.3.1}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Vai trò của một số thành phần chính trong Frontend}}{64}{table.3.2}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Dữ liệu đầu vào và kết quả xử lý của Nutrition Core}}{67}{table.3.3}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Dữ liệu đầu vào của Adaptive TDEE}}{71}{table.caption.36}%
+\contentsline {table}{\numberline {3.5}{\ignorespaces Các trạng thái chính của log Adaptive TDEE}}{71}{table.3.5}%
+\contentsline {table}{\numberline {3.6}{\ignorespaces Các nhóm dữ liệu chính trong Food Scoring}}{75}{table.3.6}%
+\contentsline {table}{\numberline {3.7}{\ignorespaces Các nhóm dữ liệu đầu vào của Health Insights}}{78}{table.3.7}%
+\contentsline {table}{\numberline {3.8}{\ignorespaces Cơ chế phân tầng trong Health Insights}}{80}{table.3.8}%
+\contentsline {table}{\numberline {3.9}{\ignorespaces Các nhóm xử lý chính trong Meal Planner}}{84}{table.3.9}%
+\contentsline {table}{\numberline {3.10}{\ignorespaces Luồng tra cứu mã vạch trong Hybrid Nutrition Scanner}}{89}{table.caption.40}%
+\contentsline {table}{\numberline {3.11}{\ignorespaces Một số cơ chế bảo mật và xử lý lỗi trong Backend}}{93}{table.3.11}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Môi trường phần mềm và công cụ thực nghiệm}}{96}{table.4.1}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Kết quả kiểm thử chức năng chính của hệ thống}}{102}{table.4.2}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces Kết quả thực nghiệm các thuật toán chính}}{105}{table.4.3}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Tổng hợp đánh giá kết quả thực nghiệm}}{108}{table.caption.48}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces Hạn chế và hướng phát triển của hệ thống}}{109}{table.4.5}%
-\contentsline {table}{\numberline {4.6}{\ignorespaces Tổng hợp nội dung đánh giá trong Chương 4}}{110}{table.4.6}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Môi trường phần mềm và công cụ thực nghiệm}}{97}{table.4.1}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Kết quả kiểm thử chức năng chính của hệ thống}}{103}{table.4.2}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Kết quả thực nghiệm các thuật toán chính}}{106}{table.4.3}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Tổng hợp đánh giá kết quả thực nghiệm}}{109}{table.caption.48}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Hạn chế và hướng phát triển của hệ thống}}{110}{table.4.5}%
+\contentsline {table}{\numberline {4.6}{\ignorespaces Tổng hợp nội dung đánh giá trong Chương 4}}{111}{table.4.6}%
