@@ -15,11 +15,11 @@
 \contentsline {table}{\numberline {2.8}{\ignorespaces Đặc tả rút gọn Use Case sử dụng Hybrid Nutrition Scanner}}{34}{table.2.8}%
 \contentsline {table}{\numberline {2.9}{\ignorespaces Phân nhóm bảng dữ liệu của hệ thống}}{37}{table.2.9}%
 \contentsline {table}{\numberline {2.10}{\ignorespaces Tóm tắt khóa chính và khóa ngoại của một số bảng chính}}{38}{table.2.10}%
-\contentsline {table}{\numberline {2.11}{\ignorespaces Cấu trúc phản hồi API}}{42}{table.caption.23}%
-\contentsline {table}{\numberline {2.12}{\ignorespaces Các nhóm API chính của hệ thống}}{44}{table.2.12}%
+\contentsline {table}{\numberline {2.11}{\ignorespaces Cấu trúc phản hồi API}}{43}{table.caption.23}%
+\contentsline {table}{\numberline {2.12}{\ignorespaces Các nhóm API chính của hệ thống}}{45}{table.2.12}%
 \contentsline {table}{\numberline {2.13}{\ignorespaces Một số endpoint tiêu biểu của hệ thống}}{45}{table.2.13}%
-\contentsline {table}{\numberline {2.14}{\ignorespaces Một số mã trạng thái API}}{46}{table.2.14}%
-\contentsline {table}{\numberline {2.15}{\ignorespaces Tổng hợp một số màn hình chức năng của hệ thống}}{52}{table.caption.30}%
+\contentsline {table}{\numberline {2.14}{\ignorespaces Một số mã trạng thái API}}{47}{table.2.14}%
+\contentsline {table}{\numberline {2.15}{\ignorespaces Tổng hợp một số màn hình chức năng của hệ thống}}{53}{table.caption.30}%
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {3.1}{\ignorespaces Một số nhóm API chính của Backend}}{58}{table.3.1}%
 \contentsline {table}{\numberline {3.2}{\ignorespaces Vai trò của một số thành phần chính trong Frontend}}{63}{table.3.2}%
