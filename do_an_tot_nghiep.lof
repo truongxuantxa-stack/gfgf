@@ -22,7 +22,7 @@
 \contentsline {figure}{\numberline {3.2}{\ignorespaces Sơ đồ luồng xử lý một request có xác thực. \textit {(Ghi chú: Bước kiểm tra Token ở Middleware bao gồm giải mã JWT và kiểm tra tính hợp lệ của User trong cơ sở dữ liệu).}}}{58}{figure.caption.32}%
 \contentsline {figure}{\numberline {3.3}{\ignorespaces Sơ đồ tổng quan kiến trúc Frontend của NutriTrack}}{61}{figure.caption.33}%
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Sơ đồ luồng gọi API ở Frontend (Happy Path)}}{64}{figure.caption.34}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Sơ đồ luồng xử lý Nutrition Core}}{68}{figure.caption.35}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Sơ đồ luồng xử lý Nutrition Core}}{69}{figure.caption.35}%
 \contentsline {figure}{\numberline {3.6}{\ignorespaces Sơ đồ luồng xử lý Adaptive TDEE}}{73}{figure.caption.37}%
 \contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng xử lý của module Health Insights}}{81}{figure.caption.38}%
 \contentsline {figure}{\numberline {3.8}{\ignorespaces Sơ đồ luồng xử lý của Meal Planner}}{86}{figure.caption.39}%

@@ -3181,7 +3181,7 @@ Trong phạm vi hệ thống, giá trị BMR/REE được ước lượng bằng
 
 Sau khi ước lượng BMR, hệ thống tính TDEE tĩnh theo công thức \textbf{TDEE = BMR × PAL}. PAL, viết tắt của Physical Activity Level, biểu diễn tổng năng lượng tiêu hao trong 24 giờ dưới dạng bội số của BMR và được xác định về mặt khái niệm theo quan hệ \textbf{PAL = TEE/BMR}. Theo báo cáo FAO/WHO/UNU, khi biết BMR và PAL có thể ước lượng tổng nhu cầu năng lượng hằng ngày; PAL cần phản ánh lối sống hoạt động thường xuyên, bao gồm cả hoạt động nghề nghiệp và hoạt động trong thời gian rảnh \cite{fao_who_unu_2001}. Trong NutriTrack, mức vận động do người dùng khai báo được ánh xạ thành một hệ số triển khai để tạo staticTDEE ban đầu. Giá trị này là ước lượng tham khảo và có thể được thay thế bằng Adaptive TDEE khi hệ thống đã thu thập đủ dữ liệu thực tế. Phần tính toán Adaptive TDEE được tách riêng và trình bày ở mục 3.3.2.
 
-Từ TDEE áp dụng, hệ thống tính năng lượng mục tiêu theo mục tiêu cá nhân. Trong phạm vi triển khai của NutriTrack, nếu mục tiêu là giảm cân thì \textbf{targetCalories = max(TDEE - 500, BMR)}; nếu mục tiêu là duy trì cân nặng thì \textbf{targetCalories = TDEE}; nếu mục tiêu là tăng cân thì \textbf{targetCalories = TDEE + 300}. Việc chặn dưới bằng BMR trong trường hợp giảm cân giúp hệ thống không đề xuất mức năng lượng thấp hơn năng lượng nền.
+Từ TDEE áp dụng, hệ thống tính năng lượng mục tiêu theo mục tiêu cá nhân. Đối với người dùng trưởng thành lựa chọn mục tiêu giảm cân, hệ thống áp dụng mức thâm hụt mặc định 500 kcal/ngày so với TDEE đang được áp dụng. Giá trị này nằm trong khoảng thâm hụt 500–750 kcal/ngày được đề cập trong hướng dẫn ACC/AHA/TOS về quản lý thừa cân và béo phì ở người trưởng thành \cite{jensen2014}. Mức 500 kcal/ngày được lựa chọn làm cấu hình mặc định theo hướng thận trọng; năng lượng mục tiêu được xác định theo công thức: \textbf{targetCalories = max(TDEE - 500, BMR)}. Việc chặn dưới bằng BMR giúp hệ thống hạn chế tự động đề xuất mức năng lượng quá thấp dưới mức năng lượng nền. Nếu mục tiêu là duy trì cân nặng thì \textbf{targetCalories = TDEE}; nếu mục tiêu là tăng cân thì \textbf{targetCalories = TDEE + 300}. Các thông số này đóng vai trò là tham chiếu hỗ trợ theo dõi của hệ thống và không thay thế đánh giá của chuyên gia y tế.
 
 Sau khi có năng lượng mục tiêu, hệ thống chuyển đổi sang lượng protein, carbohydrate và lipid theo đơn vị gram. Tỷ lệ mặc định trong mã nguồn là protein 30\%, carbohydrate 40\% và lipid 30\%. Nếu người dùng thiết lập tỷ lệ riêng trong hồ sơ, hệ thống sử dụng tỷ lệ tùy chỉnh; nếu không, hệ thống quay về tỷ lệ mặc định. Quy tắc chuyển đổi được tính như sau: \textbf{proteinGram = targetCalories × proteinRate / 4}, \textbf{carbGram = targetCalories × carbRate / 4}, \textbf{fatGram = targetCalories × fatRate / 9}. Các hệ số 4, 4 và 9 tương ứng với năng lượng sinh ra từ 1g protein, 1g carbohydrate và 1g lipid.
 Thay vì để các module gọi từng hàm rời rạc, hệ thống có hàm tổng hợp để tính toàn bộ chỉ số dinh dưỡng cho một người dùng. Hàm này trả về các thông tin như tuổi, BMI, phân loại BMI, BMR, staticTDEE, TDEE áp dụng, trạng thái dùng Adaptive TDEE, năng lượng mục tiêu, lượng macro theo gram, tỷ lệ macro và mục tiêu nước. Các dữ liệu này được dùng trực tiếp cho API hoặc các service khác.
@@ -4319,6 +4319,11 @@ FAO/WHO/UNU. (2004).
 "Human Energy Requirements: Report of a Joint FAO/WHO/UNU Expert Consultation, Rome, 17–24 October 2001".
 \textit{FAO Food and Nutrition Technical Report Series No. 1}.
 Rome: Food and Agriculture Organization of the United Nations. Truy cập ngày 11/07/2026, từ \url{https://www.fao.org/4/y5686e/y5686e07.htm}
+
+\bibitem{jensen2014}
+Jensen, M. D., Ryan, D. H., Apovian, C. M., et al. (2014),
+"2013 AHA/ACC/TOS Guideline for the Management of Overweight and Obesity in Adults",
+\textit{Circulation}, Tập 129, Số Suppl. 2, Trang S102--S138.
 
 \end{thebibliography}
 \end{document}
