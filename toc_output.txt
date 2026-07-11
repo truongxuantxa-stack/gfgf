@@ -1,0 +1,173 @@
+LỜI NÓI ĐẦU
+Trong quá trình học tập tại Trường Đại học Xây dựng Hà Nội, em đã được trang bị
+các kiến thức nền tảng và chuyên ngành về lập trình, cơ sở dữ liệu, phân tích thiết kế
+hệ thống, phát triển ứng dụng web và các phương pháp xây dựng phần mềm. Đồ án tốt
+nghiệp là cơ hội để em tổng hợp, vận dụng và kiểm chứng những kiến thức đã học vào
+một bài toán cụ thể. Trên cơ sở đó, đề tài “Xây dựng hệ thống quản lý dinh dưỡng cá
+nhân” được thực hiện nhằm xây dựng một hệ thống hỗ trợ người dùng theo dõi nhật ký
+dinh dưỡng, quản lý chỉ số cơ thể, phân tích dữ liệu ăn uống và sinh báo cáo theo thời
+gian.
+Trong quá trình thực hiện đồ án, em đã tìm hiểu các kiến thức liên quan đến quản lý
+dinh dưỡng cá nhân, thiết kế cơ sở dữ liệu, xây dựng RESTful API, phát triển giao diện
+người dùng bằng React và triển khai backend bằng Node.js, Express. Bên cạnh các chức
+năng quản lý dữ liệu cơ bản, hệ thống còn được xây dựng thêm một số thành phần xử lý
+dữ liệu dinh dưỡng như tính toán chỉ số nền tảng, điều chỉnh TDEE theo dữ liệu thực tế,
+chấm điểm món ăn, sinh cảnh báo, lập kế hoạch bữa ăn và quét thông tin sản phẩm. Quá
+trình thực hiện đề tài giúp em củng cố thêm kiến thức về tổ chức mã nguồn, thiết kế hệ
+thống theo mô hình client-server, xử lý dữ liệu người dùng và kiểm thử chức năng trong
+phạm vi một hệ thống web phục vụ đồ án tốt nghiệp.
+Em xin gửi lời cảm ơn chân thành đến [Học hàm, học vị và họ tên giảng viên hướng
+dẫn], người đã tận tình hướng dẫn, góp ý và định hướng cho em trong suốt quá trình thực
+hiện đồ án tốt nghiệp. Những nhận xét và chỉ dẫn của thầy/cô là cơ sở quan trọng giúp
+em hoàn thiện nội dung nghiên cứu, điều chỉnh cách trình bày báo cáo và cải thiện chất
+lượng triển khai hệ thống.
+Em cũng xin gửi lời cảm ơn đến các thầy cô trong [Tên khoa/viện], Trường Đại học
+Xây dựng Hà Nội, đã truyền đạt cho em những kiến thức chuyên môn cần thiết trong
+suốt quá trình học tập. Những kiến thức này là nền tảng giúp em có thể tiếp cận, phân
+tích và triển khai đề tài tốt nghiệp một cách hệ thống hơn.
+Mặc dù đã cố gắng hoàn thiện báo cáo và hệ thống trong phạm vi khả năng, đồ án
+vẫn khó tránh khỏi những thiếu sót về nội dung, kỹ thuật triển khai và cách trình bày.
+Em kính mong nhận được sự góp ý của các thầy cô để đề tài được hoàn thiện hơn.
+Em xin chân thành cảm ơn!
+Hà Nội, ngày ..... tháng ..... năm 2026
+Sinh viên thực hiện
+Nguyễn Văn Khánh
+
+CAM ĐOAN
+Tôi xin cam đoan đồ án tốt nghiệp với đề tài “Xây dựng hệ thống quản lý dinh
+dưỡng cá nhân” là kết quả nghiên cứu và thực hiện của riêng tôi dưới sự hướng dẫn của
+[Học hàm, học vị và họ tên giảng viên hướng dẫn].
+Các nội dung trình bày trong đồ án, bao gồm phần phân tích, thiết kế, xây dựng hệ
+thống, thực nghiệm và đánh giá kết quả, được thực hiện dựa trên quá trình nghiên cứu,
+triển khai và kiểm thử của bản thân. Các số liệu, kết quả thực nghiệm, bảng biểu và hình
+ảnh sử dụng trong báo cáo là trung thực, phản ánh đúng phạm vi hệ thống đã xây dựng.
+Các tài liệu, công thức, khái niệm, công nghệ và thông tin tham khảo từ nguồn bên
+ngoài đều được trích dẫn và ghi rõ trong phần tài liệu tham khảo của đồ án. Tôi không
+sao chép nội dung từ các công trình khác mà không ghi nguồn, không sử dụng kết quả
+nghiên cứu của người khác làm kết quả của mình và hoàn toàn chịu trách nhiệm về tính
+trung thực của nội dung báo cáo.
+Tôi xin chịu trách nhiệm trước Nhà trường, Khoa/Bộ môn và Hội đồng chấm đồ án
+tốt nghiệp về lời cam đoan này.
+Hà Nội, ngày ..... tháng ..... năm 2026
+Sinh viên thực hiện
+Nguyễn Văn Khánh
+
+ii
+
+MỤC LỤC
+Lời nói đầu . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+i
+
+Cam đoan . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+ii
+
+Mục lục . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+iii
+
+Danh mục bảng biểu . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+iv
+
+Danh mục hình ảnh . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+v
+
+Danh mục chữ viết tắt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+vi
+
+Danh mục ký hiệu . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+vii
+
+Trang
+MỞ ĐẦU . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+1
+
+CHƯƠNG 1. TỔNG QUAN ĐỀ TÀI . . . . . . . . . . . . . . . . . . . . . .
+
+4
+
+1.1. Tổng quan bài toán quản lý dinh dưỡng cá nhân . . . . . . . . . . . . . .
+
+4
+
+1.1.1.Đặc điểm của bài toán . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+4
+
+1.1.2.Các yêu cầu đặt ra đối với hệ thống . . . . . . . . . . . . . . . . . . . .
+
+5
+
+1.2. Mục tiêu và yêu cầu của hệ thống . . . . . . . . . . . . . . . . . . . . . .
+
+7
+
+1.2.1.Mục tiêu xây dựng hệ thống . . . . . . . . . . . . . . . . . . . . . . . .
+
+7
+
+1.2.2.Yêu cầu chức năng . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+8
+
+1.2.3.Yêu cầu phi chức năng . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+9
+
+1.3. Công nghệ và nền tảng phát triển . . . . . . . . . . . . . . . . . . . . . .
+
+11
+
+1.3.1.React . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+12
+
+1.3.2.Node.js và Express . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+12
+
+1.3.3.MySQL và Sequelize ORM . . . . . . . . . . . . . . . . . . . . . . . .
+
+13
+
+1.3.4.Các thư viện và dịch vụ hỗ trợ . . . . . . . . . . . . . . . . . . . . . .
+
+13
+
+1.3.5.Đánh giá việc lựa chọn công nghệ . . . . . . . . . . . . . . . . . . . .
+
+15
+
+1.4. Kiến trúc tổng thể của hệ thống . . . . . . . . . . . . . . . . . . . . . . .
+
+15
+
+1.4.1.Mô hình kiến trúc Client - Server . . . . . . . . . . . . . . . . . . . . .
+
+16
+
+1.4.2.Kiến trúc Frontend . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+16
+
+1.4.3.Kiến trúc Backend . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+17
+
+1.4.4.Kiến trúc cơ sở dữ liệu . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+18
+
+1.4.5.Đánh giá kiến trúc hệ thống . . . . . . . . . . . . . . . . . . . . . . . .
+
+20
+
+iii
+
+

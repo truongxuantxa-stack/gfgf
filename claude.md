@@ -38,6 +38,14 @@
 5. **Ngôn ngữ:** Luôn giao tiếp, giải thích, và comment code bằng tiếng Việt.
 6. **Đồng bộ Git:** Luôn kết thúc một task quan trọng bằng việc tạo commit rõ ràng và push lên repository.
 7. **Kiểm chứng file thực tế (Read before execute):** Tuyệt đối không dựa vào trí nhớ tạm thời đối với các file mã nguồn hoặc file kế hoạch (Plan/Task), đặc biệt là sau khi phiên làm việc bị ngắt quãng hoặc bộ nhớ bị cắt bớt (truncate / checkpoint). Luôn phải dùng lệnh `view_file` để đọc trực tiếp nội dung mới nhất của file trên ổ cứng trước khi đưa ra nhận xét hoặc code, nhằm tránh tình trạng bịa đặt (hallucinate) và bỏ sót các cập nhật mới nhất từ người dùng hoặc AI khác.
+8. **Quy trình biên dịch LaTeX (Compilation Protocol):**
+   - **Luôn compile đủ 3 lần liên tiếp** sau bất kỳ thay đổi nào ảnh hưởng đến cấu trúc tài liệu (chapter, section, toc, lof, lot, aux). Lý do: lần 1 tạo file `.toc`/`.aux`, lần 2 nhúng vào PDF, lần 3 ổn định toàn bộ tham chiếu chéo.
+   - **Khi pdflatex bị ngắt giữa chừng (kill/crash):** File `.toc` có thể đã bị xóa trắng. Dấu hiệu nhận biết là log xuất hiện dòng `No file do_an_tot_nghiep.toc.`. Bắt buộc phải chạy lại **ít nhất 2 lần** để phục hồi.
+   - **Cấm dùng lệnh nội bộ của package bên trong `\addtocontents`:** Ví dụ: `\addtocontents{toc}{\cftpagenumbersoff{chapter}}` là **NGUY HIỂM** — nó nhúng lệnh phụ thuộc package trực tiếp vào file `.toc`, gây lỗi parser trên mọi phần mềm. Thay thế an toàn: dùng `\addtocontents{toc}{\protect\contentsline{chapter}{Tên mục}{}{}}` với tham số số trang để trống.
+   - **Bắt buộc xác minh kết quả sau compile:** Sau khi biên dịch xong, luôn chạy lệnh sau để kiểm tra trực tiếp nội dung PDF trước khi báo cho người dùng:
+     ```powershell
+     pdftotext do_an_tot_nghiep.pdf - | Select-String "MỤC LỤC" -Context 0,3
+     ```
 
 ## 5. QUY ĐỊNH TRÍCH DẪN VÀ TÀI LIỆU THAM KHẢO (Theo Mẫu ĐATN-14 ĐHXDHN)
 **1. Quy tắc viết trích dẫn trong nội dung bài (In-text Citation):**
@@ -82,6 +90,7 @@
 - Đã bổ sung quy tắc số 7 (Kiểm chứng file thực tế) để chống tình trạng hallucinate.
 - Đã bổ sung Quy định trích dẫn tài liệu tham khảo theo Mẫu ĐATN-14 của trường ĐHXDHN.
 - Bổ sung quy định chặt chẽ về phong cách và giọng văn học thuật theo tiêu chuẩn HUCE (tính khách quan, ngôn từ định lượng, liêm chính).
+- Bổ sung **Quy tắc số 8 (Quy trình biên dịch LaTeX)**: compile đủ 3 lần, xử lý khi pdflatex bị ngắt giữa chừng, cấm dùng lệnh nội bộ package trong `\addtocontents`, và bắt buộc xác minh kết quả bằng `pdftotext` sau khi compile.
 
 ---
-*(Cập nhật lần cuối: Tháng 7/2026 - Thêm quy định giọng văn học thuật HUCE)*
+*(Cập nhật lần cuối: Tháng 7/2026 - Thêm quy tắc biên dịch LaTeX 3-pass và xác minh PDF bằng pdftotext)*
