@@ -39,14 +39,34 @@
 6. **Đồng bộ Git:** Luôn kết thúc một task quan trọng bằng việc tạo commit rõ ràng và push lên repository.
 7. **Kiểm chứng file thực tế (Read before execute):** Tuyệt đối không dựa vào trí nhớ tạm thời đối với các file mã nguồn hoặc file kế hoạch (Plan/Task), đặc biệt là sau khi phiên làm việc bị ngắt quãng hoặc bộ nhớ bị cắt bớt (truncate / checkpoint). Luôn phải dùng lệnh `view_file` để đọc trực tiếp nội dung mới nhất của file trên ổ cứng trước khi đưa ra nhận xét hoặc code, nhằm tránh tình trạng bịa đặt (hallucinate) và bỏ sót các cập nhật mới nhất từ người dùng hoặc AI khác.
 
-## 5. LỊCH SỬ CẬP NHẬT GẦN NHẤT
+## 5. QUY ĐỊNH TRÍCH DẪN VÀ TÀI LIỆU THAM KHẢO (Theo Mẫu ĐATN-14 ĐHXDHN)
+**1. Quy tắc viết trích dẫn trong nội dung bài (In-text Citation):**
+- **Hình thức:** Bắt buộc sử dụng chữ số đặt trong ngoặc vuông (ví dụ: `[1]`, `[2]`, `[3]`). Số này tương ứng với số thứ tự của tài liệu được liệt kê trong danh mục Tài liệu tham khảo ở cuối quyển.
+- **Vị trí:** Trích dẫn phải được đặt ngay sau nội dung tham chiếu và trước dấu chấm câu. Ví dụ: *"Hệ thống sử dụng thuật toán Adaptive TDEE để tự động tính toán năng lượng tiêu hao dựa trên biến động cân nặng thực tế [4]."*
+- **Trích dẫn nhiều tài liệu:** Dùng dấu phẩy cho các tài liệu rời rạc: `[1, 3]`. Dùng dấu gạch nối cho một chuỗi tài liệu liên tục: `[1-4]`.
+
+**2. Quy tắc sắp xếp Danh mục Tài liệu tham khảo:**
+- **Theo ngôn ngữ:** Tài liệu tiếng Việt xếp trước, sau đó đến tài liệu tiếng nước ngoài (Anh, Pháp, v.v.). Không được trộn lẫn các ngôn ngữ.
+- **Theo thứ tự chữ cái:** Trong mỗi nhóm ngôn ngữ, sắp xếp theo thứ tự ABC của tác giả.
+  - Tác giả Việt Nam: Xếp theo Tên.
+  - Tác giả nước ngoài: Xếp theo Họ.
+  - Không có tác giả cá nhân: Xếp theo chữ cái đầu tiên của tên cơ quan ban hành (ví dụ: "Bộ Giáo dục và Đào tạo" xếp theo chữ "B").
+
+**3. Quy định về định dạng ghi thông tin từng loại tài liệu:**
+- **Đối với Sách:** `[Số thứ tự] Tên tác giả (năm xuất bản), Tên sách (in nghiêng), Nhà xuất bản, Nơi xuất bản.`
+- **Đối với Bài báo khoa học/Hội nghị:** `[Số thứ tự] Tên tác giả (năm công bố), "Tên bài báo (đặt trong ngoặc kép)", Tên tạp chí/kỷ yếu hội nghị (in nghiêng), Tập, Số, Số trang.`
+- **Đối với Tài liệu từ Internet:** `[Số thứ tự] Tên tác giả hoặc Tên cơ quan tổ chức, "Tên bài viết/tài liệu trên web", Đường dẫn URL chi tiết (in nghiêng), ngày truy cập.`
+*(Ví dụ: Viện Dinh dưỡng Quốc gia, "Bảng nhu cầu dinh dưỡng khuyến nghị cho người Việt Nam", http://viendinhduong.vn/abc-xyz, truy cập ngày 15/05/2026).*
+
+> ⚠️ **Lưu ý quan trọng về Liêm chính học thuật:** Mọi ý tưởng, số liệu, hình ảnh, hay thuật toán không phải do bạn tự tạo ra đều bắt buộc phải có trích dẫn nguồn rõ ràng để tránh vi phạm đạo văn khi trường quét bằng phần mềm trước bảo vệ M3.
+
+## 6. LỊCH SỬ CẬP NHẬT GẦN NHẤT
 - Đã quyết định **KHÔNG CHIA TÁCH** file LaTeX (`do_an_tot_nghiep.tex`) để đảm bảo an toàn tuyệt đối trước thềm bảo vệ.
 - Đã fix triệt để lỗi biên dịch LaTeX (crash do ngoặc nhọn `{` nằm ngay sau ký tự xuống dòng `\\` bên trong TikZ node).
 - Đã hoàn thiện **Hình 1.5**: Sơ đồ Kiến trúc tổng thể Client - Server. 
-  - Giao diện trải ngang trực quan: `Router → Middleware → Controller → Service → Sequelize ORM`.
-  - Tách RESTful API làm cầu nối, thêm luồng JWT Authentication một chiều vào Middleware, và các dịch vụ ngoài (Open Food Facts, Gemini AI) giao tiếp nét đứt 2 chiều với tầng Service.
 - Đã chèn quy tắc xử lý lỗi khoảng trắng khổng lồ do `longtable` gây ra bằng cách dời vị trí code để text chảy lên lấp khoảng trống.
-- Đã bổ sung quy tắc số 7 (Kiểm chứng file thực tế) để chống tình trạng hallucinate do truncate bộ nhớ, bắt buộc AI dùng lệnh `view_file` đọc lại nội dung trước khi code.
+- Đã bổ sung quy tắc số 7 (Kiểm chứng file thực tế) để chống tình trạng hallucinate.
+- Đã bổ sung Quy định trích dẫn tài liệu tham khảo theo Mẫu ĐATN-14 của trường ĐHXDHN.
 
 ---
-*(Cập nhật lần cuối: Tháng 7/2026 - Cập nhật quy tắc kiểm chứng file thực tế)*
+*(Cập nhật lần cuối: Tháng 7/2026 - Thêm quy định trích dẫn ĐHXDHN)*
