@@ -37,6 +37,7 @@
    - Khi dùng `longtable` cho các bảng dài, nếu bảng bị đẩy sang trang sau và để lại khoảng trắng lớn ở cuối trang trước: **Tuyệt đối không đổi thành `table` float** (vì bảng dài sẽ bị văng mất khỏi luồng văn bản). Cách xử lý đúng là **giữ nguyên `longtable`** nhưng dời toàn bộ khối code của bảng xuống bên dưới đoạn/tiểu mục tiếp theo trong source code. Điều này giúp chữ tự động trôi lên lấp đầy khoảng trắng, còn bảng sẽ xuất hiện ở trang sau một cách tự nhiên. Bắt buộc dùng `\ref{}` để tham chiếu thay vì dùng từ "bảng sau".
 5. **Ngôn ngữ:** Luôn giao tiếp, giải thích, và comment code bằng tiếng Việt.
 6. **Đồng bộ Git:** Luôn kết thúc một task quan trọng bằng việc tạo commit rõ ràng và push lên repository.
+7. **Kiểm chứng file thực tế (Read before execute):** Tuyệt đối không dựa vào trí nhớ tạm thời đối với các file mã nguồn hoặc file kế hoạch (Plan/Task), đặc biệt là sau khi phiên làm việc bị ngắt quãng hoặc bộ nhớ bị cắt bớt (truncate / checkpoint). Luôn phải dùng lệnh `view_file` để đọc trực tiếp nội dung mới nhất của file trên ổ cứng trước khi đưa ra nhận xét hoặc code, nhằm tránh tình trạng bịa đặt (hallucinate) và bỏ sót các cập nhật mới nhất từ người dùng hoặc AI khác.
 
 ## 5. LỊCH SỬ CẬP NHẬT GẦN NHẤT
 - Đã quyết định **KHÔNG CHIA TÁCH** file LaTeX (`do_an_tot_nghiep.tex`) để đảm bảo an toàn tuyệt đối trước thềm bảo vệ.
@@ -45,6 +46,7 @@
   - Giao diện trải ngang trực quan: `Router → Middleware → Controller → Service → Sequelize ORM`.
   - Tách RESTful API làm cầu nối, thêm luồng JWT Authentication một chiều vào Middleware, và các dịch vụ ngoài (Open Food Facts, Gemini AI) giao tiếp nét đứt 2 chiều với tầng Service.
 - Đã chèn quy tắc xử lý lỗi khoảng trắng khổng lồ do `longtable` gây ra bằng cách dời vị trí code để text chảy lên lấp khoảng trống.
+- Đã bổ sung quy tắc số 7 (Kiểm chứng file thực tế) để chống tình trạng hallucinate do truncate bộ nhớ, bắt buộc AI dùng lệnh `view_file` đọc lại nội dung trước khi code.
 
 ---
-*(Cập nhật lần cuối: Tháng 7/2026 - Cập nhật quy tắc xử lý bảng longtable)*
+*(Cập nhật lần cuối: Tháng 7/2026 - Cập nhật quy tắc kiểm chứng file thực tế)*
