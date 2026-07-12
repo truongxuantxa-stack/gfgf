@@ -3390,7 +3390,8 @@ Chi tiết luồng xử lý Adaptive TDEE được minh họa trong Hình \ref{f
 
 Nhìn chung, Adaptive TDEE được triển khai như cơ chế điều chỉnh TDEE theo dữ liệu thực tế, không thay thế hoàn toàn Nutrition Core. Nutrition Core vẫn cung cấp TDEE tĩnh làm giá trị nền, còn Adaptive TDEE chỉ được áp dụng khi có đủ dữ liệu và người dùng bật cấu hình tương ứng. Các bước kiểm tra số ngày ghi nhận, kiểm tra dữ liệu cân nặng, gán trạng thái log, giới hạn biên so với TDEE tĩnh, làm mượt theo các tuần hợp lệ và chỉ cập nhật sau ít nhất hai tuần hợp lệ giúp kết quả ít bị phụ thuộc vào một bản ghi đơn lẻ hoặc một tuần dữ liệu bất thường.
 
-\subsection{Food Scoring}Food Scoring là nhóm xử lý được xây dựng để đánh giá chất lượng dinh dưỡng của thực phẩm trong hệ thống NutriTrack. Khác với cách theo dõi chỉ dựa trên tổng năng lượng, module này xem xét mật độ các thành phần dinh dưỡng trên cùng một mức năng lượng, từ đó tạo ra điểm chất lượng và nhãn hiển thị tương ứng. Kết quả chấm điểm không thay thế việc theo dõi calo, mà đóng vai trò bổ sung để phân biệt các thực phẩm có cùng mức năng lượng nhưng khác nhau về thành phần dinh dưỡng.
+\subsection{Food Scoring}Food Scoring là nhóm xử lý được xây dựng để đánh giá chất lượng dinh dưỡng của thực phẩm trong hệ thống NutriTrack. Mật độ dinh dưỡng phản ánh lượng chất dinh dưỡng có lợi mà thực phẩm cung cấp trong tương quan với mức năng lượng của thực phẩm \cite{drewnowski2005}. Các mô hình Nutrient Rich Foods phát triển cách tiếp cận này bằng việc chuẩn hóa thành phần dinh dưỡng theo một lượng tham chiếu, sau đó kết hợp nhóm chất cần khuyến khích với các thành phần cần hạn chế để tạo điểm tổng hợp hỗ trợ xếp hạng thực phẩm \cite{drewnowski2009}. Tuy nhiên, một chỉ số chỉ dựa trên một số chất dinh dưỡng có thể chưa phản ánh đầy đủ mức độ có lợi của thực phẩm hoặc chất lượng của toàn bộ chế độ ăn, do đó cần xem xét thêm nhóm thực phẩm và bối cảnh sử dụng \cite{drewnowski2019}. Food Scoring của NutriTrack được xây dựng theo các nguyên lý trên nhưng sử dụng bộ thành phần, trọng số, ngưỡng và quy tắc ngoại lệ riêng; thuật toán không phải bản triển khai đầy đủ của NRF9.3.
+Khác với cách theo dõi chỉ dựa trên tổng năng lượng, module này xem xét mật độ các thành phần dinh dưỡng trên cùng một mức năng lượng, từ đó tạo ra điểm chất lượng và nhãn hiển thị tương ứng. Kết quả chấm điểm không thay thế việc theo dõi calo, mà đóng vai trò bổ sung để phân biệt các thực phẩm có cùng mức năng lượng nhưng khác nhau về thành phần dinh dưỡng.
 
 Trong mã nguồn Backend, Food Scoring được triển khai tại service riêng. Việc tách thuật toán chấm điểm khỏi controller giúp phần xử lý này không phụ thuộc trực tiếp vào request HTTP và có thể tái sử dụng trong các chức năng khác khi cần. Về mặt thiết kế, module này được xem như một lớp đánh giá bổ sung trên dữ liệu thực phẩm, phục vụ cho việc hiển thị, phân tích nhật ký ăn uống hoặc hỗ trợ các module đánh giá khác.
 
@@ -3469,7 +3470,7 @@ Quy tắc trên giúp điểm số có thể giải thích được. Một thự
 
 \textbf{c. Xử lý ngoại lệ và giới hạn điểm}
 
-Food Scoring không áp dụng cùng một quy tắc cứng cho mọi loại thực phẩm. Một số nhóm như thịt, cá, nhóm protein hoặc chất béo không bị đánh giá bất lợi chỉ vì ít chất xơ, vì các nhóm này vốn không phải nguồn cung cấp chất xơ chính. Tương tự, đường trong thực phẩm tự nhiên như trái cây hoặc rau củ cần được phân biệt với đường trong sản phẩm chế biến.
+Việc đánh giá chất lượng thực phẩm không nên chỉ dựa vào một số chất dinh dưỡng riêng lẻ mà còn cần xem xét nhóm và bản chất của thực phẩm \cite{drewnowski2019}. Trên cơ sở đó, NutriTrack bổ sung các quy tắc ngoại lệ theo nhóm thực phẩm nhằm hạn chế những đánh giá không phù hợp với đặc điểm tự nhiên của từng nhóm. Một số nhóm như thịt, cá, nhóm protein hoặc chất béo không bị đánh giá bất lợi chỉ vì ít chất xơ, vì các nhóm này vốn không phải nguồn cung cấp chất xơ chính. Tương tự, đường trong thực phẩm tự nhiên như trái cây hoặc rau củ cần được phân biệt với đường trong sản phẩm chế biến.
 
 Ngoài cơ chế cộng và trừ điểm, thuật toán còn có bước giới hạn điểm trong một số trường hợp đặc biệt. Nếu thực phẩm quá nghèo vi chất, điểm tối đa có thể bị giới hạn ở mức nhất định. Nếu thực phẩm thiếu chất xơ nghiêm trọng và không thuộc nhóm được miễn xét chất xơ, điểm cũng có thể bị giới hạn. Cách xử lý này giúp tránh trường hợp một thực phẩm đạt điểm cao chỉ nhờ một thành phần đơn lẻ, trong khi tổng thể vẫn nghèo dinh dưỡng.
 
@@ -3483,7 +3484,7 @@ Sau khi tính điểm, hệ thống ánh xạ điểm số sang các mức phân
 
 Có dấu hiệu nghèo dinh dưỡng hoặc nhiều thành phần cần kiểm soát
 
-Các mức phân loại này là quy ước nội bộ của hệ thống, không phải kết luận y khoa. Một thực phẩm có điểm thấp không có nghĩa là bị loại bỏ trong mọi trường hợp, và một thực phẩm có điểm cao cũng không tự động phù hợp với mọi mục tiêu. Điểm số chủ yếu đóng vai trò tham khảo trong quá trình so sánh và lựa chọn thực phẩm.
+Các mức ngưỡng, trọng số cộng–trừ, ngoại lệ theo nhóm và khoảng phân loại được cấu hình trong phạm vi triển khai của NutriTrack nhằm tạo kết quả dễ giải thích. Những tham số này không được lấy trực tiếp từ mô hình NRF9.3. Các mức phân loại này là quy ước nội bộ của hệ thống, không phải kết luận y khoa. Một thực phẩm có điểm thấp không có nghĩa là bị loại bỏ trong mọi trường hợp, và một thực phẩm có điểm cao cũng không tự động phù hợp với mọi mục tiêu. Một điểm nutrient profiling có thể hỗ trợ phân loại và so sánh thực phẩm, nhưng không phản ánh đầy đủ toàn bộ chất lượng của thực phẩm hoặc chế độ ăn, đặc biệt khi mô hình chỉ xem xét một tập hợp giới hạn các chất dinh dưỡng \cite{drewnowski2019}. Điểm số chủ yếu đóng vai trò tham khảo trong quá trình so sánh và lựa chọn thực phẩm.
 
 \textbf{e. Vai trò của Food Scoring trong hệ thống}
 
@@ -4370,6 +4371,21 @@ Nunes, C. L., Casanova, N., Francisco, R., Bosy-Westphal, A., Hopkins, M., Sardi
 Rosenbaum, M., Leibel, R. L. (2010),
 "Adaptive thermogenesis in humans",
 \textit{International Journal of Obesity}, Tập 34, Số Suppl. 1, Trang S47--S55.
+
+\bibitem{drewnowski2005}
+Drewnowski, A. (2005),
+"Concept of a nutritious food: toward a nutrient density score",
+\textit{The American Journal of Clinical Nutrition}, Tập 82, Số 4, Trang 721--732.
+
+\bibitem{drewnowski2009}
+Drewnowski, A. (2009),
+"Defining Nutrient Density: Development and Validation of the Nutrient Rich Foods Index",
+\textit{Journal of the American College of Nutrition}, Tập 28, Số 4 Suppl., Trang 421S--426S.
+
+\bibitem{drewnowski2019}
+Drewnowski, A., Dwyer, J., King, J. C., Weaver, C. M. (2019),
+"A proposed nutrient density score that includes food groups and nutrients to better align with dietary guidance",
+\textit{Nutrition Reviews}, Tập 77, Số 6, Trang 404--416.
 
 \end{thebibliography}
 \end{document}
