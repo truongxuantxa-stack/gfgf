@@ -24,8 +24,8 @@
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Sơ đồ luồng gọi API ở Frontend (Happy Path)}}{65}{figure.caption.34}%
 \contentsline {figure}{\numberline {3.5}{\ignorespaces Sơ đồ luồng xử lý Nutrition Core}}{70}{figure.caption.35}%
 \contentsline {figure}{\numberline {3.6}{\ignorespaces Sơ đồ luồng xử lý Adaptive TDEE}}{75}{figure.caption.37}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng xử lý của module Health Insights}}{83}{figure.caption.38}%
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Sơ đồ luồng xử lý của Meal Planner}}{88}{figure.caption.39}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng xử lý của module Health Insights}}{84}{figure.caption.38}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Sơ đồ luồng xử lý của Meal Planner}}{89}{figure.caption.39}%
 \contentsline {figure}{\numberline {3.9}{\ignorespaces Sơ đồ luồng xử lý của Hybrid Nutrition Scanner}}{93}{figure.caption.41}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {4.1}{\ignorespaces Màn hình Onboarding / Tính TDEE}}{100}{figure.caption.42}%
