@@ -3230,7 +3230,7 @@ Quá trình tính toán này được mô tả tổng quan qua Hình \ref{fig:lu
 
 Nhìn chung, Nutrition Core được triển khai như lớp xử lý nền cho toàn bộ hệ thống dinh dưỡng cá nhân. Phạm vi của nhóm xử lý này được giữ ở mức tính toán chỉ số cơ bản và mục tiêu cá nhân. Các xử lý có tính thích ứng theo thời gian, đánh giá chất lượng món ăn, sinh cảnh báo sức khỏe hoặc lập thực đơn không được đặt trong Nutrition Core, mà được tách sang các module chuyên biệt ở các mục tiếp theo.
 
-\subsection{Adaptive TDEE}Adaptive TDEE là nhóm xử lý được xây dựng để điều chỉnh giá trị TDEE dựa trên dữ liệu thực tế của người dùng theo từng tuần. Trong Nutrition Core, TDEE được tính từ BMR và hệ số vận động. Cách tính này tạo ra giá trị nền ban đầu, tuy nhiên chưa phản ánh đầy đủ sự khác biệt giữa các cá nhân. Mối quan hệ giữa thâm hụt năng lượng và biến động cân nặng không hoàn toàn giống nhau; thành phần cơ thể ban đầu và tỷ lệ khối mỡ, khối không mỡ trong phần trọng lượng thay đổi có thể làm thay đổi năng lượng tương ứng với mỗi kilogram cân nặng giảm \cite{hall2008}. Vì vậy, NutriTrack sử dụng TDEE tĩnh làm mốc khởi điểm và bổ sung cơ chế Adaptive TDEE để hiệu chỉnh dần mức tiêu hao năng lượng ước lượng dựa trên nhật ký ăn uống và dữ liệu cân nặng đã ghi nhận.
+\subsection{Adaptive TDEE}Adaptive TDEE là nhóm xử lý được xây dựng để điều chỉnh giá trị TDEE dựa trên dữ liệu thực tế của người dùng theo từng tuần. Trong Nutrition Core, TDEE được tính từ BMR và hệ số vận động. Cách tính này tạo ra giá trị nền ban đầu, tuy nhiên mô hình cân bằng năng lượng động cho thấy cần tính đến sự thích nghi của mức tiêu hao năng lượng trong quá trình thay đổi cân nặng; do đó, TDEE tĩnh không nhất thiết duy trì sự chính xác trong toàn bộ thời gian theo dõi \cite{hall2011_lancet}. Mối quan hệ giữa thâm hụt năng lượng và biến động cân nặng không hoàn toàn giống nhau; thành phần cơ thể ban đầu và tỷ lệ khối mỡ, khối không mỡ trong phần trọng lượng thay đổi có thể làm thay đổi năng lượng tương ứng với mỗi kilogram cân nặng giảm \cite{chow_hall_2008}. Vì vậy, hệ thống sử dụng TDEE tĩnh làm mốc ban đầu và bổ sung cơ chế Adaptive TDEE để hiệu chỉnh dần mức tiêu hao năng lượng ước lượng dựa trên nhật ký ăn uống và dữ liệu cân nặng.
 
 Trong mã nguồn Backend, Adaptive TDEE được triển khai thành một service riêng. Service này không thay thế Nutrition Core mà hoạt động như lớp điều chỉnh bổ sung. Khi chưa đủ dữ liệu, hệ thống vẫn sử dụng TDEE tĩnh. Khi đã có dữ liệu hợp lệ qua nhiều tuần và người dùng bật chế độ sử dụng Adaptive TDEE, giá trị TDEE áp dụng trong hệ thống có thể được lấy từ User.adaptiveTDEE thay vì chỉ lấy từ công thức tĩnh. Cách thiết kế này giúp hệ thống vẫn hoạt động được với người dùng mới, đồng thời có khả năng điều chỉnh khi dữ liệu thực tế đã đủ.
 
@@ -3287,17 +3287,15 @@ skipped\_by\_user & Người dùng chủ động bỏ qua tuần đó & Không t
 
 \textbf{b. Công thức tính TDEE thích ứng theo tuần}
 
-Phần cốt lõi của Adaptive TDEE là ước lượng mức tiêu hao năng lượng từ năng lượng nạp trung bình và biến động cân nặng. Hệ thống sử dụng hệ số quy đổi xấp xỉ 7.700 kcal/kg, tương ứng với quy tắc thâm hụt tích lũy khoảng 3.500 kcal cho mỗi pound cân nặng giảm \cite{hall2008}. TDEE ước lượng theo tuần được xác định theo công thức:
+Phần cốt lõi của Adaptive TDEE là ước lượng mức tiêu hao năng lượng từ năng lượng nạp trung bình và biến động cân nặng. Mối quan hệ giữa năng lượng nạp, năng lượng tiêu hao và thay đổi cân nặng có tính động. Mất cân bằng năng lượng không chỉ làm thay đổi tổng khối lượng cơ thể mà còn làm thay đổi tỷ lệ khối mỡ, khối không mỡ và các kho dự trữ năng lượng khác \cite{chow_hall_2008}. Vì mật độ năng lượng của phần khối lượng thay đổi phụ thuộc vào thành phần cơ thể và thời gian, một hệ số chuyển đổi cố định không thể mô tả chính xác mọi giai đoạn thay đổi cân nặng \cite{chow_hall_2008}. Trong phạm vi triển khai, NutriTrack sử dụng hệ số 7.700 kcal/kg như một phép xấp xỉ và xác định TDEE tuần theo công thức:
 
 \textbf{TDEE\textsubscript{estimated} = E\textsubscript{in} - $\frac{\Delta W \times 7700}{7}$}
 
-Trong đó, \textbf{E\textsubscript{in}} là năng lượng nạp trung bình theo ngày và \textbf{$\Delta W$} là mức thay đổi cân nặng trong tuần. Khi cân nặng tăng, \textbf{$\Delta W$} mang giá trị dương nên TDEE ước lượng thấp hơn năng lượng nạp; khi cân nặng giảm, \textbf{$\Delta W$} mang giá trị âm nên TDEE ước lượng cao hơn năng lượng nạp.
-
-Tuy nhiên, nghiên cứu của Hall chỉ ra rằng năng lượng thâm hụt trên mỗi đơn vị giảm cân phụ thuộc vào lượng mỡ ban đầu và thành phần của phần trọng lượng thay đổi, do đó 7.700 kcal/kg không phải hằng số chính xác tuyệt đối cho mọi cá nhân \cite{hall2008}. Do hệ số năng lượng trên mỗi kilogram thay đổi theo cơ địa, Adaptive TDEE không được xem là phép đo trực tiếp tổng năng lượng tiêu hao mà chỉ là giá trị suy luận từ nhật ký dinh dưỡng và xu hướng cân nặng \cite{hall2008}.
+Trong đó, \textbf{E\textsubscript{in}} là năng lượng nạp trung bình theo ngày và \textbf{$\Delta W$} là mức thay đổi cân nặng trong tuần. Khi cân nặng tăng, \textbf{$\Delta W$} mang giá trị dương nên TDEE ước lượng thấp hơn năng lượng nạp; khi cân nặng giảm, \textbf{$\Delta W$} mang giá trị âm nên TDEE ước lượng cao hơn năng lượng nạp. Công thức này là phiên bản đơn giản hóa dựa trên nguyên lý cân bằng năng lượng, không phải phương trình đầy đủ của mô hình Hall--Chow.
 
 Ví dụ, nếu năng lượng nạp trung bình là 2500 kcal/ngày và cân nặng tăng 0,5 kg trong tuần, TDEE ước lượng được tính là $2500 - \frac{0,5 \times 7700}{7} = 1950$ kcal/ngày. Nếu năng lượng nạp trung bình là 1800 kcal/ngày và cân nặng giảm 0,5 kg trong tuần, kết quả là $1800 - \frac{-0,5 \times 7700}{7} = 2350$ kcal/ngày. Cùng một lượng calo nạp vào có thể dẫn đến TDEE ước lượng khác nhau tùy theo xu hướng biến động cân nặng.
 
-Để hạn chế tác động của dữ liệu thiếu và các kết quả cực đoan, hệ thống không sử dụng trực tiếp kết quả thô này mà bổ sung các kỹ thuật EMA, trung bình trượt, điều kiện dữ liệu tối thiểu và kiểm soát biên (giới hạn từ 70\% đến 130\% so với TDEE tĩnh). Các tham số cụ thể của cơ chế làm mượt này được lựa chọn dựa trên thiết kế nội bộ của hệ thống, không bắt nguồn trực tiếp từ nghiên cứu của Hall.
+Việc suy ra đại lượng năng lượng từ chuỗi cân nặng đòi hỏi các phép đo thường xuyên trong khoảng thời gian đủ dài; nghiên cứu của Hall và Chow cho thấy trong điều kiện mô phỏng của họ, cần dữ liệu cân hằng ngày trên 28 ngày để đạt khoảng tin cậy 95\% nhỏ hơn 300 kcal/ngày \cite{hall_chow_2011}. Vì vậy, kết quả Adaptive TDEE được xem là giá trị ước lượng sơ bộ. Dữ liệu cân nặng có thể chứa các dao động ngắn hạn không phản ánh đầy đủ thay đổi dài hạn của thành phần cơ thể. Để giải quyết, kết quả tiếp tục được kiểm soát bằng các điều kiện dữ liệu tối thiểu, thuật toán EMA, giới hạn biên và cơ chế làm mượt của hệ thống. Các tham số của cơ chế làm mượt này được lựa chọn dựa trên thiết kế nội bộ, không bắt nguồn trực tiếp từ nghiên cứu gốc.
 
 \textbf{c. Kiểm soát biên và rolling TDEE}
 
@@ -4334,10 +4332,25 @@ Food and Agriculture Organization of the United Nations (2003),
 \textit{Food Energy -- Methods of Analysis and Conversion Factors},
 FAO Food and Nutrition Paper 77, Rome. Truy cập ngày 11/07/2026, từ \url{https://www.fao.org/4/y5022e/y5022e04.htm}
 
+\bibitem{chow_hall_2008}
+Chow, C. C., Hall, K. D. (2008),
+"The Dynamics of Human Body Weight Change",
+\textit{PLoS Computational Biology}, Tập 4, Số 3, e1000045.
+
 \bibitem{hall2008}
 Hall, K. D. (2008),
 "What is the required energy deficit per unit weight loss?",
 \textit{International Journal of Obesity}, Tập 32, Số 3, Trang 573--576. DOI: 10.1038/sj.ijo.0803720.
+
+\bibitem{hall_chow_2011}
+Hall, K. D., Chow, C. C. (2011),
+"Estimating changes in free-living energy intake and its confidence interval",
+\textit{The American Journal of Clinical Nutrition}, Tập 94, Số 1, Trang 66--74.
+
+\bibitem{hall2011_lancet}
+Hall, K. D., Sacks, G., Chandramohan, D., Chow, C. C., Wang, Y. C., Gortmaker, S. L., Swinburn, B. A. (2011),
+"Quantification of the effect of energy imbalance on bodyweight",
+\textit{The Lancet}, Tập 378, Số 9793, Trang 826--837.
 
 \end{thebibliography}
 \end{document}
