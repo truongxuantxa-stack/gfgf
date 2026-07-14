@@ -669,7 +669,7 @@ Backend của hệ thống được xây dựng trên môi trường thực thi 
 Hệ thống sử dụng MySQL làm hệ quản trị cơ sở dữ liệu quan hệ, được truy cập thông qua Sequelize ORM. Sequelize đảm nhiệm vai trò ánh xạ cấu trúc bảng (Model), quản lý các quan hệ (Association), thực hiện truy vấn CRUD và thực thi các kịch bản khởi tạo (Migration, Seeder), giúp tách rời mã SQL trực tiếp khỏi ứng dụng.
 
 \subsection{Các thư viện và dịch vụ hỗ trợ}
-Ngoài các công nghệ cốt lõi, hệ thống tích hợp JSON Web Token (JWT) cho xác thực bảo mật thông qua Access Token và Refresh Token. Hệ thống tích hợp Open Food Facts API để tra cứu thông tin sản phẩm và giá trị dinh dưỡng theo mã vạch \cite{offApiCheatSheet}, đồng thời sử dụng Gemini AI Vision để trích xuất bảng dinh dưỡng từ hình ảnh. Bên cạnh đó, PDFKit được dùng xuất báo cáo và tác vụ nền theo lịch được cấu hình phục vụ thuật toán Adaptive TDEE. Danh sách tổng hợp các công nghệ được trình bày trong Bảng \ref{tab:cong_nghe_su_dung}.
+Ngoài các công nghệ cốt lõi, hệ thống tích hợp JSON Web Token (JWT) cho xác thực bảo mật thông qua Access Token và Refresh Token. Hệ thống tích hợp Open Food Facts API để tra cứu thông tin sản phẩm theo mã vạch \cite{offApiCheatSheet}, đồng thời sử dụng Gemini API với mô hình Gemini 2.5 Flash để xử lý ảnh bảng thông tin dinh dưỡng \cite{googleGemini25Flash}. Bên cạnh đó, PDFKit được dùng xuất báo cáo và tác vụ nền theo lịch được cấu hình phục vụ thuật toán Adaptive TDEE. Danh sách tổng hợp các công nghệ được trình bày trong Bảng \ref{tab:cong_nghe_su_dung}.
 
 \begin{longtable}{|>{\raggedright\arraybackslash}p{5cm}|p{10cm}|}
 \caption{Danh sách công nghệ sử dụng trong hệ thống}
@@ -1010,7 +1010,7 @@ Phân tích nghiệp vụ mô tả các quy trình chính mà hệ thống thự
 \subsection{Nghiệp vụ Hybrid Nutrition Scanner}
 \begin{itemize}
     \item \textbf{Điều kiện bắt đầu:} Người dùng cung cấp mã vạch sản phẩm hoặc hình ảnh bảng thành phần dinh dưỡng.
-    \item \textbf{Xử lý chính:} Đối với mã vạch, hệ thống tra cứu cơ sở dữ liệu nội bộ và tiếp tục gọi Open Food Facts API nếu chưa có dữ liệu \cite{offApiCheatSheet}. Đối với hình ảnh, hệ thống gửi ảnh tới Gemini AI Vision để trích xuất dữ liệu dinh dưỡng. Sau đó, dữ liệu nhận được sẽ được chuẩn hóa.
+    \item \textbf{Xử lý chính:} Đối với mã vạch, hệ thống tra cứu cơ sở dữ liệu nội bộ và tiếp tục gọi Open Food Facts API nếu chưa có dữ liệu \cite{offApiCheatSheet}. Đối với hình ảnh, hệ thống gửi ảnh tới Gemini API và sử dụng mô hình Gemini 2.5 Flash để trích xuất các trường dữ liệu dinh dưỡng \cite{googleGemini25Flash}. Sau đó, dữ liệu nhận được sẽ được chuẩn hóa.
     \item \textbf{Kết quả:} Trả về thông tin dinh dưỡng của sản phẩm phục vụ ghi nhật ký hoặc đóng góp.
     \item \textbf{Ngoại lệ:} Dịch vụ bên ngoài không phản hồi hoặc không nhận diện được dữ liệu, hệ thống hiển thị thông báo lỗi và yêu cầu nhập thủ công.
 \end{itemize}
@@ -2977,11 +2977,13 @@ AI Vision Fallback & Ảnh nhãn dinh dưỡng & Không tìm thấy bằng mã v
 
 \textbf{b. Xử lý ảnh bằng AI Vision}
 
-Trong trường hợp mã vạch không tìm thấy sản phẩm, người dùng có thể chụp ảnh bảng thông tin dinh dưỡng. Ảnh được gửi lên Backend dưới dạng dữ liệu base64. Ở tầng ứng dụng, Express được cấu hình giới hạn kích thước JSON lớn hơn thông thường để có thể nhận ảnh từ chức năng AI Vision. Sau khi nhận ảnh, controller gọi service Gemini Vision để trích xuất dữ liệu dinh dưỡng từ ảnh.
+Trong trường hợp mã vạch không tìm thấy sản phẩm, người dùng có thể chụp hoặc lựa chọn ảnh bảng thông tin dinh dưỡng. Frontend nén ảnh, tách phần dữ liệu base64 khỏi Data URL và gửi dữ liệu ảnh cùng MIME type tới Backend. Tại Backend, service Gemini Vision tạo một phần dữ liệu ảnh bằng thuộc tính \texttt{inlineData}, trong đó \texttt{data} chứa chuỗi base64 và \texttt{mimeType} mô tả định dạng ảnh. Cấu trúc này phù hợp với cơ chế gửi dữ liệu ảnh trực tiếp của phương thức \texttt{generateContent} trong Gemini API \cite{googleGeminiGenerateContent}.
 
-Kết quả AI Vision thường gồm tên sản phẩm nếu đọc được, năng lượng, protein, carbohydrate, chất béo, chất xơ, đường, natri và một số vi chất nếu có. Dữ liệu này cần được chuẩn hóa về cùng dạng trường mà hệ thống sử dụng. Ví dụ, đơn vị có thể được xác định là 100g hoặc 100ml tùy theo nhãn sản phẩm. Việc chuẩn hóa giúp dữ liệu từ AI có thể dùng chung với dữ liệu từ mã vạch và cơ sở dữ liệu thực phẩm.
+Service lựa chọn mô hình \texttt{gemini-2.5-flash}, là mô hình hỗ trợ đầu vào hình ảnh \cite{googleGemini25Flash}, sau đó gọi \texttt{generateContent} với hai thành phần gồm prompt văn bản và dữ liệu ảnh. Prompt yêu cầu mô hình đọc bảng thông tin dinh dưỡng, ưu tiên dữ liệu trên 100 g hoặc 100 ml và trả về JSON thuần gồm tên sản phẩm, khẩu phần, đơn vị, năng lượng, protein, carbohydrate, chất béo, chất xơ, đường, natri và một số vi chất nếu nhận diện được.
 
-Một điểm quan trọng là Backend không mặc định xem dữ liệu AI là chính xác tuyệt đối. Ảnh có thể bị mờ, thiếu sáng, lệch góc hoặc bảng dinh dưỡng có cách trình bày khác nhau. Vì vậy, sau khi AI Vision trả về kết quả, Frontend hiển thị biểu mẫu để người dùng kiểm tra và xác nhận lại các chỉ số đã trích xuất. Chỉ khi người dùng xác nhận, dữ liệu mới được gửi đến API đóng góp để Backend kiểm tra và lưu vào cơ sở dữ liệu. Cách xử lý này tạo thêm một lớp kiểm soát giữa kết quả AI và dữ liệu được lưu chính thức.
+Phản hồi của mô hình được Backend đọc dưới dạng văn bản. Hệ thống loại bỏ dấu bao code block nếu xuất hiện, thực hiện phân tích cú pháp bằng \texttt{JSON.parse} và kiểm tra các trường bắt buộc gồm năng lượng, protein, carbohydrate và chất béo. Các trường không đọc được có thể nhận giá trị rỗng; hệ thống không tự tạo số liệu thay thế. Kết quả hợp lệ sau đó được ánh xạ về cấu trúc dữ liệu chung của NutriTrack.
+
+Do kết quả phụ thuộc vào chất lượng ảnh và cách trình bày của nhãn, Frontend hiển thị biểu mẫu để người dùng kiểm tra và hiệu chỉnh các chỉ số đã trích xuất. Dữ liệu chỉ được gửi tới API đóng góp sau khi người dùng xác nhận, sau đó tiếp tục trải qua bước Physics Validation trước khi lưu.
 
 \textbf{c. Physics Validation và kiểm tra tính hợp lý}
 
@@ -3555,6 +3557,16 @@ truy cập ngày 14/07/2026.
 \bibitem{offApiCheatSheet}
 Open Food Facts, ``Reference: API CheatSheet'',
 \textit{\url{https://openfoodfacts.github.io/openfoodfacts-server/api/ref-cheatsheet/}},
+truy cập ngày 14/07/2026.
+
+\bibitem{googleGeminiGenerateContent}
+Google AI for Developers, ``Generating content'',
+\textit{\url{https://ai.google.dev/api/generate-content}},
+truy cập ngày 14/07/2026.
+
+\bibitem{googleGemini25Flash}
+Google AI for Developers, ``Gemini 2.5 Flash'',
+\textit{\url{https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash}},
 truy cập ngày 14/07/2026.
 
 \end{thebibliography}
