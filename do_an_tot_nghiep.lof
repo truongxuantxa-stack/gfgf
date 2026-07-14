@@ -16,12 +16,12 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Sơ đồ kiến trúc phân lớp Backend của NutriTrack}}{29}{figure.caption.29}%
 \contentsline {figure}{\numberline {3.2}{\ignorespaces Sơ đồ luồng xử lý một request có xác thực. \textit {(Ghi chú: Bước kiểm tra Token ở Middleware bao gồm giải mã JWT và kiểm tra tính hợp lệ của User trong cơ sở dữ liệu).}}}{31}{figure.caption.30}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Sơ đồ tổng quan kiến trúc Frontend của NutriTrack}}{34}{figure.caption.31}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Sơ đồ luồng gọi API ở Frontend (Happy Path)}}{37}{figure.caption.32}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Sơ đồ tổng quan kiến trúc Frontend của NutriTrack}}{35}{figure.caption.31}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Sơ đồ luồng gọi API ở Frontend (Happy Path)}}{38}{figure.caption.32}%
 \contentsline {figure}{\numberline {3.5}{\ignorespaces Sơ đồ luồng xử lý Nutrition Core}}{42}{figure.caption.33}%
 \contentsline {figure}{\numberline {3.6}{\ignorespaces Sơ đồ luồng xử lý Adaptive TDEE}}{47}{figure.caption.35}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng xử lý của module Health Insights}}{56}{figure.caption.36}%
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Sơ đồ luồng xử lý của Meal Planner}}{61}{figure.caption.37}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng xử lý của module Health Insights}}{57}{figure.caption.36}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Sơ đồ luồng xử lý của Meal Planner}}{62}{figure.caption.37}%
 \contentsline {figure}{\numberline {3.9}{\ignorespaces Sơ đồ luồng xử lý của Hybrid Nutrition Scanner}}{67}{figure.caption.39}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {4.1}{\ignorespaces Màn hình Onboarding / Tính TDEE}}{74}{figure.caption.40}%
