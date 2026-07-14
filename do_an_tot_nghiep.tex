@@ -2665,6 +2665,10 @@ Giới tính & Hồ sơ người dùng & Chọn một số ngưỡng tham chiế
 
 AHA khuyến nghị giới hạn added sugars ở khoảng 100 kcal mỗi ngày đối với phần lớn phụ nữ và 150 kcal đối với nam giới, tương ứng xấp xỉ 25 g và 36 g đường bổ sung \cite{aha_addedsugars}. Đối với natri, AHA khuyến nghị không vượt quá 2.300 mg mỗi ngày, đồng thời xác định 1.500 mg là mục tiêu tối ưu cho phần lớn người trưởng thành \cite{aha_sodium}. NutriTrack sử dụng các mức này làm ngưỡng tham chiếu trong Health Insights. Tuy nhiên, dữ liệu đường hiện được tổng hợp từ trường total sugar nên chưa thể phản ánh chính xác added sugar; vì vậy, cảnh báo đường chỉ mang tính tham khảo và không được xem là đánh giá chính xác mức đường bổ sung đã tiêu thụ.
 
+Đối với vitamin và khoáng chất, hệ thống sử dụng một bộ giá trị tham chiếu rút gọn để phục vụ hiển thị tiến độ và tạo Health Insights. Dietary Reference Intakes gồm nhiều loại giá trị tham chiếu và thay đổi theo tuổi, giới tính cũng như giai đoạn sinh lý \cite{nihNutrientRecommendations}. Trong phạm vi người trưởng thành thông thường, NutriTrack cấu hình mục tiêu vitamin A là 900~µg RAE/ngày đối với nam và 700~µg RAE/ngày đối với nữ, phù hợp với mức RDA do NIH Office of Dietary Supplements công bố \cite{nihVitaminA}. Mục tiêu vitamin C tương ứng là 90~mg/ngày đối với nam và 75~mg/ngày đối với nữ \cite{nihVitaminC}. Các giá trị này được sử dụng như ngưỡng tham chiếu của hệ thống, không đại diện cho khuyến nghị cá nhân hóa đối với mọi nhóm tuổi hoặc các trường hợp mang thai, cho con bú và tình trạng sức khỏe đặc biệt.
+
+Đối với giao diện hiện tại, mục tiêu canxi được cấu hình ở mức 1.000~mg/ngày, trong khi mục tiêu sắt là 8~mg/ngày đối với nam và 18~mg/ngày đối với nữ. Đây là các tham số tham chiếu của phiên bản hiện tại và được sử dụng thống nhất giữa thẻ vi chất và Health Insights.
+
 Nếu người dùng chưa ghi nhận món ăn và cũng chưa ghi nhận nước uống, hệ thống trả về danh sách insight rỗng. Cách xử lý này giúp giao diện không hiển thị nhận xét khi dữ liệu chưa có cơ sở.
 
 \textbf{b. Cơ chế Triage theo mức đạt calo}
@@ -3548,6 +3552,24 @@ Mela, D. J., Woolner, E. M. (2018),
 WHO (2015),
 \textit{Guideline: Sugars intake for adults and children},
 World Health Organization, Geneva.
+
+\bibitem{nihNutrientRecommendations}
+NIH Office of Dietary Supplements,
+``Nutrient Recommendations and Databases'',
+\textit{\url{https://ods.od.nih.gov/HealthInformation/nutrientrecommendations.aspx}},
+truy cập ngày 14/07/2026.
+
+\bibitem{nihVitaminA}
+NIH Office of Dietary Supplements,
+``Vitamin A and Carotenoids -- Health Professional Fact Sheet'',
+\textit{\url{https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/}},
+truy cập ngày 14/07/2026.
+
+\bibitem{nihVitaminC}
+NIH Office of Dietary Supplements,
+``Vitamin C -- Health Professional Fact Sheet'',
+\textit{\url{https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/}},
+truy cập ngày 14/07/2026.
 
 \bibitem{offNutritionData}
 Open Food Facts, ``Explain nutrition data'',
