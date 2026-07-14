@@ -1,0 +1,901 @@
+\chapter{PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG}
+Chương này trình bày quá trình phân tích yêu cầu và thiết kế hệ thống quản lý dinh dưỡng cá nhân. Nội dung chương bao gồm phân tích yêu cầu chức năng, yêu cầu phi chức năng, mô tả nghiệp vụ, thiết kế chức năng, thiết kế cơ sở dữ liệu, thiết kế API và thiết kế giao diện. Đây là cơ sở để triển khai hệ thống trong Chương 3.
+
+\section{Phân tích yêu cầu}
+Phân tích yêu cầu là bước xác định các chức năng và ràng buộc mà hệ thống cần đáp ứng trước khi tiến hành thiết kế chi tiết. Đối với hệ thống quản lý dinh dưỡng cá nhân, hệ thống kết hợp giữa việc quản lý dữ liệu cá nhân, ghi nhận nhật ký hằng ngày và phân tích dinh dưỡng chuyên sâu.
+
+\subsection{Yêu cầu và ràng buộc thiết kế chính}
+Các yêu cầu hệ thống bao gồm yêu cầu chức năng và yêu cầu phi chức năng. Việc tổng hợp các yêu cầu này giúp xác định những ràng buộc ảnh hưởng trực tiếp đến quá trình thiết kế cơ sở dữ liệu, API và giao diện, được tổng hợp trong Bảng \ref{tab:yeu_cau_thiet_ke}.
+
+\begin{table}[htbp]
+\centering
+\caption{Yêu cầu và ràng buộc thiết kế chính}
+\label{tab:yeu_cau_thiet_ke}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{10.5cm}|}
+\hline
+\textbf{Nhóm yêu cầu} & \textbf{Tác động tới thiết kế hệ thống} \\
+\hline
+Quản lý dữ liệu cá nhân & Yêu cầu cơ chế xác thực an toàn bằng JWT và phân quyền truy cập theo từng người dùng thông qua userId. \\
+\hline
+Dữ liệu theo thời gian & Đòi hỏi cấu trúc cơ sở dữ liệu lưu lại ảnh chụp snapshot giá trị dinh dưỡng để bảo toàn lịch sử ăn uống. \\
+\hline
+Nhiều module nghiệp vụ & Cần kiến trúc phân lớp (Router, Middleware, Controller, Service) để đảm bảo khả năng mở rộng. \\
+\hline
+Ứng dụng Frontend SPA & Đòi hỏi điều hướng và kiểm soát AuthOnlyRoute, ProtectedRoute trực tiếp trên giao diện React. \\
+\hline
+Tích hợp dịch vụ ngoài & Cần cơ chế xử lý lỗi, chuẩn hóa dữ liệu và fallback khi gọi Open Food Facts hoặc AI Vision. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Tổng kết yêu cầu}
+Kết quả phân tích yêu cầu đã làm rõ những chức năng trọng tâm mà hệ thống cần cung cấp cùng với các ràng buộc về tính nhất quán dữ liệu, bảo mật và khả năng mở rộng. Những yêu cầu này đặt ra cơ sở cho việc thiết kế các luồng nghiệp vụ phức tạp như Scanner, Meal Planner hay Adaptive TDEE. Từ đó, toàn bộ kiến trúc nghiệp vụ, Use Case, cơ sở dữ liệu, API và giao diện sẽ được xây dựng chặt chẽ theo các định hướng đã được xác định.
+
+\section{Phân tích nghiệp vụ}
+Phân tích nghiệp vụ mô tả các quy trình chính mà hệ thống thực hiện để đáp ứng yêu cầu người dùng.
+
+\subsection{Nghiệp vụ đăng nhập và khởi tạo hồ sơ}
+\begin{itemize}
+    \item \textbf{Điều kiện bắt đầu:} Người dùng cung cấp email và mật khẩu.
+    \item \textbf{Xử lý chính:} Backend xác thực thông tin, cấp Access Token và thiết lập Refresh Token dưới dạng HttpOnly Cookie. Sau đó hệ thống kiểm tra trạng thái khởi tạo hồ sơ của người dùng.
+    \item \textbf{Kết quả:} Người dùng chưa hoàn tất hồ sơ được chuyển tới giao diện Onboarding; người dùng đã có hồ sơ được chuyển vào Dashboard.
+    \item \textbf{Ngoại lệ:} Email hoặc mật khẩu không hợp lệ, trả về lỗi xác thực để người dùng nhập lại.
+\end{itemize}
+
+\subsection{Nghiệp vụ ghi nhật ký ăn uống}
+\begin{itemize}
+    \item \textbf{Điều kiện bắt đầu:} Người dùng lựa chọn thực phẩm từ cơ sở dữ liệu, nhập khẩu phần và chọn bữa ăn tương ứng.
+    \item \textbf{Xử lý chính:} Hệ thống tính toán lượng dinh dưỡng thực tế dựa trên khẩu phần. Lưu bản ghi nhật ký kèm theo giá trị dinh dưỡng tại thời điểm nhập (snapshot) nhằm tránh sai lệch khi dữ liệu thực phẩm gốc bị thay đổi sau này.
+    \item \textbf{Kết quả:} Cập nhật nhật ký ăn uống và tổng năng lượng, các chất đa lượng trong ngày.
+    \item \textbf{Ngoại lệ:} Thiếu foodId hoặc dữ liệu thực phẩm bị xóa, hệ thống báo lỗi không thể thêm vào nhật ký.
+\end{itemize}
+
+\subsection{Nghiệp vụ Hybrid Nutrition Scanner}
+\begin{itemize}
+    \item \textbf{Điều kiện bắt đầu:} Người dùng cung cấp mã vạch sản phẩm hoặc hình ảnh bảng thành phần dinh dưỡng.
+    \item \textbf{Xử lý chính:} Đối với mã vạch, hệ thống tra cứu cơ sở dữ liệu nội bộ và tiếp tục gọi Open Food Facts API nếu chưa có dữ liệu. Đối với hình ảnh, hệ thống gửi ảnh tới Gemini AI Vision để trích xuất dữ liệu dinh dưỡng. Sau đó, dữ liệu nhận được sẽ được chuẩn hóa.
+    \item \textbf{Kết quả:} Trả về thông tin dinh dưỡng của sản phẩm phục vụ ghi nhật ký hoặc đóng góp.
+    \item \textbf{Ngoại lệ:} Dịch vụ bên ngoài không phản hồi hoặc không nhận diện được dữ liệu, hệ thống hiển thị thông báo lỗi và yêu cầu nhập thủ công.
+\end{itemize}
+
+\subsection{Nghiệp vụ xây dựng thực đơn}
+\begin{itemize}
+    \item \textbf{Điều kiện bắt đầu:} Người dùng thiết lập bữa ăn, khuôn mẫu thực đơn và các tùy chọn cá nhân hóa.
+    \item \textbf{Xử lý chính:} Thuật toán Meal Planner tiếp nhận mục tiêu, lọc danh sách thực phẩm phù hợp, tính toán tỷ lệ phân bổ và xác định định lượng nhằm tối ưu hóa sai số dinh dưỡng.
+    \item \textbf{Kết quả:} Trả về một gợi ý thực đơn gồm danh sách thực phẩm và khối lượng cụ thể.
+    \item \textbf{Ngoại lệ:} Không thể tìm được tổ hợp thực phẩm thỏa mãn giới hạn sai số khắt khe, Backend báo lỗi không có nghiệm khả thi.
+\end{itemize}
+
+\subsection{Tổng kết nghiệp vụ}
+Các nghiệp vụ của hệ thống được tổ chức xoay quanh hồ sơ sức khỏe và luồng dữ liệu dinh dưỡng phát sinh. Bốn nghiệp vụ trọng tâm trên đã bao quát toàn bộ quá trình tương tác từ khởi tạo tài khoản, nhập liệu hằng ngày đến sử dụng các tính năng nâng cao. Việc phân tích rõ điều kiện, xử lý chính và ngoại lệ giúp định hướng trực tiếp cho thiết kế Use Case cũng như xây dựng mô hình dữ liệu bền vững ở các phần tiếp theo.
+
+\section{Thiết kế chức năng}
+Dựa trên kết quả phân tích nghiệp vụ, hệ thống được thiết kế với một tác nhân nghiệp vụ chính là người dùng cuối và các hệ thống phụ trợ. 
+
+\subsection{Tác nhân và hệ thống liên quan}
+Tác nhân chính của hệ thống là \textbf{Người dùng} cá nhân. Các hệ thống bên ngoài tham gia hỗ trợ được tổng hợp trong Bảng \ref{tab:tac_nhan}.
+
+\begin{table}[htbp]
+\centering
+\caption{Tác nhân và hệ thống liên quan}
+\label{tab:tac_nhan}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|p{7cm}|}
+\hline
+\textbf{Thành phần} & \textbf{Loại} & \textbf{Vai trò} \\
+\hline
+Người dùng & Tác nhân chính & Sử dụng các chức năng quản lý dinh dưỡng cá nhân \\
+\hline
+Open Food Facts API & Hệ thống bên ngoài & Cung cấp dữ liệu sản phẩm theo mã vạch \\
+\hline
+Gemini AI Vision & Hệ thống bên ngoài & Nhận dạng bảng thành phần dinh dưỡng từ hình ảnh \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Biểu đồ Use Case tổng thể}
+Biểu đồ Use Case tổng thể thể hiện các chức năng chính mà người dùng có thể thực hiện trong hệ thống, bao gồm xác thực người dùng, quản lý hồ sơ, ghi nhận dữ liệu hằng ngày và theo dõi chỉ số. Hình \ref{fig:usecase_tong_the} trình bày biểu đồ Use Case tổng thể của hệ thống.
+\begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        usecase/.style={rectangle, rounded corners=12pt, draw=black, thick, minimum width=3.4cm, minimum height=0.8cm, align=center, fill=blue!5, font=\small},
+        actor/.style={align=center, font=\bfseries},
+        sysbox/.style={rectangle, draw=black, thick, rounded corners=10pt, inner sep=20pt},
+        arrow/.style={-, thick},
+        include/.style={-Latex, dashed, font=\scriptsize},
+        extend/.style={-Latex, dashed, font=\scriptsize}
+    ]
+        
+        \tikzset{
+            stick figure/.pic={
+                \draw[thick] (0, 0.4) circle (0.15);
+                \draw[thick] (0, 0.25) -- (0, -0.25);
+                \draw[thick] (0, 0.1) -- (-0.3, -0.1);
+                \draw[thick] (0, 0.1) -- (0.3, -0.1);
+                \draw[thick] (0, -0.25) -- (-0.25, -0.6);
+                \draw[thick] (0, -0.25) -- (0.25, -0.6);
+            }
+        }
+
+        % --- CỘT 1 ---
+        \node[usecase] (uc_register) at (-5.5, 0) {Đăng ký tài khoản};
+        \node[usecase] (uc_profile) at (-5.5, -1.5) {Khởi tạo / cập nhật\\hồ sơ sức khỏe};
+        \node[usecase] (uc_log_water) at (-5.5, -3.0) {Ghi nhận nước uống};
+        \node[usecase] (uc_exercise) at (-5.5, -4.5) {Ghi nhận luyện tập};
+        \node[usecase] (uc_dashboard) at (-5.5, -6.0) {Xem Dashboard};
+        \node[usecase] (uc_report) at (-5.5, -9.0) {Xuất báo cáo PDF};
+        \node[usecase] (uc_meal) at (-5.5, -11.5) {Xây dựng thực đơn};
+
+        % --- CỘT 2 ---
+        \node[usecase] (uc_logout) at (0, 1.0) {Đăng xuất};
+        \node[usecase] (uc_login) at (0, -0.75) {Đăng nhập};
+        \node[usecase] (uc_log_food) at (0, -2.5) {Ghi nhật ký ăn uống};
+        \node[usecase] (uc_weight) at (0, -4.0) {Theo dõi cân nặng};
+        \node[usecase] (uc_aggregate) at (0, -7.5) {Tính toán / tổng hợp\\dinh dưỡng};
+        \node[usecase] (uc_scanner) at (0, -10.25) {Sử dụng Hybrid\\Nutrition Scanner};
+
+        % --- CỘT 3 ---
+        \node[usecase] (uc_search) at (5.5, -2.5) {Tìm kiếm / bổ sung\\thực phẩm};
+        \node[usecase] (uc_analysis) at (5.5, -6.0) {Xem phân tích\\dinh dưỡng};
+        \node[usecase] (uc_barcode) at (5.5, -9.25) {Quét mã vạch};
+        \node[usecase] (uc_ocr) at (5.5, -11.25) {Nhận dạng bảng\\dinh dưỡng};
+
+        % --- SYSTEM BOUNDARY ---
+        \node[sysbox, fit=(uc_logout) (uc_meal) (uc_register) (uc_search) (uc_ocr) (uc_barcode) (uc_scanner), label={[font=\bfseries, yshift=8pt]north:HỆ THỐNG QUẢN LÝ DINH DƯỠNG CÁ NHÂN HÓA}] (system) {};
+        
+        \node[anchor=south west, font=\itshape\scriptsize] at ([yshift=5pt, xshift=5pt]system.south west) {* Ghi chú: Các chức năng nghiệp vụ yêu cầu người dùng đã đăng nhập; riêng đăng ký và đăng nhập là chức năng công khai.};
+
+        % --- ACTORS ---
+        \node[actor] (user) at (-9.5, -5.0) {Người dùng};
+        \pic at ([yshift=0.8cm]user.center) {stick figure};
+
+        \node[actor, draw=black, thick, fill=gray!10, minimum width=2.2cm, minimum height=0.8cm, align=center, rounded corners=5pt] (openfood) at (10.5, -9.25) {<<system>>\\Open Food Facts\\API};
+        \node[actor, draw=black, thick, fill=gray!10, minimum width=2.2cm, minimum height=0.8cm, align=center, rounded corners=5pt] (gemini) at (10.5, -11.25) {<<system>>\\Gemini AI\\Vision};
+
+        % --- INCLUDE ARROWS ---
+        \draw[include] (uc_log_food) -- node[above, font=\scriptsize] {<<include>>} (uc_search);
+        \draw[include] (uc_dashboard) -- node[above, font=\scriptsize] {<<include>>} (uc_analysis);
+        
+        \draw[include] (uc_dashboard) -- node[above, sloped, font=\scriptsize, pos=0.35] {<<include>>} (uc_aggregate);
+        \draw[include] (uc_analysis) -- node[above, sloped, font=\scriptsize, pos=0.35] {<<include>>} (uc_aggregate);
+        \draw[include] (uc_report) -- node[above, sloped, font=\scriptsize, pos=0.35] {<<include>>} (uc_aggregate);
+        
+        % --- EXTEND ARROWS ---
+        \draw[extend] (uc_barcode) -- node[above, sloped, font=\scriptsize, pos=0.4] {<<extend>>} (uc_scanner);
+        \draw[extend] (uc_ocr) -- node[above, sloped, font=\scriptsize, pos=0.4] {<<extend>>} (uc_scanner);
+
+        % --- EXTERNAL ARROWS ---
+        \draw[-, thick] (openfood.west) -- (uc_barcode.east);
+        \draw[-, thick] (gemini.west) -- (uc_ocr.east);
+
+        % --- USER CONNECTIONS ---
+        \draw[-, thick] (user.east) -- (-8.0, -5.0);
+        \draw[-, thick] (-8.0, 1.0) -- (-8.0, -11.5);
+
+        % Nối vào Cột 1
+        \foreach \y in {0, -1.5, -3.0, -4.5, -6.0, -9.0, -11.5} {
+            \draw[-, thick] (-8.0, \y) -- (-7.2, \y);
+        }
+        % Nối vào Cột 2
+        \foreach \y in {1.0, -0.75, -2.5, -4.0, -10.25} {
+            \draw[-, thick] (-8.0, \y) -- (-1.7, \y);
+        }
+
+    \end{tikzpicture}
+    }
+    \caption{Biểu đồ Use Case tổng thể của hệ thống}
+    \label{fig:usecase_tong_the}
+\end{figure}
+
+\subsection{Danh sách Use Case chính}
+Bảng \ref{tab:danh_sach_usecase} tổng hợp các Use Case trọng tâm của hệ thống.
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{5cm}|>{\raggedright\arraybackslash}p{7cm}|}
+\caption{Danh sách Use Case chính}
+\label{tab:danh_sach_usecase} \\
+\hline
+\textbf{Mã Use Case} & \textbf{Tên Use Case} & \textbf{Kết quả chính} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Mã Use Case} & \textbf{Tên Use Case} & \textbf{Kết quả chính} \\
+\hline
+\endhead
+
+UC01 & Đăng ký tài khoản & Tài khoản được tạo thành công \\
+\hline
+UC02 & Đăng nhập & Xác thực thành công và nhận Access Token \\
+\hline
+UC03 & Khởi tạo / cập nhật hồ sơ & Thông tin sức khỏe được lưu trữ để tính toán dinh dưỡng \\
+\hline
+UC04 & Ghi nhật ký ăn uống & Bản ghi nhật ký được lưu cùng dữ liệu snapshot \\
+\hline
+UC05 & Ghi nhận nước uống & Lượng nước uống được cập nhật \\
+\hline
+UC06 & Tìm kiếm thực phẩm & Dữ liệu thực phẩm được truy xuất \\
+\hline
+UC07 & Theo dõi cân nặng & Cân nặng được cập nhật \\
+\hline
+UC08 & Ghi nhận luyện tập & Hoạt động tiêu hao năng lượng được lưu \\
+\hline
+UC09 & Xem Dashboard & Các chỉ số tổng hợp được hiển thị \\
+\hline
+UC10 & Xây dựng thực đơn & Thực đơn gợi ý được thiết lập \\
+\hline
+UC11 & Quét mã vạch sản phẩm & Thông tin sản phẩm được trả về \\
+\hline
+UC12 & Nhận dạng bảng dinh dưỡng & Dữ liệu dinh dưỡng được trích xuất từ ảnh \\
+\hline
+UC13 & Xuất báo cáo PDF & File báo cáo được tạo thành công \\
+\hline
+\end{longtable}
+
+\subsection{Mô tả một số Use Case tiêu biểu}
+Dưới đây là đặc tả rút gọn của hai Use Case đặc trưng liên quan đến ghi nhận dữ liệu hằng ngày và tính năng thông minh.
+
+\textbf{a. Use Case ghi nhật ký ăn uống}
+
+Use Case này cho phép thêm thực phẩm vào nhật ký theo từng bữa. Điểm cốt lõi là hệ thống phải lưu snapshot dữ liệu dinh dưỡng tại thời điểm nhập (xem Bảng \ref{tab:uc_ghi_nhat_ky}).
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{4cm}|p{11cm}|}
+\caption{Đặc tả rút gọn Use Case ghi nhật ký ăn uống}
+\label{tab:uc_ghi_nhat_ky} \\
+\hline
+\textbf{Thành phần} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Thành phần} & \textbf{Nội dung} \\
+\hline
+\endhead
+
+Tác nhân & Người dùng \\
+\hline
+Tiền điều kiện & Người dùng đã đăng nhập và tìm được thực phẩm \\
+\hline
+Luồng chính & 1. Chọn thực phẩm \newline 2. Nhập khẩu phần, chọn bữa ăn \newline 3. Chọn Thêm vào nhật ký \newline 4. Hệ thống tính toán lượng dinh dưỡng thực tế \newline 5. Lưu bản ghi kèm snapshot dinh dưỡng \\
+\hline
+Ngoại lệ & Không tìm thấy thực phẩm, hệ thống yêu cầu tìm lại hoặc dùng Scanner. \\
+\hline
+Hậu điều kiện & Nhật ký ăn uống được cập nhật. \\
+\hline
+\end{longtable}
+
+\textbf{b. Use Case sử dụng Hybrid Nutrition Scanner}
+
+Use Case này hỗ trợ nhập dữ liệu thực phẩm đóng gói tự động thông qua Open Food Facts API hoặc Gemini AI Vision (xem Bảng \ref{tab:uc_scanner}).
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{4cm}|p{11cm}|}
+\caption{Đặc tả rút gọn Use Case sử dụng Hybrid Nutrition Scanner}
+\label{tab:uc_scanner} \\
+\hline
+\textbf{Thành phần} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Thành phần} & \textbf{Nội dung} \\
+\hline
+\endhead
+
+Tác nhân & Người dùng \\
+\hline
+Tiền điều kiện & Người dùng đã đăng nhập \\
+\hline
+Luồng chính & 1. Gửi mã vạch hoặc hình ảnh \newline 2. Hệ thống gọi Open Food Facts (nếu quét mã vạch) hoặc gửi ảnh tới Gemini AI Vision \newline 3. Dịch vụ xử lý và trả kết quả \newline 4. Hệ thống chuẩn hóa kết quả \newline 5. Trả dữ liệu hiển thị cho người dùng \\
+\hline
+Ngoại lệ & Không nhận diện được dữ liệu, hệ thống thông báo lỗi. \\
+\hline
+Hậu điều kiện & Dữ liệu sản phẩm được trả về. \\
+\hline
+\end{longtable}
+
+\subsection{Quan hệ giữa các Use Case}
+Theo định nghĩa trong mô hình, quan hệ <<include>> được sử dụng khi một Use Case bắt buộc gọi đến Use Case khác (ví dụ: \textit{Ghi nhật ký ăn uống} bắt buộc phải \textit{Tìm kiếm thực phẩm}). Quan hệ <<extend>> xảy ra khi một Use Case mở rộng một chức năng hiện tại tùy thuộc vào điều kiện (ví dụ: \textit{Quét mã vạch} hoặc \textit{Nhận dạng ảnh} mở rộng \textit{Sử dụng Scanner}).
+
+\subsection{Tổng kết thiết kế chức năng}
+Thiết kế chức năng với các Use Case đã xác định rõ vai trò của tác nhân Người dùng cũng như các dịch vụ bên ngoài (Open Food Facts API, Gemini AI Vision). Việc loại bỏ các tác nhân phụ không có trong hệ thống thực tế và chuẩn hóa lại luồng sự kiện sẽ là căn cứ quan trọng để thiết kế các bảng dữ liệu, phân quyền truy cập và tổ chức giao diện tương ứng.
+
+\section{Thiết kế cơ sở dữ liệu}
+Cơ sở dữ liệu của hệ thống được thiết kế theo mô hình quan hệ nhằm lưu trữ dữ liệu có cấu trúc và duy trì tính toàn vẹn.
+
+\subsection{Tổng quan thiết kế dữ liệu}
+Thiết kế dữ liệu sử dụng MySQL làm hệ quản trị cơ sở dữ liệu chính, ánh xạ với các Model trong Sequelize ORM. Tính toàn vẹn dữ liệu được đảm bảo thông qua việc mọi dữ liệu phát sinh (như nhật ký, cân nặng) đều được liên kết chặt chẽ qua khóa ngoại \texttt{userId}. Để bảo toàn lịch sử theo dõi, hệ thống không cập nhật đè mà lưu bản ghi theo thời gian thực (ví dụ như snapshot thành phần dinh dưỡng trong nhật ký ăn uống). Đồng thời, việc hỗ trợ truy vấn nhanh được hiện thực bằng các chỉ mục phù hợp tại các trường lọc chính.
+
+\subsection{Các nhóm bảng dữ liệu chính}
+Dữ liệu được tổ chức thành các nhóm bảng nhằm hỗ trợ tách biệt nghiệp vụ. Các nhóm này được thể hiện rõ trong Bảng \ref{tab:nhom_bang_du_lieu}.
+
+\begin{table}[htbp]
+\centering
+\caption{Phân nhóm các bảng dữ liệu chính}
+\label{tab:nhom_bang_du_lieu}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{10cm}|}
+\hline
+\textbf{Nhóm dữ liệu} & \textbf{Danh sách bảng tiêu biểu} \\
+\hline
+Người dùng \& hồ sơ & \texttt{User}, \texttt{UserProfile} \\
+\hline
+Thực phẩm \& nhật ký & \texttt{Food}, \texttt{DiaryEntry} \\
+\hline
+Theo dõi hằng ngày & \texttt{WeightLog}, \texttt{WaterLog}, \texttt{ExerciseLog} \\
+\hline
+Meal Planner & \texttt{UserMealConfig}, \texttt{MealTemplate}, \texttt{MealRecommendation} \\
+\hline
+Scanner \& đóng góp & \texttt{ScannedProduct}, \texttt{ProductContribution} \\
+\hline
+Adaptive TDEE & \texttt{AdaptiveTDEELog} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Sơ đồ ERD rút gọn}
+Sơ đồ mô hình thực thể liên kết (ERD) mô tả quan hệ tĩnh giữa các bảng. Dưới đây là sơ đồ rút gọn tập trung vào các nhóm bảng vừa được đề cập.
+
+\begin{figure}[htbp]
+    \centering
+    \resizebox{0.95\textwidth}{!}{
+    \begin{tikzpicture}[
+        table/.style={
+            rectangle, draw=black, thick, fill=blue!5, 
+            rounded corners=4pt, minimum width=3.2cm, minimum height=0.8cm, 
+            align=center, font=\sffamily\bfseries\small
+        },
+        rel/.style={thick, -},
+        dashed_rel/.style={thick, dashed, -Latex},
+        label/.style={font=\scriptsize\sffamily, fill=white, inner sep=1pt}
+    ]
+
+    % User
+    \node[table, fill=blue!15] (user) at (0, 0) {User};
+
+    % Daily Logs
+    \node[table] (weight) at (-5.5, 2.25) {WeightLog};
+    \node[table] (water) at (-5.5, 0.75) {WaterLog};
+    \node[table] (exercise) at (-5.5, -0.75) {ExerciseLog};
+    \node[table] (tdee) at (-5.5, -2.25) {AdaptiveTDEELog};
+
+    % Food & Diary
+    \node[table] (diary) at (4, 2.5) {DiaryEntry};
+    \node[table] (food) at (4, 0.5) {Food};
+
+    % Meal Planner
+    \node[table] (mealconfig) at (0, -3.5) {UserMealConfig};
+    \node[table] (mealtpl) at (4, -3.5) {MealTemplate};
+
+    % Scanner
+    \node[table] (scanner) at (8.5, 0.5) {ScannedProduct};
+    \node[table] (contrib) at (8.5, -1.5) {ProductContribution};
+
+    % User to Logs
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (weight);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (water);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (exercise);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (tdee);
+
+    % Meal Planner
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {0..1} (mealconfig);
+    \draw[dashed_rel] (mealtpl) -- node[label, above] {Sử dụng} (mealconfig);
+    \draw[dashed_rel] (mealtpl) -- node[label, right] {Sử dụng} (food);
+
+    % User to Core
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (diary);
+    \draw[rel] (user) -- node[label, pos=0.15] {1} node[label, pos=0.65] {N (tùy chọn)} (food);
+
+    % Food to Diary
+    \draw[rel] (food) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (diary);
+
+    % Scanner
+    \draw[rel] (food) -- node[label, pos=0.25] {0..1} node[label, pos=0.85] {N} (scanner);
+    \draw[rel] (scanner) -- node[label, pos=0.15] {1} node[label, pos=0.85] {N} (contrib);
+    \draw[rel] (user) -- node[label, pos=0.08] {1} node[label, pos=0.92] {N} (contrib);
+
+    \end{tikzpicture}
+    }
+    \caption{Sơ đồ ERD rút gọn của hệ thống}
+    \label{fig:erd_rut_gon}
+    
+    \vspace{0.2cm}
+    \small \textit{* Ghi chú: Sơ đồ chỉ thể hiện các bảng trung tâm và quan hệ chính. Đường nét đứt thể hiện quan hệ sử dụng ở mức nghiệp vụ, không nhất thiết là khóa ngoại trực tiếp. Các trường dữ liệu chi tiết, ràng buộc và ERD đầy đủ được trình bày trong Phụ lục C.}
+\end{figure}
+
+Mô hình ERD trên cho thấy rõ quan hệ một-nhiều (1-N) giữa \texttt{User} với các bảng ghi nhận dữ liệu hằng ngày như \texttt{WeightLog}, \texttt{WaterLog}, \texttt{ExerciseLog} và \texttt{DiaryEntry}. Bất kỳ tương tác phát sinh dữ liệu nào cũng phải thông qua khóa ngoại \texttt{userId}.
+
+Đối với nhóm thực phẩm và nhật ký, một \texttt{Food} có thể xuất hiện trong nhiều \texttt{DiaryEntry}. Cấu trúc này cũng được lặp lại tương tự ở nhóm chức năng Meal Planner, khi các \texttt{MealTemplate} tham chiếu trực tiếp đến danh sách \texttt{Food} nhằm hỗ trợ sinh thực đơn.
+
+\subsection{Thiết kế lưu trữ lịch sử theo thời gian}
+Bảng \texttt{DiaryEntry} và nhóm các bảng \texttt{Log} (như \texttt{WeightLog}, \texttt{WaterLog}) đều lưu thông tin theo thời điểm ghi nhận. Điều này cho phép hệ thống truy xuất và tổng hợp dữ liệu xu hướng trong bất kỳ khoảng thời gian nào phục vụ cho Dashboard và xuất báo cáo.
+
+\subsection{Thiết kế hỗ trợ Hybrid Nutrition Scanner}
+Các bảng \texttt{ScannedProduct} và \texttt{ProductContribution} hỗ trợ lưu trữ tạm thời các dữ liệu trả về từ Open Food Facts hoặc AI Vision. Dữ liệu này giúp người dùng sử dụng ngay trong phiên làm việc hoặc đóng góp chờ xác thực mà không làm loãng cơ sở dữ liệu \texttt{Food} gốc.
+
+\subsection{Tối ưu truy vấn dữ liệu}
+Do yêu cầu truy xuất dữ liệu hằng ngày theo khoảng thời gian rất lớn, các trường như \texttt{date} trong bảng log hay nhật ký đều cần được thiết lập chỉ mục phụ (secondary index). Việc này đảm bảo tốc độ phản hồi nhanh khi tính toán lượng calories hoặc chất đa lượng.
+
+\subsection{Tổng kết thiết kế cơ sở dữ liệu}
+Mô hình cơ sở dữ liệu đã phân tách rõ ràng dữ liệu định danh, dữ liệu từ điển và dữ liệu giao dịch theo thời gian. Đây là nền tảng vững chắc, kết nối chặt chẽ với ORM, làm tiền đề để xây dựng các API xử lý nghiệp vụ ở phần kế tiếp.
+
+\section{Thiết kế API}
+\subsection{Nguyên tắc thiết kế chung}
+Các API của hệ thống được thiết kế theo tiêu chuẩn RESTful API, giao tiếp bằng định dạng JSON. Tất cả endpoint được nhóm theo không gian tên (namespace) với tiền tố \texttt{/api/v1}. Việc phân lớp hệ thống tuân thủ mô hình Router - Middleware - Controller - Service nhằm đảm bảo tính đơn nhiệm và dễ bảo trì. Các endpoint liên quan đến dữ liệu cá nhân hoặc nghiệp vụ thay đổi trạng thái đều được bảo vệ bởi middleware xác thực.
+
+\subsection{Cấu trúc phản hồi (Response)}
+Nhằm đảm bảo giao diện Frontend xử lý dữ liệu một cách đồng nhất, tất cả API đều trả về kết quả tuân theo cấu trúc tiêu chuẩn được định nghĩa tại Bảng \ref{tab:cau_truc_phan_hoi}. Cơ chế này đặc biệt hiệu quả khi xử lý các lỗi xác thực dữ liệu (validation errors), giúp Frontend hiển thị thông báo lỗi đến đúng trường tương ứng trên giao diện.
+
+\begin{table}[htbp]
+\centering
+\caption{Cấu trúc phản hồi API}
+\label{tab:cau_truc_phan_hoi}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{5cm}|p{10cm}|}
+\hline
+\textbf{Trường dữ liệu} & \textbf{Ý nghĩa} \\
+\hline
+success & Trạng thái xử lý thành công hoặc thất bại \\
+\hline
+data & Dữ liệu trả về khi xử lý thành công \\
+\hline
+message & Thông báo kết quả hoặc lỗi \\
+\hline
+errors & Danh sách lỗi chi tiết khi dữ liệu đầu vào không hợp lệ \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Cơ chế xác thực và phân quyền}
+Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Request / Response (Hình \ref{fig:api_flow}). Do giao tiếp là phi trạng thái (stateless), việc xác thực người dùng được duy trì thông qua cơ chế Access Token và Refresh Token sử dụng JWT (JSON Web Token).
+
+\begin{figure}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        box/.style={rectangle, draw=black, thick, fill=blue!5, rounded corners=4pt, 
+                    text width=4.5cm, align=center, font=\small\sffamily, inner sep=6pt},
+        req/.style={thick, -Latex, blue!80!black},
+        res/.style={thick, -Latex, red!80!black, dashed},
+        label_req/.style={font=\scriptsize\sffamily, text=blue!80!black, fill=white, inner sep=2pt},
+        label_res/.style={font=\scriptsize\sffamily, text=red!80!black, fill=white, inner sep=2pt}
+    ]
+
+    % Titles
+    \node[font=\large\bfseries\sffamily, text=black] at (0, 6.5) {FRONTEND};
+    \node[font=\large\bfseries\sffamily, text=black] at (6, 6.5) {BACKEND};
+    \node[font=\large\bfseries\sffamily, text=black] at (12, 6.5) {DATABASE};
+
+    % Separators
+    \draw[thick, dashed, gray!50] (3, 7) -- (3, -6.5);
+    \draw[thick, dashed, gray!50] (9, 7) -- (9, -6.5);
+
+    % FRONTEND
+    \node[box, fill=blue!10] (react) at (0, 3) {\textbf{React Frontend}\\[1ex] \scriptsize Pages, Components, Forms, Modals};
+    \node[box] (axios) at (0, 0) {\textbf{Axios / TanStack Query}\\[1ex] \scriptsize Gửi HTTP request, quản lý cache, invalidate query};
+
+    % BACKEND
+    \node[box] (api) at (6, 5) {\textbf{RESTful API Route}\\[1ex] \scriptsize \texttt{/api/v1/auth}, \texttt{/api/v1/diary},\\[0.5ex] \texttt{/api/v1/dashboard}, ...};
+    \node[box] (middleware) at (6, 2.5) {\textbf{Middleware xác thực}\\[1ex] \scriptsize Kiểm tra Access Token / JWT\\Nếu sai $\rightarrow$ trả 401 JSON};
+    \node[box] (controller) at (6, 0) {\textbf{Controller}\\[1ex] \scriptsize Nhận request, gọi service, trả response};
+    \node[box] (service) at (6, -2.5) {\textbf{Service}\\[1ex] \scriptsize Xử lý nghiệp vụ, tính toán, tổng hợp dữ liệu};
+
+    % DATABASE
+    \node[box] (model) at (12, -2.5) {\textbf{Sequelize Model}};
+    \node[box] (db) at (12, -5) {\textbf{MySQL Database}};
+
+    % Request Flows (Blue)
+    \draw[req] ([xshift=-0.5cm]react.south) -- ([xshift=-0.5cm]axios.north);
+    \draw[req] ([yshift=0.2cm]axios.east) -- ++(0.75,0) |- node[label_req, near start, left] {HTTP Request} (api.west);
+    
+    \draw[req] (api.south) -- (middleware.north);
+    \draw[req] (middleware.south) -- (controller.north);
+    \draw[req] ([xshift=-0.5cm]controller.south) -- ([xshift=-0.5cm]service.north);
+    
+    \draw[req] ([yshift=0.2cm]service.east) -- ([yshift=0.2cm]model.west);
+    \draw[req] ([xshift=-0.5cm]model.south) -- ([xshift=-0.5cm]db.north);
+
+    % Response Flows (Red, Dashed)
+    \draw[res] ([xshift=0.5cm]db.north) -- ([xshift=0.5cm]model.south);
+    \draw[res] ([yshift=-0.2cm]model.west) -- ([yshift=-0.2cm]service.east);
+    
+    \draw[res] ([xshift=0.5cm]service.north) -- ([xshift=0.5cm]controller.south);
+    
+    \draw[res] (controller.west) -- node[label_res, above] {Response JSON} ([yshift=-0.2cm]axios.east);
+    \draw[res] ([xshift=0.5cm]axios.north) -- ([xshift=0.5cm]react.south);
+
+    \end{tikzpicture}
+    }
+    \caption{Luồng request/response giữa Frontend và Backend}
+    \label{fig:api_flow}
+    
+    \vspace{0.2cm}
+    \small \textit{* Ghi chú: Các API dữ liệu cá nhân yêu cầu Access Token trong header. Nếu xác thực hợp lệ, request được chuyển qua Controller, Service và Model để truy vấn cơ sở dữ liệu; kết quả được trả về Frontend dưới dạng JSON thống nhất.}
+\end{figure}
+
+Quá trình xác thực được minh họa trong Hình \ref{fig:jwt-auth-flow}. Khi đăng nhập thành công, Backend trả về Access Token để Frontend đính kèm vào \texttt{Authorization Header} của các yêu cầu tiếp theo. Đồng thời, một Refresh Token được thiết lập ngầm vào trình duyệt thông qua cơ chế \texttt{HttpOnly Cookie}. Khi Access Token hết hạn, Frontend có thể sử dụng Refresh Token để tự động lấy token mới mà không yêu cầu người dùng đăng nhập lại.
+
+\begin{figure}[htbp]
+\centering
+\makebox[\textwidth][c]{
+\begin{tikzpicture}[
+    node distance=1.2cm,
+    box/.style={
+        rectangle,
+        draw,
+        rounded corners,
+        align=center,
+        minimum width=3.0cm,
+        minimum height=0.9cm,
+        fill=blue!5,
+        font=\footnotesize
+    },
+    smallbox/.style={
+        rectangle,
+        draw,
+        rounded corners,
+        align=center,
+        minimum width=2.6cm,
+        minimum height=0.8cm,
+        fill=red!5,
+        draw=red,
+        font=\scriptsize
+    },
+    arrow/.style={->, thick},
+    dashedarrow/.style={->, thick, dashed},
+    note/.style={font=\scriptsize\itshape, align=center}
+]
+
+% Cột (x: 0, 5.5, 11.0)
+\node[font=\bfseries\small] (feTitle) at (0, 1.5) {Frontend (Client)};
+\node[font=\bfseries\small] (mwTitle) at (5.5, 1.5) {Router \& Middleware};
+\node[font=\bfseries\small] (svcTitle) at (11.0, 1.5) {Controller \& Service};
+
+% Đường phân cách cột
+\draw[dashed, gray] (2.75, 1.0) -- (2.75, -11.8);
+\draw[dashed, gray] (8.25, 1.0) -- (8.25, -11.8);
+
+% -- LUỒNG LOGIN --
+\node[box] (loginReq) at (0,0) {Gửi thông tin Login\\(Email, Password)};
+\node[box] (checkLogin) at (5.5,0) {POST {\ttfamily /auth/login}\\(Xác thực user)};
+\node[box] (dbCheck) at (11.0,0) {Kiểm tra DB \&\\Tạo Tokens};
+\node[box] (tokenReturn) at (5.5,-2.0) {Gắn Refresh Token vào\\{\ttfamily HttpOnly Cookie}};
+\node[box] (saveToken) at (0,-2.0) {Lưu Access Token\\vào bộ nhớ tạm};
+
+\draw[arrow] (loginReq) -- (checkLogin);
+\draw[arrow] (checkLogin) -- (dbCheck);
+\draw[arrow] (dbCheck) |- (tokenReturn);
+\draw[arrow] (tokenReturn) -- node[above, font=\scriptsize, align=center] {Trả Access\\Token (JSON)} (saveToken);
+
+% -- LUỒNG GỌI API --
+\node[box] (apiReq) at (0,-4.0) {Gọi API nghiệp vụ\\Header: Bearer Token};
+\node[box] (checkJwt) at (5.5,-4.0) {Middleware {\ttfamily verifyToken}\\Kiểm tra Access Token};
+\node[box] (business) at (11.0,-4.0) {Xử lý logic\\(Service)};
+\node[box] (successJson) at (0,-5.8) {Cập nhật giao diện\\(Data JSON)};
+
+\draw[arrow] (saveToken) -- (apiReq);
+\draw[arrow] (apiReq) -- (checkJwt);
+\draw[arrow] (checkJwt) -- node[above, font=\scriptsize] {Hợp lệ} (business);
+\draw[arrow] (business) |- (successJson);
+\node[above, font=\scriptsize] at (2.75, -5.8) {Trả Data (JSON)};
+
+% -- LUỒNG REFRESH TOKEN --
+\node[smallbox] (expired) at (5.5,-7.5) {Token hết hạn\\Trả về lỗi 401};
+\node[box] (refreshReq) at (0,-9.5) {Tự động gọi\\POST {\ttfamily /auth/refresh-token}};
+\node[box] (checkRefresh) at (5.5,-9.5) {Đọc {\ttfamily refreshToken}\\từ HttpOnly Cookie};
+\node[box] (verifyRefresh) at (11.0,-9.5) {Xác thực \&\\Tạo Access Token mới};
+\node[box] (newToken) at (5.5,-11.5) {Trả Access Token\\mới qua JSON};
+\node[box] (retryReq) at (0,-11.5) {Cập nhật Access Token \&\\Gửi lại request bị lỗi};
+
+\draw[dashedarrow] (checkJwt) -- (expired);
+\node[right, font=\scriptsize] at (5.5, -5.0) {Hết hạn};
+
+\draw[dashedarrow] (expired) -| (refreshReq);
+\draw[dashedarrow] (refreshReq) -- node[above, font=\scriptsize, align=center] {Gửi kèm\\Cookie} (checkRefresh);
+\draw[dashedarrow] (checkRefresh) -- (verifyRefresh);
+\draw[dashedarrow] (verifyRefresh) |- (newToken);
+\draw[dashedarrow] (newToken) -- (retryReq);
+
+\draw[dashedarrow] (retryReq.west) -- ++(-1.0,0) |- (apiReq.west);
+\node[left, font=\scriptsize, align=center] at (-2.5, -7.75) {Thử lại\\request};
+
+% Chú thích
+\node[note] at (5.5,-12.5) {
+Đường liền: Luồng đăng nhập và gọi API thành công.\\
+Đường nét đứt: Luồng xử lý khi Access Token hết hạn (Cơ chế Refresh Token).
+};
+
+\end{tikzpicture}
+}
+\caption{Luồng xác thực API bằng JWT}
+\label{fig:jwt-auth-flow}
+\end{figure}
+
+\subsection{Các nhóm API chính}
+Toàn bộ endpoint được chia thành các nhóm tương ứng với các phân hệ nghiệp vụ, giúp Router dễ dàng định tuyến (Bảng \ref{tab:nhom_api_chinh}).
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|p{7cm}|}
+\caption{Các nhóm API chính của hệ thống}
+\label{tab:nhom_api_chinh} \\
+\hline
+\textbf{Nhóm API} & \textbf{Đường dẫn chính} & \textbf{Vai trò} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Nhóm API} & \textbf{Đường dẫn chính} & \textbf{Vai trò} \\
+\hline
+\endhead
+
+Auth & /api/v1/auth & Đăng ký, đăng nhập, đăng xuất, làm mới Token, lấy thông tin người dùng hiện tại \\
+\hline
+Dashboard & /api/v1/dashboard & Lấy dữ liệu tổng hợp phục vụ Dashboard \\
+\hline
+Diary & /api/v1/diary & Quản lý nhật ký ăn uống và thực phẩm tùy chỉnh \\
+\hline
+Profile & /api/v1/profile & Quản lý hồ sơ sức khỏe, macro, dị ứng và onboarding \\
+\hline
+Weight & /api/v1/weight & Quản lý dữ liệu cân nặng \\
+\hline
+Water & /api/v1/water & Quản lý dữ liệu nước uống \\
+\hline
+Exercise & /api/v1/exercise & Quản lý dữ liệu luyện tập \\
+\hline
+Meal Planner & /api/v1/meal-planner & Cấu hình bữa ăn, lấy nguyên liệu, sinh thực đơn và thay thế nguyên liệu \\
+\hline
+Adaptive TDEE & /api/v1/adaptive-tdee & Quản lý trạng thái và lịch sử tính toán Adaptive TDEE \\
+\hline
+Scanner & /api/v1/scanner & Quét mã vạch, nhận dạng bảng thành phần và lưu dữ liệu sản phẩm \\
+\hline
+Report & /api/v1/report & Xuất báo cáo PDF \\
+\hline
+\end{longtable}
+
+\subsection{Danh sách endpoint tiêu biểu}
+Bảng \ref{tab:endpoint_tieu_bieu} dưới đây giới thiệu một số endpoint đại diện liên quan trực tiếp đến nghiệp vụ lõi của hệ thống.
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{6cm}|>{\raggedright\arraybackslash}p{6.5cm}|}
+\caption{Danh sách endpoint tiêu biểu}
+\label{tab:endpoint_tieu_bieu} \\
+\hline
+\textbf{Method} & \textbf{Endpoint} & \textbf{Mục đích} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Method} & \textbf{Endpoint} & \textbf{Mục đích} \\
+\hline
+\endhead
+
+POST & \texttt{/api/v1/auth/login} & Đăng nhập và nhận Access Token \\
+\hline
+GET & \texttt{/api/v1/users/me} & Lấy thông tin user hiện tại \\
+\hline
+POST & \texttt{/api/v1/diary} & Thêm bản ghi nhật ký ăn uống \\
+\hline
+POST & \texttt{/api/v1/weight} & Ghi nhận cân nặng \\
+\hline
+GET & \texttt{/api/v1/tdee/adaptive} & Tính toán TDEE thích ứng \\
+\hline
+POST & \texttt{/api/v1/meal-planner/generate} & Tạo gợi ý thực đơn (Meal Planner) \\
+\hline
+POST & \texttt{/api/v1/scanner/analyze} & Nhận dạng thành phần từ ảnh (Scanner) \\
+\hline
+GET & \texttt{/api/v1/report/pdf} & Xuất báo cáo dinh dưỡng định dạng PDF \\
+\hline
+\end{longtable}
+
+\subsection{Xử lý mã trạng thái HTTP}
+Hệ thống sử dụng các mã trạng thái (HTTP Status Code) chuẩn như 200 (Thành công), 201 (Đã tạo), 400 (Yêu cầu không hợp lệ), 401 (Chưa xác thực), 422 (Dữ liệu không hợp lệ) và 500 (Lỗi máy chủ). Đặc biệt, với trường hợp token hết hạn, Backend trả về mã trạng thái \texttt{401} với mã lỗi \texttt{TOKEN\_EXPIRED} để Frontend nhận diện và kích hoạt luồng gọi Refresh Token.
+
+\subsection{Tổng kết thiết kế API}
+Thiết kế RESTful API cùng với cơ chế xác thực JWT và cấu trúc phản hồi chuẩn giúp Backend đáp ứng đầy đủ yêu cầu truy xuất dữ liệu từ các ứng dụng Client. Việc tổ chức endpoint khoa học không chỉ phục vụ đắc lực cho Web SPA mà còn tạo tiền đề vững chắc cho việc mở rộng trên nền tảng di động sau này.
+\section{Thiết kế giao diện}
+\subsection{Nguyên tắc thiết kế}
+Giao diện hệ thống được thiết kế theo nguyên tắc bố cục nhất quán, phân tách rõ ràng khu vực hiển thị thông tin và khu vực thao tác. Các thao tác thường xuyên được ưu tiên ở những vị trí dễ tiếp cận, đồng thời hệ thống luôn cung cấp trạng thái phản hồi rõ ràng (đang tải, thành công hoặc lỗi) để người dùng nắm bắt quá trình xử lý, đảm bảo khả năng sử dụng trên nhiều kích thước màn hình.
+
+\subsection{Sơ đồ điều hướng}
+Luồng điều hướng được tổ chức dựa trên trạng thái xác thực. Các trang Landing Page, đăng nhập, đăng ký là công khai. Người dùng sau khi đăng nhập nhưng chưa có hồ sơ sẽ bị ép buộc truy cập Onboarding thông qua \texttt{AuthOnlyRoute}. Các trang chức năng chính như Dashboard, Nhật ký ăn uống, Meal Planner, Cân nặng và Luyện tập được bảo vệ bởi \texttt{ProtectedRoute}.
+
+\begin{figure}[htbp]
+\centering
+\makebox[\textwidth][c]{
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    public/.style={rectangle, draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.8cm, fill=blue!5, font=\footnotesize},
+    onboard/.style={rectangle, draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.8cm, fill=orange!10, font=\footnotesize},
+    layout/.style={rectangle, draw, rounded corners, align=center, minimum width=2.8cm, minimum height=0.8cm, fill=green!10, font=\footnotesize\bfseries},
+    page/.style={rectangle, draw, rounded corners, align=center, minimum width=2.6cm, minimum height=0.7cm, fill=gray!10, font=\footnotesize},
+    decision/.style={diamond, draw, align=center, fill=yellow!10, aspect=2, font=\scriptsize, inner sep=1pt},
+    arrow/.style={->, thick},
+    dashedarrow/.style={->, thick, dashed}
+]
+
+% Nhóm công khai
+\node[public] (landing) at (0, 0) {Landing Page};
+\node[public] (login) at (3.2, 1) {Đăng nhập};
+\node[public] (register) at (3.2, -1) {Đăng ký};
+
+\draw[thick] (landing.east) -- ++(0.6,0) coordinate (forkPub);
+\draw[arrow] (forkPub) |- (login.west);
+\draw[arrow] (forkPub) |- (register.west);
+
+% Decision: có hồ sơ chưa?
+\node[decision] (checkProfile) at (6.5, 0) {Đã có\\hồ sơ?};
+
+\draw[thick] (login.east) -| ++(0.5, -1) coordinate (joinP);
+\draw[thick] (register.east) -| (joinP);
+\draw[arrow] (joinP) -- (checkProfile.west);
+
+% Onboarding
+\node[onboard] (onboarding) at (6.5, -2.5) {Onboarding\\(Nhập chỉ số)};
+\draw[arrow] (checkProfile.south) -- node[right, font=\scriptsize] {Chưa} (onboarding.north);
+
+% AppLayout
+\node[layout] (appLayout) at (10.2, 0) {App Layout};
+\draw[arrow] (checkProfile.east) -- node[above, font=\scriptsize] {Đã có} (appLayout.west);
+
+% Onboarding to AppLayout
+\draw[arrow] (onboarding.east) -| (appLayout.south);
+
+% Pages inside AppLayout
+\node[page] (dashboard) at (15.0, 3.0) {Dashboard};
+\node[page] (diary)     at (15.0, 2.0) {Nhật ký ăn uống};
+\node[page] (planner)   at (15.0, 1.0) {Meal Planner};
+\node[page] (weight)    at (15.0, 0.0) {Cân nặng};
+\node[page] (exercise)  at (15.0, -1.0) {Luyện tập};
+\node[page] (profile)   at (15.0, -2.0) {Hồ sơ cá nhân};
+\node[page] (report)    at (15.0, -3.0) {Báo cáo / Thống kê};
+
+\draw[thick] (appLayout.east) -- node[above, font=\scriptsize\itshape, text=black!70] {Sidebar Nav} ++(1.7,0) coordinate (forkApp);
+\draw[arrow] (forkApp) |- (dashboard.west);
+\draw[arrow] (forkApp) |- (diary.west);
+\draw[arrow] (forkApp) |- (planner.west);
+\draw[arrow] (forkApp) |- (weight.west);
+\draw[arrow] (forkApp) |- (exercise.west);
+\draw[arrow] (forkApp) |- (profile.west);
+\draw[arrow] (forkApp) |- (report.west);
+
+% Chú thích
+\node[fill=blue!5, draw, rounded corners, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Public}] at (1.5,-4.5) {};
+\node[fill=yellow!10, draw, diamond, aspect=2, inner sep=1pt, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Logic Server}] at (3.7,-4.5) {};
+\node[fill=orange!10, draw, rounded corners, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Khởi tạo}] at (6.7,-4.5) {};
+\node[fill=green!10, draw, rounded corners, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Bố cục chung}] at (9.0,-4.5) {};
+\node[fill=gray!10, draw, rounded corners, minimum width=0.6cm, minimum height=0.3cm, label=right:{\scriptsize Trang chức năng}] at (12.0,-4.5) {};
+
+\end{tikzpicture}
+}
+\caption{Sơ đồ điều hướng giao diện của hệ thống}
+\label{fig:ui-navigation}
+\end{figure}
+
+\subsection{Giao diện Landing Page và Xác thực}
+Landing Page cung cấp thông tin giới thiệu và điều hướng đến trang Đăng nhập / Đăng ký. Người dùng thực hiện thao tác điền form; hệ thống phản hồi bằng thông báo lỗi xác thực hoặc điều hướng khi thành công.
+
+\subsection{Giao diện Onboarding và Hồ sơ cá nhân}
+Trang Onboarding thu thập tuần tự các thông số như chiều cao, cân nặng, độ tuổi và mức độ vận động. Dữ liệu này được gửi tới Backend để tính toán các chỉ số nền tảng. Trang Hồ sơ cá nhân cho phép xem và cập nhật lại thông tin này khi có thay đổi.
+
+\subsection{Giao diện ghi nhận dữ liệu hằng ngày}
+Đây là nhóm chức năng có tần suất sử dụng cao nhất. Giao diện nhật ký ăn uống được chia thành các bữa ăn; người dùng có thể tìm kiếm, nhập định lượng hoặc sử dụng Scanner để thêm thực phẩm. Mọi thao tác ghi nhận đều cập nhật trực tiếp tiến độ tiêu thụ năng lượng và chất đa lượng trong ngày.
+
+\begin{figure}[htbp]
+\centering
+\makebox[\textwidth][c]{
+\begin{tikzpicture}[
+    font=\sffamily,
+    panel/.style={draw=gray!30, rounded corners, fill=white, inner sep=0}
+]
+
+% Background
+\fill[gray!5, rounded corners] (0, 0) rectangle (15.5, -11.0);
+\draw[gray!30, rounded corners] (0, 0) rectangle (15.5, -11.0);
+
+% Sidebar (Dimmed)
+\fill[white, rounded corners] (0, 0) rectangle (3.5, -11.0);
+\draw[gray!30] (3.5, 0) -- (3.5, -11.0);
+
+\node[circle, fill=blue!10, minimum size=1.0cm, font=\bfseries] at (1.75, -1.2) {B};
+\node[font=\bfseries\footnotesize] at (1.75, -2.1) {Nguyễn Thị B};
+\draw[gray!30] (0.5, -2.5) -- (3.0, -2.5);
+
+\node[fill=gray!5, rounded corners, anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray] at (0.35, -3.2) {\footnotesize Tổng quan};
+\node[fill=gray!10, rounded corners, anchor=west, minimum width=2.8cm, minimum height=0.6cm] at (0.35, -4.0) {\footnotesize \textbf{Nhật ký}};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray] at (0.35, -4.8) {\footnotesize Lập kế hoạch};
+\node[anchor=west, minimum width=2.8cm, minimum height=0.6cm, text=gray] at (0.35, -5.6) {\footnotesize Cân nặng};
+
+% Main Content (Dimmed)
+\node[anchor=north west, font=\bfseries\small] at (3.8, -0.4) {Nhật ký ăn uống};
+\node[anchor=north east, draw=gray!50, rounded corners, fill=white, font=\scriptsize] at (15.2, -0.4) {$\leftarrow$ Hôm nay $\rightarrow$};
+
+% Meal List Background
+\node[panel, minimum width=11.4cm, minimum height=8.0cm, anchor=north west] at (3.8, -1.5) {};
+
+% Bữa sáng
+\node[anchor=north west, font=\bfseries] at (4.0, -1.7) {Bữa sáng};
+\node[anchor=north east, font=\bfseries, text=blue!80] at (15.0, -1.7) {450 kcal};
+\draw[gray!20] (4.0, -2.3) -- (15.0, -2.3);
+
+\node[anchor=west, font=\scriptsize] at (4.0, -2.8) {Phở bò};
+\node[anchor=west, font=\scriptsize, text=gray] at (4.0, -3.2) {1 bát lớn (500g)};
+\node[anchor=east, font=\scriptsize] at (15.0, -2.8) {450 kcal};
+
+\node[anchor=north west, font=\scriptsize, text=blue!80, draw=blue!50, rounded corners, inner sep=1.5mm] at (4.0, -3.8) {+ Thêm thực phẩm};
+
+% Bữa trưa
+\node[anchor=north west, font=\bfseries] at (4.0, -5.0) {Bữa trưa};
+\node[anchor=north east, font=\bfseries, text=blue!80] at (15.0, -5.0) {650 kcal};
+\draw[gray!20] (4.0, -5.6) -- (15.0, -5.6);
+
+\node[anchor=west, font=\scriptsize] at (4.0, -6.1) {Cơm tấm sườn bì};
+\node[anchor=west, font=\scriptsize, text=gray] at (4.0, -6.5) {1 đĩa (400g)};
+\node[anchor=east, font=\scriptsize] at (15.0, -6.1) {650 kcal};
+\node[anchor=north west, font=\scriptsize, text=blue!80, draw=blue!50, rounded corners, inner sep=1.5mm] at (4.0, -7.1) {+ Thêm thực phẩm};
+
+% Overlay (Darken background)
+\fill[black, opacity=0.5, rounded corners] (0, 0) rectangle (15.5, -11.0);
+
+% Modal Shadow
+\fill[black, opacity=0.2, rounded corners] (4.7, -1.1) rectangle (14.7, -8.1);
+
+% Modal Window
+\fill[white, rounded corners] (4.5, -1.0) rectangle (14.5, -8.0);
+\draw[gray!50, rounded corners] (4.5, -1.0) rectangle (14.5, -8.0);
+
+% Modal Header
+\node[anchor=north west, font=\bfseries\small] at (4.8, -1.3) {Thêm món ăn};
+\node[anchor=north east, font=\sffamily\large, text=gray] at (14.3, -1.3) {$\times$};
+\draw[gray!30] (4.5, -2.0) -- (14.5, -2.0);
+
+% Tabs
+\node[font=\scriptsize, text=gray] at (6.3, -2.4) {Tìm kiếm};
+\node[font=\scriptsize, text=gray] at (9.5, -2.4) {Tạo món mới};
+\node[font=\bfseries\scriptsize, text=black] at (12.7, -2.4) {[ Quét/Chụp ]};
+
+% Subtext
+\node[font=\scriptsize, text=gray!80, align=center] at (9.5, -3.2) {Chọn phương thức quét để thêm thông tin dinh dưỡng nhanh chóng};
+
+% Big Green Button
+\fill[green!50!black, rounded corners=2mm, opacity=0.75] (5.2, -3.8) rectangle (13.8, -5.8);
+\node[text=white, font=\bfseries\small] at (9.5, -4.5) {Chụp bảng thành phần};
+\node[text=white, font=\scriptsize] at (9.5, -5.1) {AI đọc nhãn dinh dưỡng tự động};
+
+% Small White Button
+\fill[white, rounded corners=1mm] (5.2, -6.1) rectangle (13.8, -7.0);
+\draw[gray!40, rounded corners=1mm] (5.2, -6.1) rectangle (13.8, -7.0);
+\node[text=black!80, font=\bfseries\scriptsize] at (9.5, -6.55) {Quét mã vạch sản phẩm};
+
+% Bottom Text
+\node[font=\scriptsize, text=gray!70] at (9.5, -7.5) {Dữ liệu bạn đóng góp sẽ giúp cộng đồng tìm kiếm dễ hơn};
+
+\end{tikzpicture}
+}
+\caption{Wireframe giao diện Nhật ký ăn uống và Modal Scanner}
+\label{fig:diary-scanner}
+\end{figure}
+
+\subsection{Tổng hợp các màn hình chức năng}
+Bảng \ref{tab:man_hinh_chuc_nang} tóm tắt các màn hình phục vụ trực tiếp cho người dùng cuối.
+
+\begin{table}[htbp]
+\centering
+\caption{Tổng hợp các màn hình chức năng chính}
+\label{tab:man_hinh_chuc_nang}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{10cm}|}
+\hline
+\textbf{Màn hình} & \textbf{Dữ liệu và thao tác chính} \\
+\hline
+Đăng nhập / Đăng ký & Nhập thông tin tài khoản, xử lý thông báo lỗi xác thực \\
+\hline
+Onboarding & Khai báo chỉ số sức khỏe ban đầu để tính TDEE \\
+\hline
+Dashboard & Hiển thị biểu đồ tiến độ năng lượng, nước uống, cân nặng \\
+\hline
+Nhật ký ăn uống & Tìm kiếm thực phẩm, nhập khẩu phần, tích hợp Scanner \\
+\hline
+Theo dõi Cân nặng / Nước & Nhập thông số thực tế, hiển thị biểu đồ xu hướng \\
+\hline
+Meal Planner & Chọn bữa ăn, mục tiêu dinh dưỡng và sinh gợi ý thực đơn \\
+\hline
+Hồ sơ cá nhân & Cập nhật thông tin chiều cao, cân nặng, mục tiêu cá nhân \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Tổng kết thiết kế giao diện}
+Thiết kế giao diện đã cụ thể hóa các yêu cầu chức năng thành những luồng thao tác trực quan. Sự kết hợp giữa các wireframe trọng tâm và luồng điều hướng chặt chẽ là cơ sở để triển khai các component React ở Chương 3.
+
+\section{Kết luận chương}
+Chương 2 đã hoàn thành việc phân tích yêu cầu, phân tích nghiệp vụ và thiết kế kiến trúc toàn diện cho hệ thống. Từ các yêu cầu cốt lõi về quản lý dữ liệu cá nhân, hệ thống được thiết kế với mô hình cơ sở dữ liệu lưu vết lịch sử chặt chẽ và tập hợp RESTful API bảo mật bằng JWT. Các luồng nghiệp vụ phức tạp như Scanner hay Meal Planner đã được định hình rõ ràng thông qua Use Case và thiết kế giao diện điều hướng, tạo tiền đề trực tiếp để triển khai mã nguồn chi tiết ở Chương 3.
