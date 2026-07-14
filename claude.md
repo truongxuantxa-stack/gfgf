@@ -82,7 +82,13 @@
 - **Giọng văn cam đoan quyết liệt:** Tại Mẫu ĐATN-14, phải dùng giọng văn khẳng định 100% về tính độc lập: "Đồ án này là công trình nghiên cứu của riêng tôi, các số liệu... là trung thực và chưa từng được công bố".
 - **Tuyệt đối khách quan (Lạnh lùng, lý tính):** Tập trung hoàn toàn vào số liệu và sự thật kỹ thuật, không đưa cảm xúc cá nhân. Nếu copy nội dung do AI sinh ra, **bắt buộc phải sửa lại** những câu có giọng điệu quá bay bổng, quảng cáo (kiểu "Giải pháp tuyệt vời này sẽ mang lại...") thành giọng văn báo cáo kỹ thuật trung lập. Mọi ý tưởng "mượn" đều phải trích dẫn (như đã quy định ở Mục 5).
 
-## 7. LỊCH SỬ CẬP NHẬT GẦN NHẤT
+## 8. QUY TRÌNH LÀM SLIDE THUYẾT TRÌNH BẰNG LATEX VỚI AI (ANTIGRAVITY)
+1. **Chuẩn bị nội dung:** Người dùng cung cấp gạch đầu dòng các ý chính cần trình bày cho từng slide (ví dụ: "Slide 1: Giới thiệu..."). AI không tự ý bịa nội dung ngoài phạm vi báo cáo.
+2. **Sinh mã nguồn LaTeX (Beamer):** AI tự động viết code Beamer chuẩn, phân chia layout, và chèn các hình ảnh/công thức đã có sẵn trong file báo cáo chính.
+3. **Tùy chỉnh giao diện:** AI ưu tiên áp dụng các theme Beamer có sẵn (như Madrid, Metropolis, v.v.) để đảm bảo tính chuyên nghiệp và hiện đại, giúp người dùng không phải cấu hình code giao diện phức tạp.
+4. **Tự động hóa biên dịch:** AI chạy trực tiếp lệnh `pdflatex` / `xelatex` trong workspace để xuất file PDF, sau đó xác minh cấu trúc PDF tương tự quy trình làm báo cáo.
+
+## 9. LỊCH SỬ CẬP NHẬT GẦN NHẤT
 - Đã quyết định **KHÔNG CHIA TÁCH** file LaTeX (`do_an_tot_nghiep.tex`) để đảm bảo an toàn tuyệt đối trước thềm bảo vệ.
 - Đã fix triệt để lỗi biên dịch LaTeX (crash do ngoặc nhọn `{` nằm ngay sau ký tự xuống dòng `\\` bên trong TikZ node).
 - Đã hoàn thiện **Hình 1.5**: Sơ đồ Kiến trúc tổng thể Client - Server. 
@@ -91,6 +97,7 @@
 - Đã bổ sung Quy định trích dẫn tài liệu tham khảo theo Mẫu ĐATN-14 của trường ĐHXDHN.
 - Bổ sung quy định chặt chẽ về phong cách và giọng văn học thuật theo tiêu chuẩn HUCE (tính khách quan, ngôn từ định lượng, liêm chính).
 - Bổ sung **Quy tắc số 8 (Quy trình biên dịch LaTeX)**: compile đủ 3 lần, xử lý khi pdflatex bị ngắt giữa chừng, cấm dùng lệnh nội bộ package trong `\addtocontents`, và bắt buộc xác minh kết quả bằng `pdftotext` sau khi compile.
+- Bổ sung **Mục 8 (Quy trình làm slide LaTeX với AI)** chuẩn bị cho giai đoạn bảo vệ đồ án.
 
 ---
-*(Cập nhật lần cuối: Tháng 7/2026 - Thêm quy tắc biên dịch LaTeX 3-pass và xác minh PDF bằng pdftotext)*
+*(Cập nhật lần cuối: Tháng 7/2026 - Thêm quy trình làm slide Beamer với AI)*
