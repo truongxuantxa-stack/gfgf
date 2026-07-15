@@ -279,6 +279,7 @@ JSON & JavaScript Object Notation \\[0.15cm]
 JWT & JSON Web Token \\[0.15cm]
 MET & Metabolic Equivalent of Task \\[0.15cm]
 MVC & Model View Controller \\[0.15cm]
+NHLBI & National Heart, Lung, and Blood Institute \\[0.15cm]
 ORM & Object Relational Mapping \\[0.15cm]
 OWASP & Open Worldwide Application Security Project \\[0.15cm]
 PDF & Portable Document Format \\[0.15cm]
@@ -2311,7 +2312,13 @@ Tỷ lệ macro tùy chỉnh & Phân bổ năng lượng sang gram & protein, ca
 
 Chuỗi xử lý của Nutrition Core được thực hiện theo thứ tự: tính tuổi từ ngày sinh, tính BMI, tính BMR, tính TDEE tĩnh, chọn TDEE áp dụng, tính năng lượng mục tiêu, sau đó chuyển năng lượng mục tiêu thành lượng protein, carbohydrate, lipid và mục tiêu nước. Cách xử lý theo chuỗi giúp kết quả đầu ra của bước trước trở thành dữ liệu đầu vào cho bước sau, đồng thời làm rõ quan hệ giữa các chỉ số.
 
-Chỉ số khối cơ thể BMI được xác định theo công thức \textbf{BMI = W / H²}, trong đó \textbf{W} là cân nặng tính bằng kilogram và \textbf{H} là chiều cao tính bằng mét; kết quả có đơn vị kg/m². Theo hệ thống phân loại BMI dành cho người trưởng thành của WHO và NHLBI, BMI dưới 18,5 được xếp vào nhóm thiếu cân, từ 18,5 đến 24,9 là bình thường, từ 25,0 đến 29,9 là thừa cân và từ 30,0 trở lên là béo phì \cite{jankau2025}. Trong NutriTrack, kết quả BMI được làm tròn đến một chữ số thập phân và ánh xạ thành một trong bốn nhãn trên để Frontend hiển thị thống nhất. Tuy nhiên, do BMI không phản ánh trực tiếp tỷ lệ khối mỡ, khối cơ và sự phân bố mỡ, hệ thống chỉ sử dụng chỉ số này để mô tả sơ bộ tình trạng cân nặng, không xem đây là kết luận chẩn đoán y khoa \cite{jankau2025}.
+Chỉ số khối cơ thể BMI được xác định theo công thức
+\(
+BMI = W/H^2
+\),
+trong đó \(W\) là cân nặng tính bằng kilogram và \(H\) là chiều cao tính bằng mét; kết quả có đơn vị kg/m\(^2\). WHO sử dụng công thức này và mô tả BMI là một chỉ dấu thay thế cho mức độ mỡ cơ thể; các phép đo bổ sung như vòng eo có thể hỗ trợ quá trình đánh giá \cite{whoObesityOverweight2025}. Đối với người trưởng thành, bảng phân loại của NHLBI chia BMI thành bốn khoảng: dưới 18,5 là thiếu cân, từ 18,5 đến 24,9 là bình thường, từ 25,0 đến 29,9 là thừa cân và từ 30,0 trở lên là béo phì \cite{nhlbiPracticalGuide2000}. Trong NutriTrack, kết quả BMI được làm tròn đến một chữ số thập phân và ánh xạ thành một trong bốn nhãn trên để Frontend hiển thị thống nhất.
+
+BMI được tính từ cân nặng và chiều cao nên không trực tiếp phân biệt khối mỡ với khối cơ. Chỉ số này có thể đánh giá cao mức độ mỡ ở người có khối cơ lớn và đánh giá thấp ở người bị mất khối cơ; mối quan hệ giữa BMI và lượng mỡ cơ thể cũng có thể thay đổi theo tuổi, giới tính và một số đặc điểm quần thể \cite{nhlbiPracticalGuide2000}. Vì vậy, NutriTrack chỉ sử dụng BMI để phân loại sơ bộ tình trạng cân nặng, không xem đây là kết luận chẩn đoán y khoa độc lập.
 
 Trong phạm vi hệ thống, giá trị BMR/REE được ước lượng bằng công thức Mifflin-St Jeor dựa trên giới tính, tuổi, chiều cao và cân nặng của người dùng \cite{mifflin1990}. Cụ thể, đối với nam giới, $\text{BMR} = 10 \times \text{cân nặng} + 6,25 \times \text{chiều cao} - 5 \times \text{tuổi} + 5$; đối với nữ giới, $\text{BMR} = 10 \times \text{cân nặng} + 6,25 \times \text{chiều cao} - 5 \times \text{tuổi} - 161$. Trong đó, cân nặng tính bằng kg, chiều cao tính bằng cm và tuổi tính bằng năm. Việc tách công thức theo giới tính được xử lý ở Backend dựa trên dữ liệu hồ sơ người dùng.
 
@@ -3480,11 +3487,15 @@ Mifflin, M. D., St Jeor, S. T., Hill, L. A., et al. (1990).
 The American Journal of Clinical Nutrition.
 Truy cập ngày 30/06/2026, từ \url{https://pubmed.ncbi.nlm.nih.gov/2305711/}
 
-\bibitem{jankau2025}
-Jankau, J., Rogoń, I., Kaczmarek, M., et al. (2025).
-"The Challenges of Postoperative Tissue Flap Vitality Monitoring in Obese Individuals".
-\textit{Journal of Clinical Medicine}, 14.
-Truy cập ngày 11/07/2026, từ \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC12610855/}
+\bibitem{whoObesityOverweight2025}
+World Health Organization (2025).
+"Obesity and overweight".
+Cập nhật ngày 08/12/2025, truy cập ngày 15/07/2026, từ \url{https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight}
+
+\bibitem{nhlbiPracticalGuide2000}
+National Heart, Lung, and Blood Institute (2000).
+\textit{The Practical Guide: Identification, Evaluation, and Treatment of Overweight and Obesity in Adults}.
+National Institutes of Health. Truy cập ngày 15/07/2026, từ \url{https://www.nhlbi.nih.gov/files/docs/guidelines/prctgd_c.pdf}
 
 \bibitem{fao_who_unu_2001}
 FAO/WHO/UNU. (2004).
