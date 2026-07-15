@@ -1,0 +1,601 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+% Hỗ trợ tiếng Việt với XeLaTeX
+\usepackage{polyglossia}
+\setdefaultlanguage{vietnamese}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Courier New}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, calc, backgrounds}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+% Cấu hình màu sắc NutriTrack
+\definecolor{NutriDark}{HTML}{003139}
+\definecolor{NutriGreen}{HTML}{5FE089}
+\definecolor{NutriLightGray}{HTML}{F8F9FA}
+
+\setbeamercolor{palette primary}{bg=NutriDark,fg=white}
+\setbeamercolor{palette secondary}{bg=NutriGreen,fg=NutriDark}
+\setbeamercolor{structure}{fg=NutriDark}
+\setbeamercolor{frametitle}{bg=NutriDark,fg=white}
+\setbeamercolor{background canvas}{bg=NutriLightGray}
+\setbeamercolor{normal text}{fg=black!85}
+\setbeamercolor{itemize item}{fg=NutriGreen}
+\setbeamercolor{itemize subitem}{fg=NutriDark}
+
+% Cấu hình template
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{itemize item}{\tikz\fill[NutriGreen] (0,0) circle (2pt);}
+\setbeamertemplate{itemize subitem}{\tikz\fill[NutriDark] (0,0) circle (1.5pt);}
+
+% Component tái sử dụng
+\newcommand{\modulelabel}[1]{\tikz[baseline=(char.base)]\node[anchor=text, rectangle, draw=NutriDark, fill=NutriDark!10, rounded corners=2pt, inner sep=3pt, text=NutriDark, font=\bfseries] (char) {#1};}
+\newcommand{\highlightblue}[1]{\textcolor{NutriDark}{\textbf{#1}}}
+\newcommand{\highlightgreen}[1]{\textcolor{NutriGreen!80!black}{\textbf{#1}}}
+
+% Thông tin tiêu đề
+\title{\textbf{HỆ THỐNG QUẢN LÝ DINH DƯỠNG CÁ NHÂN HÓA}}
+\subtitle{Personalized Nutrition Management System}
+\author{\textbf{Sinh viên: Nguyễn Văn Khánh}\\ MSSV: 0241967 \quad Lớp: 67CS2 \\ \vspace{0.3cm} \small GVHD: TS. Phạm Hồng Phong}
+\institute{Trường Đại học Xây dựng Hà Nội \\ Ngành Công nghệ thông tin - Chuyên ngành Khoa học máy tính}
+\date{Năm 2026}
+
+\begin{document}
+
+% Thời lượng dự kiến: 20-30 giây
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% Thời lượng dự kiến: 50 giây
+\begin{frame}{Đặt vấn đề}
+    \begin{itemize}
+        \setlength{\itemsep}{10pt}
+        \item Người dùng cần theo dõi nhiều loại dữ liệu: ăn uống, năng lượng, cân nặng, nước và luyện tập.
+        \item Việc ghi chép và tổng hợp thủ công tốn thời gian, phân tán.
+        \item Các công thức năng lượng tĩnh (TDEE) chưa phản ánh hoàn toàn sự thay đổi thực tế của từng người theo thời gian.
+        \item \highlightblue{Yêu cầu:} Một hệ thống thống nhất để theo dõi, phân tích và hỗ trợ điều chỉnh chế độ dinh dưỡng cá nhân hóa.
+    \end{itemize}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=1.2cm, >=Stealth, 
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.8cm, text centered, font=\small},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[box] (data) {Dữ liệu phân tán};
+        \node[box, right=of data] (track) {Khó theo dõi};
+        \node[box, right=of track] (eval) {Khó đánh giá};
+        \node[box, fill=NutriGreen!20, right=of eval] (sys) {\textbf{Cần hệ thống cá nhân hóa}};
+        
+        \draw[arrow] (data) -- (track);
+        \draw[arrow] (track) -- (eval);
+        \draw[arrow] (eval) -- (sys);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% Thời lượng dự kiến: 50 giây
+\begin{frame}{Mục tiêu và phạm vi}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \modulelabel{Mục tiêu hệ thống}
+            \vspace{0.3cm}
+            \begin{itemize}
+                \item Xây dựng hệ thống web quản lý dinh dưỡng cá nhân.
+                \item Theo dõi nhật ký ăn uống và các chỉ số cơ thể.
+                \item Tính toán nhu cầu năng lượng và dinh dưỡng.
+                \item Phân tích dữ liệu theo thời gian.
+                \item Hỗ trợ lập kế hoạch bữa ăn và nhận diện thực phẩm.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \modulelabel{Phạm vi ứng dụng}
+            \vspace{0.3cm}
+            \begin{itemize}
+                \item Hồ sơ và mục tiêu cá nhân.
+                \item Nhật ký dinh dưỡng.
+                \item Cân nặng, lượng nước, và luyện tập.
+                \item Dashboard và báo cáo.
+                \item Lập kế hoạch bữa ăn (Meal Planner).
+                \item Quét thông tin sản phẩm (Scanner).
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Thời lượng dự kiến: 1 phút
+\begin{frame}{Kiến trúc tổng thể của hệ thống}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.6cm and 0.4cm,
+        layer/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text centered, minimum width=2.5cm, minimum height=0.6cm, font=\footnotesize},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[layer, fill=NutriGreen!20] (client) {\textbf{Người dùng}};
+        \node[layer, below=of client] (react) {React SPA};
+        \node[layer, below=of react] (api) {RESTful API};
+        
+        \node[layer, below left=1cm and -1cm of api] (controller) {Controller};
+        \node[layer, right=of controller] (service) {Service};
+        \node[layer, right=of service] (model) {Sequelize Model};
+        
+        \node[layer, fill=NutriDark!10, below=0.5cm of service] (db) {\textbf{MySQL}};
+        
+        \node[layer, dashed, right=2cm of react] (ext) {Dịch vụ ngoài (AI Vision, OpenFoodFacts)};
+        
+        \draw[arrow] (client) -- (react);
+        \draw[arrow] (react) -- node[right, font=\footnotesize] {Axios / TanStack Query} (api);
+        \draw[arrow] (api) -| node[above left, font=\footnotesize] {Middleware} (controller);
+        \draw[arrow] (controller) -- (service);
+        \draw[arrow] (service) -- (model);
+        \draw[arrow] (model) |- (db);
+        
+        \draw[<->, dashed, NutriDark] (service) -- (ext);
+    \end{tikzpicture}
+    \end{center}
+    
+    \vspace{0.3cm}
+    \centering\small \textit{Frontend và Backend được tách biệt thông qua RESTful API, trong đó tầng Service đảm nhiệm nghiệp vụ và thuật toán.}
+\end{frame}
+
+% Thời lượng dự kiến: 1 phút
+\begin{frame}{Công nghệ và tổ chức hệ thống}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \modulelabel{Frontend}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item \small \textbf{React SPA:} Trải nghiệm người dùng mượt mà.
+                \item \small \textbf{React Router:} Quản lý điều hướng.
+                \item \small \textbf{AuthProvider / ProtectedRoute.}
+                \item \small \textbf{TanStack Query \& Axios.}
+                \item \small \textbf{Lazy Loading:} Tối ưu hóa hiệu suất.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \modulelabel{Backend}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item \small \textbf{Node.js / Express:} Xây dựng RESTful API.
+                \item \small \textbf{Middleware:} Xác thực JWT và kiểm tra dữ liệu.
+                \item \small \textbf{Controller:} Xử lý HTTP request.
+                \item \small \textbf{Service:} Chứa thuật toán và nghiệp vụ.
+                \item \small \textbf{Sequelize ORM / MySQL.}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    \vspace{0.8cm}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.4cm and 0.4cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text centered, font=\scriptsize, minimum height=0.5cm},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[box] (fe) {Frontend};
+        \node[box, right=of fe] (axios) {Axios / TanStack Query};
+        \node[box, right=of axios] (api) {RESTful API};
+        
+        \node[box, below=0.5cm of fe] (mid) {Middleware};
+        \node[box, right=of mid] (ctrl) {Controller};
+        \node[box, right=of ctrl] (srv) {Service};
+        \node[box, right=of srv, fill=NutriGreen!20] (db) {Model / MySQL};
+        
+        \draw[arrow] (fe) -- (axios);
+        \draw[arrow] (axios) -- (api);
+        \draw[arrow, rounded corners] (api.south) -- ++(0,-0.25) -| (mid.north);
+        \draw[arrow] (mid) -- (ctrl);
+        \draw[arrow] (ctrl) -- (srv);
+        \draw[arrow] (srv) -- (db);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+% Thời lượng dự kiến: 40 giây
+\begin{frame}{Một số giao diện chính}
+    \begin{columns}[T]
+        \begin{column}{0.33\textwidth}
+            \centering
+            \includegraphics[height=5cm, width=\textwidth, keepaspectratio]{images/dashboard_overview_cropped.png} \\
+            \vspace{0.2cm}
+            \small \textbf{Dashboard}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \centering
+            \includegraphics[height=5cm, width=\textwidth, keepaspectratio]{images/meal_planner_cropped.png} \\
+            \vspace{0.2cm}
+            \small \textbf{Meal Planner}
+        \end{column}
+        \begin{column}{0.33\textwidth}
+            \centering
+            \includegraphics[height=5cm, width=\textwidth, keepaspectratio]{images/scanner_step1_cropped.png} \\
+            \vspace{0.2cm}
+            \small \textbf{Hybrid Scanner}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Thời lượng dự kiến: 1 phút
+\begin{frame}{Nền tảng tính toán dinh dưỡng (Nutrition Core)}
+    \begin{itemize}
+        \item \textbf{BMI:} Đánh giá tương quan cân nặng và chiều cao.
+        \item \textbf{BMR:} Năng lượng chuyển hóa cơ bản (Mifflin-St Jeor).
+        \item \textbf{TDEE tĩnh:} Tổng năng lượng tiêu hao ước tính dựa trên hệ số hoạt động.
+        \item Dựa vào mục tiêu cá nhân, hệ thống xác định năng lượng mục tiêu và phân bổ đa lượng chất (Carb, Protein, Fat).
+    \end{itemize}
+    
+    \vspace{0.5cm}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.8cm,
+        steplabel/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.6cm, text centered, font=\footnotesize},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[steplabel] (profile) {Hồ sơ cá nhân};
+        \node[steplabel, right=of profile] (bmi) {BMI};
+        \node[steplabel, right=of bmi] (bmr) {BMR};
+        \node[steplabel, right=of bmr] (tdee) {TDEE};
+        \node[steplabel, below=0.6cm of tdee] (goal) {Mục tiêu năng lượng};
+        \node[steplabel, left=of goal, fill=NutriGreen!20] (dist) {\textbf{Phân bổ dinh dưỡng}};
+        
+        \draw[arrow] (profile) -- (bmi);
+        \draw[arrow] (bmi) -- (bmr);
+        \draw[arrow] (bmr) -- (tdee);
+        \draw[arrow] (tdee) -- (goal);
+        \draw[arrow] (goal) -- (dist);
+    \end{tikzpicture}
+    \end{center}
+    
+    \vspace{0.3cm}
+    \centering\small \textit{\textbf{Nutrition Core} là nền tảng đầu vào cho các module phân tích và cá nhân hóa phía sau.}
+\end{frame}
+
+% Thời lượng dự kiến: 1 phút 30 giây
+\begin{frame}{Adaptive TDEE – Điều chỉnh theo dữ liệu thực tế}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.3cm and 0.4cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.6cm, text centered, font=\scriptsize},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[box] (w1) {Cân nặng hằng ngày};
+        \node[box, right=of w1] (ema) {EMA lọc nhiễu xu hướng};
+        \node[box, right=of ema] (agg) {Tổng hợp theo tuần};
+        \node[box, below=0.5cm of agg] (est) {Ước lượng TDEE tuần};
+        \node[box, left=of est] (roll) {Rolling Average 4 tuần \& kiểm tra giới hạn};
+        \node[box, left=of roll, fill=NutriGreen!20] (update) {\textbf{Cập nhật Adaptive TDEE}};
+        
+        \draw[arrow] (w1) -- (ema);
+        \draw[arrow] (ema) -- (agg);
+        \draw[arrow] (agg) -- (est);
+        \draw[arrow] (est) -- (roll);
+        \draw[arrow] (roll) -- (update);
+    \end{tikzpicture}
+    \end{center}
+    
+    \vspace{0.2cm}
+    \begin{center}
+        \colorbox{NutriDark!10}{\textbf{Công thức: } $TDEE\_\text{ước\_tính} = \text{AvgIntake} - \left( \frac{\Delta\text{Weight} \times 7700}{7} \right)$}
+    \end{center}
+    
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \modulelabel{TDEE tĩnh}
+            \begin{itemize}
+                \item \small Dựa trên hồ sơ và hệ số hoạt động.
+                \item \small Là giá trị ước tính ban đầu.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \modulelabel{Adaptive TDEE}
+            \begin{itemize}
+                \item \small Dựa trên dữ liệu thực tế theo thời gian.
+                \item \small Có cơ chế lọc nhiễu và kiểm soát mức cập nhật.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Thời lượng dự kiến: 1 phút
+\begin{frame}{Phân tích chất lượng dinh dưỡng}
+    \begin{columns}[T]
+        \begin{column}{0.52\textwidth}
+            \modulelabel{Food Scoring}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item \small Chuẩn hóa dữ liệu dinh dưỡng theo 100 kcal.
+                \item \small Protein, chất xơ và vi chất có thể \textbf{cộng điểm}.
+                \item \small Đường và natri có thể \textbf{làm giảm điểm}.
+                \item \small Kết quả được giới hạn và phân loại thành các mức.
+            \end{itemize}
+            \vspace{0.1cm}
+            \centering
+            \begin{tikzpicture}[>=Stealth, node distance=0.3cm,
+                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text width=2.8cm, text centered, font=\scriptsize},
+                arrow/.style={->, NutriDark}]
+                \node[box] (data) {Dữ liệu thực phẩm};
+                \node[box, below=of data] (norm) {Chuẩn hóa theo 100 kcal};
+                \node[box, below=of norm] (score) {Cộng / trừ điểm};
+                \node[box, below=of score] (limit) {Áp dụng quy tắc giới hạn};
+                \node[box, right=of limit] (res) {Điểm \& phân loại};
+                \draw[arrow] (data) -- (norm);
+                \draw[arrow] (norm) -- (score);
+                \draw[arrow] (score) -- (limit);
+                \draw[arrow] (limit) -- (res);
+            \end{tikzpicture}
+        \end{column}
+        
+        \begin{column}{0.44\textwidth}
+            \modulelabel{Health Insights}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item \small \textbf{Ví dụ:} thiếu nước, thiếu protein, vượt năng lượng, mất cân đối macro.
+            \end{itemize}
+            \vspace{0.1cm}
+            \centering
+            \begin{tikzpicture}[>=Stealth, node distance=0.3cm,
+                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text width=3.5cm, text centered, font=\scriptsize},
+                arrow/.style={->, NutriDark}]
+                \node[box] (log) {Nhật ký trong ngày};
+                \node[box, below=of log] (cmp) {Đánh giá theo ngữ cảnh \& mức hoàn thành mục tiêu};
+                \node[box, below=of cmp] (warn) {Sinh cảnh báo / nhận xét};
+                \draw[arrow] (log) -- (cmp);
+                \draw[arrow] (cmp) -- (warn);
+            \end{tikzpicture}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Thời lượng dự kiến: 1 phút 30 giây
+\begin{frame}{Meal Planner – Tính khẩu phần bằng phương pháp khử Gauss}
+    \textbf{Bài toán:} Tính định lượng các nguyên liệu đã chọn nhằm đáp ứng mục tiêu Protein, Carb và Fat của bữa ăn.
+    
+    \vspace{0.3cm}
+    \begin{columns}[T]
+        \begin{column}{0.4\textwidth}
+            Mô hình toán học:
+            \[ A\mathbf{x} = \mathbf{b} \]
+            \small Trong đó:
+            \begin{itemize}
+                \item $A$: ma trận thành phần Protein, Carb và Fat của nguyên liệu.
+                \item $\mathbf{x}$: vector khối lượng của ba nguyên liệu cần xác định.
+                \item $\mathbf{b}$: mục tiêu macro của bữa ăn.
+            \end{itemize}
+            \vspace{0.2cm}
+            \scriptsize \textit{*Với bữa chính có thêm nguyên liệu nhóm rau/fiber, hệ thống cố định định lượng rau trước, điều chỉnh mục tiêu còn lại rồi giải hệ $3\times3$.}
+        \end{column}
+        
+        \begin{column}{0.55\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[>=Stealth, node distance=0.5cm,
+                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.5cm, text centered, font=\scriptsize},
+                arrow/.style={->, NutriDark}]
+                
+                \node[box] (select) {Chọn nguyên liệu};
+                \node[box, below=of select] (goal) {Xác định mục tiêu bữa ăn};
+                \node[box, below=of goal] (matrix) {Xây dựng hệ $3\times3$};
+                \node[box, below=of matrix] (gauss) {\textbf{Khử Gauss}};
+                \node[box, below=of gauss] (check) {Kiểm tra nghiệm và khối lượng};
+                \node[box, below=of check, fill=NutriGreen!20] (res) {Trả kết quả hoặc thử tổ hợp khác};
+                
+                \draw[arrow] (select) -- (goal);
+                \draw[arrow] (goal) -- (matrix);
+                \draw[arrow] (matrix) -- (gauss);
+                \draw[arrow] (gauss) -- (check);
+                \draw[arrow] (check) -- (res);
+            \end{tikzpicture}
+            \end{center}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Thời lượng dự kiến: 1 phút 15 giây
+\begin{frame}{Hybrid Nutrition Scanner}
+    \textbf{Ưu tiên dữ liệu cục bộ trước, chỉ gọi nguồn bên ngoài khi cần.}
+    \vspace{-0.3cm}
+    
+    \begin{center}
+    \resizebox{!}{6.2cm}{%
+    \begin{tikzpicture}[>=Stealth,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners=3pt,
+                    text centered, font=\scriptsize, inner sep=3pt, minimum height=0.55cm},
+        dbox/.style={rectangle, draw=NutriDark, fill=NutriGreen!25, rounded corners=3pt,
+                     text centered, font=\scriptsize\bfseries, inner sep=4pt,
+                     minimum height=0.6cm, double, double distance=1.5pt},
+        arrow/.style={->, thick, NutriDark},
+        darrow/.style={->, very thick, NutriDark!80},
+        dasharrow/.style={->, dashed, NutriDark!60, thin}]
+
+        % ── Background scopes ─────────────────────────────────────────
+        \begin{scope}[on background layer]
+            % Nhánh 1 – xanh dương nhạt
+            \fill[blue!8, rounded corners=4pt] (-0.2, 1.35) rectangle (5.5, -6.9);
+            % Nhánh 2 – xanh lá nhạt
+            \fill[NutriGreen!10, rounded corners=4pt] (5.8, 1.35) rectangle (10.8, -6.9);
+            % Tiêu đề
+            \node[font=\footnotesize\bfseries, blue!70!black]   at (2.6,  0.70) {Nhánh 1 — Tra cứu Barcode};
+            \node[font=\footnotesize\bfseries, NutriDark]       at (8.3,  0.70) {Nhánh 2 — AI Vision};
+        \end{scope}
+
+        % ═══════════════ NHÁNH 1 ═══════════════
+        \node[box, fill=blue!15, text width=2.4cm]  (barcode) at (1.2,  0.2) {Quét Barcode};
+
+        \node[box, text width=2.4cm] (l1) at (1.2, -1.0) {\textbf{Layer 1:} Local DB\\(Verified, score $\geq$ 0.7)};
+        \node[box, text width=2.4cm] (l2) at (1.2, -2.3) {\textbf{Layer 2:} Local DB\\(Unverified)};
+        \node[box, text width=2.4cm] (l3) at (1.2, -3.6) {\textbf{Layer 3:}\\OpenFoodFacts};
+        \node[box, fill=red!8, draw=red!60, text width=2.4cm] (l4) at (1.2, -5.0) {\textbf{Layer 4:}\\Cả 3 lớp\\không tìm thấy};
+
+        \node[box, text width=0.8cm, draw=NutriDark!50, fill=blue!5, font=\tiny\itshape]
+              (cache) at (3.3, -3.6) {Cache};
+
+        \node[box, text width=2.0cm] (show) at (4.4, -4.6) {Hiển thị kết quả};
+        \node[box, text width=2.0cm] (chk1) at (4.4, -5.7) {Người dùng\\chọn/xác nhận};
+
+        \draw[arrow] (barcode) -- (l1);
+        \draw[arrow] (l1) -- node[left, font=\tiny] {không thấy} (l2);
+        \draw[arrow] (l2) -- node[left, font=\tiny] {không thấy} (l3);
+        \draw[arrow] (l3) -- node[left, font=\tiny] {không thấy} (l4);
+
+        % Bus connections
+        \draw[thick, blue!50] (l1.east) -| (4.4, -3.9) node[pos=0.25, above, font=\tiny, blue!70!black] {tìm thấy};
+        \draw[thick, blue!50] (l2.east) -| (4.4, -3.9) node[pos=0.25, above, font=\tiny, blue!70!black] {tìm thấy};
+        
+        \draw[dasharrow] (l3.east) -- (cache.west) node[midway, above, yshift=3pt, font=\tiny, blue!70!black] {tìm thấy};
+        \draw[thick, blue!50] (cache.east) -| (4.4, -3.9);
+
+        \draw[arrow] (4.4, -3.9) -- (show.north);
+        \draw[arrow] (show) -- (chk1);
+
+        % ═══════════════ NHÁNH 2 ═══════════════
+        \node[box, fill=NutriGreen!20, text width=2.8cm]
+              (img)   at (8.8,  0.2) {Chụp ảnh nhãn\\dinh dưỡng};
+        \node[box, text width=2.8cm]
+              (ai)    at (8.8, -1.0) {Gemini Flash\\(AI OCR)};
+        \node[box, text width=2.8cm]
+              (phys)  at (8.8, -2.4) {\textbf{Physics Validation}\\Tổng macro $\leq$ 100g\\Calo $\leq$ 900 kcal\\Atwater dev. $<$ 15\%};
+        
+        \node[box, fill=red!8, draw=red!60, text width=1.6cm]
+              (fail)  at (6.0, -2.4) {Báo lỗi:\\``Dữ liệu sai''};
+              
+        \node[box, text width=2.8cm]
+              (chk2)  at (8.8, -4.1) {Người dùng\\kiểm tra \& xác nhận};
+        \node[box, text width=2.8cm]
+              (trust) at (8.8, -5.4) {Lưu ProductContribution\\+ Tính Trust Score};
+
+        % ── Fallback arrow ──
+        \draw[darrow, rounded corners=4pt]
+              (l4.east) -- (5.4, -5.0) 
+              -- (5.4, 1.15) 
+              -- (10.5, 1.15) node[midway, above, font=\tiny\bfseries, red!70!black] {Không tìm thấy $\rightarrow$ chuyển sang AI}
+              -- (10.5, 0.2) -- (img.east);
+
+        % ── Arrows Nhánh 2 ──
+        \draw[arrow] (img)  -- (ai);
+        \draw[arrow] (ai)   -- (phys);
+        \draw[arrow] (phys) -- node[right, font=\tiny] {Pass} (chk2);
+        \draw[arrow] (phys) -- node[pos=0.3, above, yshift=4pt, font=\tiny] {Fail} (fail);
+        
+        \draw[arrow, rounded corners=4pt]
+              (fail.north) |- (img.west) node[pos=0.40, left, font=\tiny] {chụp lại};
+        \draw[arrow] (chk2) -- (trust);
+
+        % ═══════════════ SHARED ENDPOINT ═══════════════
+        \node[dbox, text width=6.0cm]
+              (save) at (6.6, -6.8) {Lưu dữ liệu / Thêm vào nhật ký (Diary)};
+
+        \draw[arrow] (chk1.south) -- (chk1.south |- save.north);
+        \draw[arrow] (trust.south) -- (trust.south |- save.north);
+
+    \end{tikzpicture}
+    }% end resizebox
+    \end{center}
+\end{frame}
+
+
+% Thời lượng dự kiến: 50 giây
+\begin{frame}{Kết quả thực nghiệm và kiểm thử}
+    \begin{columns}[T]
+        \begin{column}{0.33\textwidth}
+            \modulelabel{Chức năng chính}
+            \vspace{0.2cm}
+            
+            \small Các chức năng chính thực hiện theo luồng thiết kế.
+        \end{column}
+        
+        \begin{column}{0.33\textwidth}
+            \modulelabel{Xử lý dữ liệu}
+            \vspace{0.2cm}
+            
+            \small Các thuật toán trả kết quả phù hợp với dữ liệu kiểm thử.
+        \end{column}
+        
+        \begin{column}{0.33\textwidth}
+            \modulelabel{Kiến trúc kỹ thuật}
+            \vspace{0.2cm}
+            
+            \small Frontend – RESTful API – Backend – MySQL hoạt động thống nhất.
+        \end{column}
+    \end{columns}
+    
+    \vspace{0.5cm}
+    \begin{center}
+        \normalsize
+        \renewcommand{\arraystretch}{1.5}
+        \begin{tabularx}{0.98\textwidth}{>{\hsize=0.3\hsize}X | >{\hsize=0.7\hsize}X}
+            \toprule
+            \textbf{Nhóm kiểm thử} & \textbf{Kết quả} \\
+            \midrule
+            Luồng xác thực \& CRUD & Các trường hợp kiểm thử chính đạt kết quả mong đợi. \\
+            Giải thuật khử Gauss (Meal Planner) & Trả khẩu phần khi tìm được nghiệm hợp lệ; cảnh báo hoặc thử lại khi nghiệm không phù hợp. \\
+            Adaptive TDEE & Trả kết quả nhất quán với dữ liệu lịch sử và dữ liệu thực nghiệm đã chuẩn bị. \\
+            Scanner API / AI Vision & Tra cứu và trích xuất dữ liệu trong các trường hợp thử nghiệm; dữ liệu chưa đạt điều kiện được yêu cầu kiểm tra và xác nhận. \\
+            \bottomrule
+        \end{tabularx}
+    \end{center}
+\end{frame}
+
+% Thời lượng dự kiến: 20-30 giây
+\begin{frame}{Kịch bản demo}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, 
+        node distance=0.8cm,
+        steplabel/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.8cm, text width=2.5cm, text centered, font=\footnotesize},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[steplabel, fill=NutriGreen!20] (s1) {1. Dashboard \& Hồ sơ tổng quan};
+        \node[steplabel, right=of s1] (s2) {2. Ghi nhận bữa ăn \& quan sát};
+        \node[steplabel, right=of s2] (s3) {3. Demo Meal Planner hoặc Scanner};
+        \node[steplabel, right=of s3] (s4) {4. Xem nhanh Adaptive TDEE};
+        
+        \draw[arrow] (s1) -- (s2);
+        \draw[arrow] (s2) -- (s3);
+        \draw[arrow] (s3) -- (s4);
+    \end{tikzpicture}
+    \end{center}
+    
+    \vspace{1cm}
+    \centering
+    \Large \textit{Tiến hành demo trực tiếp trên hệ thống...}
+\end{frame}
+
+% Thời lượng dự kiến: 50 giây
+\begin{frame}{Kết luận và hướng phát triển}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \modulelabel{Kết quả đạt được}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item Xây dựng được hệ thống web quản lý dinh dưỡng cá nhân với các chức năng chính theo mục tiêu đề tài.
+                \item Tích hợp chức năng theo dõi dinh dưỡng và sức khỏe cơ bản.
+                \item Triển khai các module xử lý dữ liệu và thuật toán như Adaptive TDEE, Food Scoring và Meal Planner phục vụ cá nhân hóa.
+                \item Xây dựng kiến trúc Client–Server với Frontend và Backend giao tiếp qua RESTful API.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \modulelabel{Hướng phát triển}
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item Mở rộng cơ sở dữ liệu thực phẩm nội bộ.
+                \item Kiểm thử với nhiều người dùng và dữ liệu dài hạn.
+                \item Tiếp tục đánh giá thuật toán Adaptive TDEE.
+                \item Cải thiện độ tin cậy của Hybrid Scanner và dữ liệu đầu vào.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    \vspace{0.3cm}
+    \centering
+    \Large \textbf{\textcolor{NutriDark}{Em xin chân thành cảm ơn thầy cô đã lắng nghe!}} \\
+    \vspace{0.2cm}
+    \normalsize \textit{Q\&A}
+\end{frame}
+
+\end{document}
