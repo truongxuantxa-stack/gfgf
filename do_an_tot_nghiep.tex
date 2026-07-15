@@ -2651,7 +2651,33 @@ Các mức ngưỡng, trọng số cộng–trừ, ngoại lệ theo nhóm và k
 
 Food Scoring bổ sung một thước đo định lượng về chất lượng thực phẩm cho NutriTrack. Trong nhật ký ăn uống, điểm thực phẩm có thể giúp người dùng nhận biết món nào có mật độ dinh dưỡng tốt hơn. Trong Health Insights, kết quả này có thể hỗ trợ phát hiện khẩu phần có nhiều thực phẩm điểm thấp. Trong Meal Planner, điểm thực phẩm có thể được dùng như một tín hiệu phụ khi lựa chọn hoặc thay thế nguyên liệu, bên cạnh các ràng buộc chính như năng lượng mục tiêu, protein, carbohydrate, chất béo và cấu hình bữa ăn.
 
-Gợi ý chèn hình 3.x: Sơ đồ luồng Food Scoring gồm các bước: lấy dữ liệu thực phẩm → kiểm tra dữ liệu hợp lệ → chuẩn hóa trên 100 kcal → cộng điểm cho protein, chất xơ và vi chất → trừ điểm cho đường và natri → áp dụng ngoại lệ và giới hạn điểm → trả về điểm, nhãn và tooltip cho Frontend.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.8cm,
+        box/.style={rectangle, draw=blue!80!black, thick, rounded corners, minimum width=8cm, minimum height=1cm, align=center, fill=blue!5},
+        arrow/.style={thick, ->, >=stealth, draw=gray!80!black}
+        ]
+        
+        \node (step1) [box] {Lấy dữ liệu thực phẩm};
+        \node (step2) [box, below=of step1] {Kiểm tra dữ liệu hợp lệ};
+        \node (step3) [box, below=of step2] {Chuẩn hóa trên 100 kcal};
+        \node (step4) [box, below=of step3] {Cộng điểm cho protein, chất xơ và vi chất};
+        \node (step5) [box, below=of step4] {Trừ điểm cho đường và natri};
+        \node (step6) [box, below=of step5] {Áp dụng ngoại lệ và giới hạn điểm};
+        \node (step7) [box, below=of step6] {Trả về điểm, nhãn và tooltip cho Frontend};
+        
+        \draw [arrow] (step1) -- (step2);
+        \draw [arrow] (step2) -- (step3);
+        \draw [arrow] (step3) -- (step4);
+        \draw [arrow] (step4) -- (step5);
+        \draw [arrow] (step5) -- (step6);
+        \draw [arrow] (step6) -- (step7);
+        
+    \end{tikzpicture}
+    \caption{Sơ đồ luồng Food Scoring}
+    \label{fig:food_scoring_flow}
+\end{figure}
 
 Nhìn chung, Food Scoring được triển khai nhằm bổ sung góc nhìn về mật độ dinh dưỡng của thực phẩm. Thuật toán không chỉ dựa vào tổng năng lượng mà đánh giá thực phẩm theo lượng thành phần có lợi và thành phần cần kiểm soát trên 100 kcal. Việc tách Food Scoring thành service riêng giúp kết quả chấm điểm có thể được sử dụng lại khi cần, đồng thời giữ ranh giới rõ ràng giữa xử lý dữ liệu thực phẩm, phân tích sức khỏe và lập kế hoạch bữa ăn.
 \subsection{Health Insights}Health Insights là nhóm xử lý được xây dựng để tạo ra các nhận xét và gợi ý ngắn dựa trên dữ liệu dinh dưỡng trong ngày của người dùng. Nếu Nutrition Core tạo ra các chỉ số nền như năng lượng mục tiêu, macro và mục tiêu nước, thì Health Insights sử dụng các chỉ số đó để so sánh với dữ liệu thực tế đã ghi nhận. Kết quả của module này không phải là chẩn đoán y khoa, mà là thông tin tham khảo giúp người dùng theo dõi tình trạng ăn uống, nước uống và một số yếu tố cần điều chỉnh trong ngày.
