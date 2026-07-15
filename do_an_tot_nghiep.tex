@@ -280,6 +280,7 @@ JWT & JSON Web Token \\[0.15cm]
 MET & Metabolic Equivalent of Task \\[0.15cm]
 MVC & Model View Controller \\[0.15cm]
 ORM & Object Relational Mapping \\[0.15cm]
+OWASP & Open Worldwide Application Security Project \\[0.15cm]
 PDF & Portable Document Format \\[0.15cm]
 REST & Representational State Transfer \\[0.15cm]
 SPA & Single Page Application \\[0.15cm]
@@ -2063,21 +2064,7 @@ Chi tiết luồng xử lý một request có xác thực được minh họa tr
 
 Service layer là nơi chứa phần lớn logic nghiệp vụ của Backend. Các service được tổ chức theo từng nhóm chức năng, chẳng hạn như nutrition service, dashboard service, health insight service, food scoring service, meal planner service, scanner service, physics validation service, Adaptive TDEE service và PDF service. Mỗi service phụ trách một phạm vi xử lý riêng, giúp mã nguồn có ranh giới rõ ràng hơn.
 
-Một ví dụ là chức năng dashboard. Khi người dùng xem dữ liệu trong ngày, Backend không chỉ lấy nhật ký ăn uống mà còn cần tổng hợp năng lượng, protein, carbohydrate, lipid, chất xơ, nước uống, vận động và cân nặng. Các dữ liệu này được xử lý ở service rồi trả về cho Frontend dưới dạng cấu trúc thống nhất. Nếu toàn bộ xử lý đặt trong controller, mã nguồn sẽ khó bảo trì khi chức năng thay đổi.
-
-\textbf{Ước tính năng lượng luyện tập theo MET.}
-
-Đối với dữ liệu luyện tập, \texttt{exercise.service.js} sử dụng MET (Metabolic Equivalent of Task) để ước tính năng lượng tiêu hao. MET biểu thị tỷ lệ giữa mức chuyển hóa khi thực hiện một hoạt động và mức chuyển hóa khi nghỉ; một MET được quy ước bằng 1~kcal/kg/giờ và xấp xỉ mức tiêu hao khi ngồi yên \cite{paCompendiumWebsite}. Với cân nặng \(m\) tính bằng kg, thời gian luyện tập \(t\) tính bằng phút và giá trị MET của hoạt động là \(MET_s\), hệ thống tính năng lượng tiêu hao theo công thức:
-
-\[
-E = MET_s \times m \times \frac{t}{60}
-\]
-
-Trong đó, \(E\) là năng lượng tiêu hao ước tính, đơn vị kcal; \(MET_s\) là giá trị \texttt{defaultMet} được lấy từ \texttt{MET\_TABLE}; \(m\) là cân nặng người dùng tính bằng kg; \(t\) là thời gian luyện tập tính bằng phút. Kết quả được làm tròn đến một chữ số thập phân trước khi lưu vào trường \texttt{caloriesBurned} của \texttt{ExerciseLog}.
-
-Compendium of Physical Activities cung cấp hệ thống mã và giá trị MET cho nhiều nhóm hoạt động với các mức cường độ khác nhau \cite{herrmann2024Compendium}. Dựa trên nguồn tham chiếu này, NutriTrack tổ chức \texttt{MET\_TABLE} theo các lựa chọn có ý nghĩa đối với giao diện, trong đó một số hoạt động được tách theo cường độ, còn một số hoạt động sử dụng một giá trị mặc định đại diện. Khi người dùng chưa có cân nặng trong hồ sơ, phiên bản hiện tại tạm sử dụng 60~kg để duy trì phép tính; đây là cơ chế dự phòng của hệ thống, không phải giá trị chuẩn do Compendium quy định.
-
-Các giá trị được sử dụng là standard MET và kết quả chỉ mang tính ước tính. Chi phí năng lượng thực tế còn có thể thay đổi theo tuổi, giới tính, thể trạng, kỹ thuật thực hiện và mức chuyển hóa khi nghỉ của từng người; do đó phép tính không thay thế phương pháp đo trực tiếp năng lượng tiêu hao \cite{paCompendiumCorrectedMets}.
+Một ví dụ là chức năng dashboard. Khi người dùng xem dữ liệu trong ngày, Backend không chỉ lấy nhật ký ăn uống mà còn cần tổng hợp năng lượng, protein, carbohydrate, lipid, chất xơ, nước uống, vận động và cân nặng. Các dữ liệu này được xử lý ở service rồi trả về cho Frontend dưới dạng cấu trúc thống nhất. Nếu toàn bộ xử lý đặt trong controller, mã nguồn sẽ khó bảo trì khi chức năng thay đổi. Các phép tính nghiệp vụ cụ thể, chẳng hạn ước tính năng lượng tiêu hao khi luyện tập theo MET, được triển khai tại tầng Service để tách khỏi xử lý HTTP; cơ sở tính toán và cách hiện thực được trình bày tại Mục~\ref{sec:met-exercise}.
 
 Tương tự, các chỉ số nền tảng như BMI, BMR, TDEE, năng lượng mục tiêu, phân bổ protein, carbohydrate, lipid và mục tiêu nước được đặt trong nhóm xử lý dinh dưỡng. Các kết quả này được sử dụng lại ở nhiều chức năng như hồ sơ người dùng, dashboard, lập kế hoạch bữa ăn và báo cáo PDF. Việc tập trung công thức tại service giúp giảm nguy cơ sai lệch kết quả giữa các module.
 
@@ -2283,7 +2270,7 @@ Cách liên kết này phù hợp với kiến trúc Client - Server, trong đó
 
 Nhìn chung, Frontend của NutriTrack được triển khai theo hướng tách rõ giao diện, điều hướng, trạng thái xác thực và logic gọi API. React Router đảm nhiệm điều hướng theo màn hình, Auth Context quản lý phiên người dùng, TanStack Query quản lý dữ liệu lấy từ server, Axios thực hiện request HTTP, còn các component đảm nhiệm hiển thị và tương tác cụ thể. Các thuật toán dinh dưỡng không được trình bày chi tiết trong mục này vì phần lớn được xử lý ở Backend và sẽ được phân tích ở các mục tiếp theo của Chương 3.
 
-\section{Các thuật toán xử lý chính}Chương 3 bên cạnh việc trình bày cách triển khai Backend và Frontend còn tập trung vào các thuật toán nghiệp vụ cốt lõi của hệ thống NutriTrack. Các thuật toán này bao gồm Nutrition Core, Adaptive TDEE, Food Scoring, Health Insights và Meal Planner. Mỗi nhóm xử lý đảm nhiệm một vai trò riêng trong quá trình tính toán và phân tích dinh dưỡng, đồng thời có sự liên kết với nhau thông qua dữ liệu đầu vào và đầu ra chung.
+\section{Các thuật toán xử lý chính}Chương 3 bên cạnh việc trình bày cách triển khai Backend và Frontend còn tập trung vào các thuật toán nghiệp vụ cốt lõi của hệ thống NutriTrack. Các nhóm xử lý được trình bày gồm Nutrition Core, ước tính năng lượng luyện tập theo MET, Adaptive TDEE, Food Scoring, Health Insights và Meal Planner. Mỗi nhóm đảm nhiệm một vai trò riêng trong quá trình tính toán và phân tích dữ liệu, đồng thời liên kết với nhau thông qua dữ liệu đầu vào và đầu ra của hệ thống.
 
 \subsection{Nutrition Core}Nutrition Core là nhóm xử lý nền tảng của hệ thống NutriTrack, được sử dụng để tính các chỉ số dinh dưỡng cá nhân ban đầu cho người dùng. Vai trò chính của nhóm xử lý này là tạo ra các giá trị cơ sở như BMI, phân loại BMI, BMR, TDEE, năng lượng mục tiêu, phân bổ protein, carbohydrate, lipid và mục tiêu nước uống hằng ngày. Các giá trị này không phải là kết quả phân tích cuối cùng, mà là dữ liệu nền để Dashboard, Profile, Meal Planner, Health Insights, Adaptive TDEE và PDF Report sử dụng trong các bước xử lý tiếp theo.
 
@@ -2328,7 +2315,7 @@ Chỉ số khối cơ thể BMI được xác định theo công thức \textbf{
 
 Trong phạm vi hệ thống, giá trị BMR/REE được ước lượng bằng công thức Mifflin-St Jeor dựa trên giới tính, tuổi, chiều cao và cân nặng của người dùng \cite{mifflin1990}. Cụ thể, đối với nam giới, $\text{BMR} = 10 \times \text{cân nặng} + 6,25 \times \text{chiều cao} - 5 \times \text{tuổi} + 5$; đối với nữ giới, $\text{BMR} = 10 \times \text{cân nặng} + 6,25 \times \text{chiều cao} - 5 \times \text{tuổi} - 161$. Trong đó, cân nặng tính bằng kg, chiều cao tính bằng cm và tuổi tính bằng năm. Việc tách công thức theo giới tính được xử lý ở Backend dựa trên dữ liệu hồ sơ người dùng.
 
-Sau khi ước lượng BMR, hệ thống tính TDEE tĩnh theo công thức \textbf{TDEE = BMR × PAL}. PAL, viết tắt của Physical Activity Level, biểu diễn tổng năng lượng tiêu hao trong 24 giờ dưới dạng bội số của BMR và được xác định về mặt khái niệm theo quan hệ \textbf{PAL = TEE/BMR}. Theo báo cáo FAO/WHO/UNU, khi biết BMR và PAL có thể ước lượng tổng nhu cầu năng lượng hằng ngày; PAL cần phản ánh lối sống hoạt động thường xuyên, bao gồm cả hoạt động nghề nghiệp và hoạt động trong thời gian rảnh \cite{fao_who_unu_2001}. Trong NutriTrack, mức vận động do người dùng khai báo được ánh xạ thành một hệ số triển khai để tạo staticTDEE ban đầu. Giá trị này là ước lượng tham khảo và có thể được thay thế bằng Adaptive TDEE khi hệ thống đã thu thập đủ dữ liệu thực tế. Phần tính toán Adaptive TDEE được tách riêng và trình bày ở mục 3.3.2.
+Sau khi ước lượng BMR, hệ thống tính TDEE tĩnh theo công thức \textbf{TDEE = BMR × PAL}. PAL, viết tắt của Physical Activity Level, biểu diễn tổng năng lượng tiêu hao trong 24 giờ dưới dạng bội số của BMR và được xác định về mặt khái niệm theo quan hệ \textbf{PAL = TEE/BMR}. Theo báo cáo FAO/WHO/UNU, khi biết BMR và PAL có thể ước lượng tổng nhu cầu năng lượng hằng ngày; PAL cần phản ánh lối sống hoạt động thường xuyên, bao gồm cả hoạt động nghề nghiệp và hoạt động trong thời gian rảnh \cite{fao_who_unu_2001}. Trong NutriTrack, mức vận động do người dùng khai báo được ánh xạ thành một hệ số triển khai để tạo staticTDEE ban đầu. Giá trị này là ước lượng tham khảo và có thể được thay thế bằng Adaptive TDEE khi hệ thống đã thu thập đủ dữ liệu thực tế. Phần tính toán Adaptive TDEE được tách riêng và trình bày tại Mục~\ref{sec:adaptive-tdee}.
 
 Từ TDEE áp dụng, hệ thống tính năng lượng mục tiêu theo mục tiêu cá nhân. Đối với người dùng trưởng thành lựa chọn mục tiêu giảm cân, hệ thống áp dụng mức thâm hụt mặc định 500 kcal/ngày so với TDEE đang được áp dụng. Giá trị này nằm trong khoảng thâm hụt 500–750 kcal/ngày được đề cập trong hướng dẫn ACC/AHA/TOS về quản lý thừa cân và béo phì ở người trưởng thành \cite{jensen2014}. Mức 500 kcal/ngày được lựa chọn làm cấu hình mặc định theo hướng thận trọng; năng lượng mục tiêu được xác định theo công thức: \textbf{targetCalories = max(TDEE - 500, BMR)}. Việc chặn dưới bằng BMR giúp hệ thống hạn chế tự động đề xuất mức năng lượng quá thấp dưới mức năng lượng nền. Nếu mục tiêu là duy trì cân nặng thì \textbf{targetCalories = TDEE}; nếu mục tiêu là tăng cân thì \textbf{targetCalories = TDEE + 300}. Các thông số này đóng vai trò là tham chiếu hỗ trợ theo dõi của hệ thống và không thay thế đánh giá của chuyên gia y tế.
 
@@ -2379,7 +2366,24 @@ Quá trình tính toán này được mô tả tổng quan qua Hình \ref{fig:lu
 
 Nhìn chung, Nutrition Core được triển khai như lớp xử lý nền cho toàn bộ hệ thống dinh dưỡng cá nhân. Phạm vi của nhóm xử lý này được giữ ở mức tính toán chỉ số cơ bản và mục tiêu cá nhân. Các xử lý có tính thích ứng theo thời gian, đánh giá chất lượng món ăn, sinh cảnh báo sức khỏe hoặc lập thực đơn không được đặt trong Nutrition Core, mà được tách sang các module chuyên biệt ở các mục tiếp theo.
 
-\subsection{Adaptive TDEE}Adaptive TDEE là nhóm xử lý được xây dựng để điều chỉnh giá trị TDEE dựa trên dữ liệu thực tế của người dùng theo từng tuần. Trong Nutrition Core, TDEE được tính từ BMR và hệ số vận động. Cách tính này tạo ra giá trị nền ban đầu, tuy nhiên mô hình cân bằng năng lượng động cho thấy cần tính đến sự thích nghi của mức tiêu hao năng lượng trong quá trình thay đổi cân nặng; do đó, TDEE tĩnh không nhất thiết duy trì sự chính xác trong toàn bộ thời gian theo dõi \cite{hall2011_lancet}. Mối quan hệ giữa thâm hụt năng lượng và biến động cân nặng không hoàn toàn giống nhau; thành phần cơ thể ban đầu và tỷ lệ khối mỡ, khối không mỡ trong phần trọng lượng thay đổi có thể làm thay đổi năng lượng tương ứng với mỗi kilogram cân nặng giảm \cite{chow_hall_2008}. Vì vậy, hệ thống sử dụng TDEE tĩnh làm mốc ban đầu và bổ sung cơ chế Adaptive TDEE để hiệu chỉnh dần mức tiêu hao năng lượng ước lượng dựa trên nhật ký ăn uống và dữ liệu cân nặng.
+\subsection{Ước tính năng lượng luyện tập theo MET}
+\label{sec:met-exercise}
+
+MET (Metabolic Equivalent of Task) biểu thị tỷ lệ giữa mức chuyển hóa khi thực hiện một hoạt động và mức chuyển hóa khi nghỉ. Một MET được quy ước tương đương 1~kcal/kg/giờ và xấp xỉ mức tiêu hao năng lượng khi ngồi yên \cite{paCompendiumWebsite}. Trong NutriTrack, giá trị MET được sử dụng để ước tính năng lượng tiêu hao của một buổi luyện tập dựa trên loại hoạt động, cân nặng và thời gian thực hiện.
+
+\[
+E = MET_s \times m \times \frac{t}{60}
+\]
+
+Trong đó, \(E\) là năng lượng tiêu hao ước tính, đơn vị kcal; \(MET_s\) là giá trị \texttt{defaultMet} của hoạt động được lấy từ \texttt{MET\_TABLE}; \(m\) là cân nặng người dùng tính bằng kg; \(t\) là thời gian luyện tập tính bằng phút. Hàm \texttt{calculateExerciseCalories} chuyển thời gian từ phút sang giờ, thực hiện phép tính và làm tròn kết quả đến một chữ số thập phân trước khi lưu vào trường \texttt{caloriesBurned} của \texttt{ExerciseLog}.
+
+Compendium of Physical Activities cung cấp hệ thống mã và giá trị MET cho nhiều nhóm hoạt động với các mức cường độ khác nhau \cite{herrmann2024Compendium}. Dựa trên nguồn tham chiếu này, NutriTrack tổ chức \texttt{MET\_TABLE} theo các lựa chọn sử dụng trên giao diện. Một số hoạt động như đi bộ, chạy bộ, đạp xe và tập tạ được chia thành nhiều mức cường độ; các hoạt động còn lại sử dụng một giá trị mặc định đại diện. Frontend lấy danh sách hoạt động và mức năng lượng ước tính theo giờ từ Backend, sau đó chỉ gửi khóa hoạt động và thời gian luyện tập khi người dùng ghi nhận dữ liệu. Phép tính cuối cùng vẫn được thực hiện tập trung tại Backend.
+
+Khi hồ sơ chưa có cân nặng, phiên bản hiện tại tạm sử dụng 60~kg để duy trì phép tính; đây là cơ chế dự phòng của NutriTrack, không phải giá trị do Compendium quy định. Các giá trị đang sử dụng là standard MET nên kết quả chỉ mang tính ước tính và có thể khác với năng lượng tiêu hao thực tế của từng cá nhân \cite{paCompendiumCorrectedMets}.
+
+\subsection{Adaptive TDEE}
+\label{sec:adaptive-tdee}
+Adaptive TDEE là nhóm xử lý được xây dựng để điều chỉnh giá trị TDEE dựa trên dữ liệu thực tế của người dùng theo từng tuần. Trong Nutrition Core, TDEE được tính từ BMR và hệ số vận động. Cách tính này tạo ra giá trị nền ban đầu, tuy nhiên mô hình cân bằng năng lượng động cho thấy cần tính đến sự thích nghi của mức tiêu hao năng lượng trong quá trình thay đổi cân nặng; do đó, TDEE tĩnh không nhất thiết duy trì sự chính xác trong toàn bộ thời gian theo dõi \cite{hall2011_lancet}. Mối quan hệ giữa thâm hụt năng lượng và biến động cân nặng không hoàn toàn giống nhau; thành phần cơ thể ban đầu và tỷ lệ khối mỡ, khối không mỡ trong phần trọng lượng thay đổi có thể làm thay đổi năng lượng tương ứng với mỗi kilogram cân nặng giảm \cite{chow_hall_2008}. Vì vậy, hệ thống sử dụng TDEE tĩnh làm mốc ban đầu và bổ sung cơ chế Adaptive TDEE để hiệu chỉnh dần mức tiêu hao năng lượng ước lượng dựa trên nhật ký ăn uống và dữ liệu cân nặng.
 
 Trong mã nguồn Backend, Adaptive TDEE được triển khai thành một service riêng. Service này không thay thế Nutrition Core mà hoạt động như lớp điều chỉnh bổ sung. Khi chưa đủ dữ liệu, hệ thống vẫn sử dụng TDEE tĩnh. Khi đã có dữ liệu hợp lệ qua nhiều tuần và người dùng bật chế độ sử dụng Adaptive TDEE, giá trị TDEE áp dụng trong hệ thống có thể được lấy từ User.adaptiveTDEE thay vì chỉ lấy từ công thức tĩnh. Cách thiết kế này giúp hệ thống vẫn hoạt động được với người dùng mới, đồng thời có khả năng điều chỉnh khi dữ liệu thực tế đã đủ.
 
@@ -3102,13 +3106,17 @@ Chi tiết sơ đồ luồng Hybrid Nutrition Scanner được thể hiện tron
 Nhìn chung, Hybrid Nutrition Scanner được triển khai như một luồng xử lý kết hợp giữa tra cứu mã vạch, nguồn dữ liệu bên ngoài, AI Vision và cơ chế kiểm tra độ tin cậy. Thiết kế nhiều tầng giúp hệ thống ưu tiên dữ liệu nhanh và tin cậy trước, đồng thời vẫn có phương án xử lý khi gặp sản phẩm mới. Physics Validation, bước xác nhận của người dùng và cơ chế cập nhật confidenceScore giúp hạn chế việc lưu dữ liệu bất thường, từ đó làm cho chức năng scanner phù hợp hơn với mục tiêu theo dõi dinh dưỡng cá nhân của NutriTrack.
 \section{Bảo mật và xử lý lỗi}Bảo mật và xử lý lỗi là phần hỗ trợ quan trọng trong quá trình vận hành Backend của hệ thống NutriTrack. Do hệ thống lưu trữ dữ liệu cá nhân liên quan đến hồ sơ người dùng, nhật ký ăn uống, cân nặng và mục tiêu dinh dưỡng, các API cần có cơ chế xác thực người dùng, giới hạn truy cập và trả lỗi nhất quán. Trong phạm vi triển khai, hệ thống tập trung vào một số nhóm xử lý chính: xác thực bằng token, bảo vệ mật khẩu, giới hạn request, chuẩn hóa phản hồi API và xử lý lỗi tập trung.
 
-Đối với xác thực, Backend sử dụng cơ chế Access Token và Refresh Token. Khi người dùng đăng nhập thành công, hệ thống tạo Access Token để Frontend gửi kèm trong header Authorization khi gọi các API cần xác thực. Refresh Token có thời gian sống dài hơn và được lưu trong HttpOnly Cookie. Việc đặt Refresh Token trong HttpOnly Cookie giúp hạn chế việc JavaScript phía Frontend truy cập trực tiếp vào token này. Ngoài ra, cookie refresh token được cấu hình đường dẫn riêng cho endpoint làm mới token, nhờ đó giảm phạm vi gửi cookie trong các request không cần thiết.
+Đối với xác thực, Backend sử dụng cơ chế Access Token và Refresh Token. Khi người dùng đăng nhập thành công, hệ thống tạo Access Token để Frontend gửi kèm trong header Authorization khi gọi các API cần xác thực. Refresh Token có thời gian sống 7 ngày và được lưu trong cookie với các thuộc tính \texttt{HttpOnly}, \texttt{SameSite=Strict}, \texttt{Secure} khi hệ thống chạy trong môi trường production và \texttt{Path} giới hạn ở endpoint làm mới token. Thuộc tính \texttt{HttpOnly} hạn chế JavaScript phía Frontend đọc trực tiếp cookie, trong khi \texttt{Secure} yêu cầu cookie chỉ được truyền qua HTTPS ở môi trường production. \texttt{SameSite=Strict} hạn chế việc gửi cookie trong các request khác nguồn, còn phạm vi \texttt{Path} hẹp giúp giảm số request không cần thiết mang theo Refresh Token. Cách cấu hình này phù hợp với một số khuyến nghị quản lý phiên của OWASP \cite{owaspSessionManagement}. Tuy nhiên, \texttt{Path} chỉ giới hạn phạm vi trình duyệt gửi cookie, không được xem là một ranh giới bảo mật tuyệt đối.
 
 Các nhóm API nghiệp vụ như Dashboard, Diary, Weight, Water, Exercise, Meal Planner, Profile,Report, Adaptive TDEE và Scanner được bảo vệ bằng middleware requireAuthApi. Middleware này kiểm tra Access Token trong header trước khi cho phép controller xử lý request. Khi Access Token hết hạn, Frontend có thể gọi endpoint refresh token để lấy Access Token mới dựa trên Refresh Token trong cookie. Cách tổ chức này giúp tách rõ token dùng để gọi API hằng ngày và token dùng để duy trì phiên đăng nhập.
 
-Mật khẩu người dùng không được lưu trực tiếp dưới dạng văn bản gốc. Khi đăng ký, Backend sử dụng bcrypt để băm mật khẩu trước khi lưu vào cơ sở dữ liệu. Khi đăng nhập, mật khẩu người dùng nhập vào được so sánh với giá trị đã băm. Nếu email không tồn tại hoặc mật khẩu không khớp, hệ thống trả về thông báo chung như “Email hoặc mật khẩu không đúng” thay vì nêu rõ sai email hay sai mật khẩu. Cách xử lý này giúp giảm khả năng suy đoán tài khoản hợp lệ từ phản hồi của hệ thống.
+Mật khẩu người dùng không được lưu trực tiếp dưới dạng văn bản gốc. Khi đăng ký, Backend sử dụng thư viện \texttt{bcryptjs} để thực hiện thuật toán bcrypt với cost factor 12 trước khi lưu giá trị băm vào cơ sở dữ liệu. Khi đăng nhập, mật khẩu đầu vào được kiểm tra bằng hàm \texttt{bcrypt.compare}. OWASP khuyến nghị sử dụng các hàm băm mật khẩu chậm và thích ứng, trong đó Argon2id được ưu tiên cho hệ thống mới; đối với bcrypt, tài liệu nêu work factor tối thiểu là 10 \cite{owaspPasswordStorage}. Vì vậy, cost factor 12 của NutriTrack cao hơn mức tối thiểu được OWASP nêu cho bcrypt, nhưng không nên được mô tả là lựa chọn hiện đại được OWASP ưu tiên nhất.
 
-Bên cạnh xác thực, hệ thống áp dụng giới hạn request cho các route đăng nhập và đăng ký. Trong mã nguồn, nhóm route này được giới hạn 20 request trong 15 phút cho mỗi IP. Nếu vượt quá số lần cho phép, server trả về lỗi yêu cầu thử lại sau. Ngoài ra, chức năng AI Vision trong Scanner cũng có giới hạn request riêng theo người dùng, nhằm hạn chế việc gửi quá nhiều ảnh trong thời gian ngắn. Một số cơ chế bảo mật và xử lý lỗi trong Backend được tổng hợp trong Bảng \ref{tab:bao_mat_xu_ly_loi}.
+Nếu email không tồn tại hoặc mật khẩu không khớp, luồng đăng nhập đều trả về thông báo chung ‘Email hoặc mật khẩu không đúng’ thay vì phân biệt nguyên nhân thất bại. Phản hồi chung giúp giảm khả năng suy đoán sự tồn tại của tài khoản từ nội dung trả về và phù hợp với khuyến nghị về phản hồi xác thực của OWASP \cite{owaspAuthentication}.
+
+Bên cạnh xác thực, hệ thống áp dụng giới hạn request cho các route đăng nhập và đăng ký. Các route đăng nhập và đăng ký được giới hạn tối đa 20 request trong khoảng 15 phút theo địa chỉ IP. Đây là một hình thức throttling nhằm hạn chế số lượng request tự động trong thời gian ngắn \cite{owaspAuthentication}. Tuy nhiên, cơ chế hiện tại chỉ đếm theo IP và chưa gắn bộ đếm với từng tài khoản, do đó được xem là một lớp phòng vệ bổ sung chứ không phải biện pháp ngăn chặn hoàn toàn brute-force hoặc credential stuffing. Ngoài ra, chức năng AI Vision trong Scanner cũng có giới hạn request riêng theo người dùng, nhằm hạn chế việc gửi quá nhiều ảnh trong thời gian ngắn. Ở phía Frontend, Access Token có thời hạn 15 phút được lưu trong \texttt{localStorage} và được Axios interceptor đọc để gắn vào header \texttt{Authorization}. Cách lưu trữ này thuận tiện cho việc duy trì trạng thái đăng nhập và tự động gửi lại request sau khi làm mới token, nhưng \texttt{localStorage} luôn có thể được JavaScript cùng origin truy cập. OWASP cảnh báo rằng dữ liệu nhạy cảm hoặc định danh phiên trong \texttt{localStorage} có thể bị lấy cắp khi ứng dụng xuất hiện lỗ hổng XSS \cite{owaspHTML5Security}. Vì vậy, việc bảo vệ Refresh Token bằng HttpOnly Cookie không loại bỏ hoàn toàn rủi ro đối với Access Token đang được lưu tại phía client.
+
+Một số cơ chế bảo mật và xử lý lỗi trong Backend được tổng hợp trong Bảng \ref{tab:bao_mat_xu_ly_loi}.
 
 \begin{longtable}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|p{7cm}|}
 \caption{Một số cơ chế bảo mật và xử lý lỗi trong Backend}
@@ -3124,13 +3132,13 @@ Bên cạnh xác thực, hệ thống áp dụng giới hạn request cho các r
 
 Access Token & Xác thực request cần đăng nhập & Gửi trong header Authorization \\
 \hline
-Refresh Token & Làm mới phiên đăng nhập & Lưu trong HttpOnly Cookie \\
+Refresh Token & Làm mới phiên đăng nhập & HttpOnly Cookie, SameSite=Strict, Secure ở production \\
 \hline
 requireAuthApi & Bảo vệ API nghiệp vụ & Kiểm tra token trước khi vào controller \\
 \hline
-bcrypt & Bảo vệ mật khẩu người dùng & Băm mật khẩu trước khi lưu \\
+bcrypt & Bảo vệ mật khẩu người dùng & Băm bằng bcryptjs với cost factor 12 \\
 \hline
-Rate limit & Hạn chế request bất thường & Giới hạn login/register theo IP \\
+Rate limit & Hạn chế request bất thường & 20 request/15 phút/IP cho login và register \\
 \hline
 AI Vision rate limit & Hạn chế gửi ảnh quá nhiều & Giới hạn request scanner theo người dùng \\
 \hline
@@ -3145,7 +3153,7 @@ Error handler & Xử lý lỗi chưa bắt & Ghi log và trả lỗi máy chủ 
 
 Hệ thống cũng phân biệt các nhóm lỗi HTTP thường gặp. Lỗi dữ liệu đầu vào có thể trả về mã 400 hoặc 422; lỗi xác thực trả về 401; lỗi xung đột dữ liệu như email đã tồn tại trả về 409; lỗi vượt quá giới hạn request trả về 429; lỗi máy chủ trả về 500. Ngoài ra, Backend có cơ chế xử lý riêng cho các API không tồn tại. Mọi request bắt đầu bằng /api nhưng không khớp route nào sẽ nhận phản hồi JSON báo endpoint không tồn tại, tránh trường hợp Frontend gọi sai API nhưng lại nhận về file HTML của React SPA.
 
-Ở cuối luồng xử lý, Backend có error handler tổng quát để bắt các lỗi chưa được xử lý trong route hoặc controller. Error handler ghi log lỗi ở phía server và trả về thông báo lỗi máy chủ nội bộ cho client. Việc không trả trực tiếp stack trace về Frontend giúp hạn chế lộ thông tin triển khai. Nhìn chung, các cơ chế bảo mật và xử lý lỗi trong NutriTrack được triển khai ở mức phù hợp với một hệ thống quản lý dinh dưỡng cá nhân, giúp bảo vệ phiên đăng nhập, hạn chế request bất thường và duy trì cấu trúc phản hồi API nhất quán.
+Ở cuối luồng xử lý, Backend có error handler tổng quát để bắt các lỗi chưa được xử lý trong route hoặc controller. Error handler ghi log lỗi ở phía server và trả về thông báo lỗi máy chủ nội bộ cho client. Việc không trả trực tiếp stack trace về Frontend giúp hạn chế lộ thông tin triển khai. Nhìn chung, NutriTrack đã triển khai một số biện pháp bảo mật như phân tách Access Token và Refresh Token, bảo vệ Refresh Token bằng cookie, băm mật khẩu, sử dụng phản hồi đăng nhập chung, giới hạn request và chuẩn hóa xử lý lỗi. Một số cơ chế này tham chiếu và phù hợp với các khuyến nghị liên quan của OWASP. Tuy nhiên, hệ thống chưa được đánh giá theo toàn bộ tiêu chí của OWASP và vẫn còn các giới hạn như Access Token được lưu trong \texttt{localStorage} và login throttling chỉ được thực hiện theo địa chỉ IP. Do đó, báo cáo chỉ đánh giá việc áp dụng từng biện pháp trong phạm vi mã nguồn hiện tại, không khẳng định hệ thống tuân thủ hoàn toàn OWASP.
 
 \section{Kết luận chương}Chương 3 đã trình bày quá trình xây dựng và triển khai hệ thống NutriTrack từ kiến trúc tổng thể đến các module xử lý cụ thể. Về phía Backend, hệ thống được tổ chức theo hướng phân lớp, trong đó route định nghĩa tài nguyên API, controller tiếp nhận và trả phản hồi HTTP, service xử lý nghiệp vụ, còn model làm việc với cơ sở dữ liệu MySQL thông qua Sequelize. Cách tổ chức này giúp tách biệt giữa xử lý giao tiếp và xử lý nghiệp vụ, đặc biệt phù hợp với hệ thống có nhiều chức năng tính toán dinh dưỡng.
 
@@ -3625,6 +3633,30 @@ truy cập ngày 14/07/2026.
 Google AI for Developers, ``Gemini 2.5 Flash'',
 \textit{\url{https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash}},
 truy cập ngày 14/07/2026.
+
+\bibitem{owaspAuthentication}
+OWASP Foundation,
+``Authentication Cheat Sheet'',
+\textit{\url{https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html}},
+truy cập ngày 15/07/2026.
+
+\bibitem{owaspSessionManagement}
+OWASP Foundation,
+``Session Management Cheat Sheet'',
+\textit{\url{https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html}},
+truy cập ngày 15/07/2026.
+
+\bibitem{owaspPasswordStorage}
+OWASP Foundation,
+``Password Storage Cheat Sheet'',
+\textit{\url{https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html}},
+truy cập ngày 15/07/2026.
+
+\bibitem{owaspHTML5Security}
+OWASP Foundation,
+``HTML5 Security Cheat Sheet'',
+\textit{\url{https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html}},
+truy cập ngày 15/07/2026.
 
 \end{thebibliography}
 \end{document}
