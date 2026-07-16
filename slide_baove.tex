@@ -395,128 +395,16 @@
 \end{frame}
 
 % Thời lượng dự kiến: 1 phút 15 giây
+% ─── HYBRID NUTRITION SCANNER SLIDE ───────────────────────────────────────
+% Sơ đồ được vẽ bằng draw.io, lưu tại images/hybrid_scanner_flow.drawio
+% Để cập nhật sơ đồ: mở file .drawio → chỉnh sửa → File > Export As > PDF
+% (bật checkbox "Crop") → lưu đè vào images/hybrid_scanner_flow.pdf
+% ─────────────────────────────────────────────────────────────────────────
 \begin{frame}{Hybrid Nutrition Scanner}
     \textbf{Ưu tiên dữ liệu cục bộ trước, chỉ gọi nguồn bên ngoài khi cần.}
-    \vspace{-0.3cm}
-
+    \vspace{0.1cm}
     \begin{center}
-    \resizebox{!}{6.0cm}{%
-    \begin{tikzpicture}[>=Stealth,
-        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners=3pt,
-                    text centered, font=\scriptsize, inner sep=3pt,
-                    minimum height=0.6cm, minimum width=2.6cm},
-        dbox/.style={rectangle, draw=NutriDark, fill=NutriGreen!25, rounded corners=3pt,
-                     text centered, font=\scriptsize\bfseries, inner sep=4pt,
-                     minimum height=0.7cm, double, double distance=1.5pt},
-        failbox/.style={rectangle, draw=red!60, fill=red!8, rounded corners=3pt,
-                        text centered, font=\scriptsize, inner sep=3pt,
-                        minimum height=0.6cm, minimum width=1.8cm},
-        arrow/.style={->, thick, NutriDark},
-        darrow/.style={->, very thick, red!70!black},
-        dasharrow/.style={->, dashed, NutriDark!60, thin},
-        lbl/.style={font=\tiny}]
-
-        % ── Background ──────────────────────────────────────
-        \begin{scope}[on background layer]
-            \fill[blue!8,       rounded corners=5pt] (-0.3, 0.85) rectangle (5.5, -6.2);
-            \fill[NutriGreen!8, rounded corners=5pt] (5.8,  0.85) rectangle (11.3, -6.2);
-        \end{scope}
-        \node[font=\footnotesize\bfseries, blue!70!black] at (2.5, 0.63)
-              {Nhánh 1 --- Tra cứu Barcode};
-        \node[font=\footnotesize\bfseries, NutriDark] at (8.5, 0.63)
-              {Nhánh 2 --- AI Vision};
-
-        \node[box, fill=blue!15, text width=2.4cm] (barcode) at (1.5,  0.2)  {Quét Barcode};
-        \node[box, text width=2.4cm] (l1) at (1.5, -0.75)
-              {\textbf{Layer 1:} Local DB\\(Verified, score $\geq$ 0.7)};
-        \node[box, text width=2.4cm] (l2) at (1.5, -1.90)
-              {\textbf{Layer 2:} Local DB\\(Unverified)};
-        \node[box, text width=2.4cm] (l3) at (1.5, -3.00)
-              {\textbf{Layer 3:} OpenFoodFacts};
-        \node[box, fill=red!8, draw=red!60, text width=2.4cm] (l4) at (1.5, -4.25)
-              {\textbf{Layer 4:}\\Cả 3 lớp\\không tìm thấy};
-
-        % Cache
-        \node[rectangle, rounded corners=2pt, draw=NutriDark!40, fill=blue!5,
-              font=\tiny\itshape, inner sep=3pt] (cache) at (3.3, -3.00) {Cache};
-
-        % Hiển thị + xác nhận
-        \node[box, text width=2.2cm] (show) at (4.5, -3.75) {Hiển thị kết quả};
-        \node[box, text width=2.2cm] (chk1) at (4.5, -4.90) {Người dùng\\chọn/xác nhận};
-
-        % Mũi tên dọc Nhánh 1
-        \draw[arrow] (barcode) -- (l1);
-        \draw[arrow] (l1) -- node[left, lbl] {không thấy} (l2);
-        \draw[arrow] (l2) -- node[left, lbl] {không thấy} (l3);
-        \draw[arrow] (l3) -- node[left, lbl] {không thấy} (l4);
-
-        % Bus dọc tại x=4.5 (không mũi tên, chỉ là đường kết nối)
-        \draw[NutriDark!25, line width=1.2pt] (4.5, -0.75) -- (4.5, -3.42);
-
-        % L1 → bus (ngang, nhãn trên đoạn ngang)
-        \draw[->, thick, blue!55] (l1.east)
-            -- node[above, lbl, blue!70!black] {tìm thấy} (4.5, -0.75);
-        % L2 → bus (T-junction)
-        \draw[->, thick, blue!55] (l2.east)
-            -- node[above, lbl, blue!70!black] {tìm thấy} (4.5, -1.90);
-        % L3 → Cache (dashed) → bus
-        \draw[dasharrow] (l3.east) -- (cache.west);
-        \node[lbl, blue!70!black, above=2pt] at (2.58, -2.97) {tìm thấy};
-        \draw[thick, blue!55] (cache.east) -- (4.5, -3.00);
-
-        % Bus → show → chk1
-        \draw[arrow] (4.5, -3.42) -- (show.north);
-        \draw[arrow] (show) -- (chk1);
-
-        % ══ NHÁNH 2 ════════════════════════════════════════
-        \node[box, fill=NutriGreen!20, text width=2.8cm]
-              (img)  at (8.7,  0.2)  {Chụp ảnh nhãn\\dinh dưỡng};
-        \node[box, text width=2.8cm]
-              (ai)   at (8.7, -0.75) {Gemini Flash\\(AI OCR)};
-        \node[box, text width=2.8cm]
-              (phys) at (8.7, -2.15)
-              {\textbf{Physics Validation}\\Tổng macro $\leq$ 100g\\
-               Calo $\leq$ 900 kcal\\Atwater dev. $<$ 15\%};
-
-        % Báo lỗi: bên trái phys, cùng y, trong vùng Nhánh 2
-        \node[failbox, text width=1.7cm] (fail) at (5.9, -2.15) {Báo lỗi:\\``Dữ liệu sai''};
-
-        \node[box, text width=2.8cm]
-              (chk2)  at (8.7, -3.75) {Người dùng\\kiểm tra \& xác nhận};
-        \node[box, text width=2.8cm]
-              (trust) at (8.7, -5.00) {Lưu ProductContribution\\+ Tính Trust Score};
-
-        % Mũi tên Nhánh 2
-        \draw[arrow] (img)  -- (ai);
-        \draw[arrow] (ai)   -- (phys);
-        \draw[arrow] (phys) -- node[right, lbl] {Pass} (chk2);
-        % Fail: phys.west → fail.east (không xuyên qua hộp)
-        \draw[arrow] (phys.west) -- node[above, lbl] {Fail} (fail.east);
-        \draw[arrow] (chk2) -- (trust);
-
-        % chụp lại: lên thẳng đến y=0.2, rẽ phải vào img.west
-        \draw[arrow, rounded corners=5pt]
-              (fail.north)
-              -- node[right, lbl, pos=0.60] {chụp lại}
-              (5.9, 0.2)
-              -- (img.west);
-
-        % Fallback L4 → img: đi qua khe giữa 2 nhánh
-        \draw[darrow, rounded corners=5pt]
-              (l4.east) -- (5.35, -4.25)
-              -- (5.35, 1.15)
-              -| (img.north);
-        \node[lbl, font=\tiny\bfseries, red!70!black] at (7.0, 1.30)
-              {Không tìm thấy $\rightarrow$ chuyển sang AI};
-
-        % ══ SHARED ENDPOINT ═════════════════════════════════
-        \node[dbox, minimum width=7.0cm]
-              (save) at (6.5, -5.90) {Lưu dữ liệu / Thêm vào nhật ký (Diary)};
-        \draw[arrow] (chk1.south)  |- (save.west);
-        \draw[arrow] (trust.south) |- (save.east);
-
-    \end{tikzpicture}
-    }% end resizebox
+        \includegraphics[width=0.93\textwidth, height=0.72\textheight, keepaspectratio]{images/hybrid_scanner_flow.pdf}
     \end{center}
 \end{frame}
 

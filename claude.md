@@ -32,6 +32,9 @@
    - Đảm bảo thiết kế gọn gàng, chia tầng (layer) rõ ràng bằng các khung `fit` hoặc `rectangle`.
    - Các chữ/nhãn trên mũi tên phải được tinh chỉnh `xshift`, `yshift`, `pos` để không đè lên các đối tượng khác.
    - Chương 1 chỉ vẽ khái quát (lược bỏ các chi tiết kỹ thuật quá sâu nếu không cần thiết).
+   - **Chiến lược chọn công cụ vẽ sơ đồ:** 
+     + **Mặc định:** Ưu tiên AI vẽ bằng TikZ nhưng **bắt buộc dặn AI dùng thư viện `positioning` (tọa độ tương đối, ví dụ `below=of`)**, cấm dùng tọa độ tuyệt đối `(x,y)` để chống xô lệch và đảm bảo font chữ đồng bộ hoàn hảo với báo cáo.
+     + **Dự phòng:** Nếu sơ đồ quá phức tạp (nhiều nhánh song song, giao cắt chéo, nhiều layer, icon) mà AI sửa 1-2 lần vẫn lỗi đè chữ, thì **DỪNG LẠI NGAY** và chuyển sang kéo thả bằng **draw.io**. Sau đó Export PDF (bật tùy chọn Crop) và chèn vào LaTeX bằng `\includegraphics`.
 4. **Xử lý Bảng biểu (Tables):**
    - Tránh dùng `[H]` cho môi trường `table` tương tự như `figure`.
    - Khi dùng `longtable` cho các bảng dài, nếu bảng bị đẩy sang trang sau và để lại khoảng trắng lớn ở cuối trang trước: **Tuyệt đối không đổi thành `table` float** (vì bảng dài sẽ bị văng mất khỏi luồng văn bản). Cách xử lý đúng là **giữ nguyên `longtable`** nhưng dời toàn bộ khối code của bảng xuống bên dưới đoạn/tiểu mục tiếp theo trong source code. Điều này giúp chữ tự động trôi lên lấp đầy khoảng trắng, còn bảng sẽ xuất hiện ở trang sau một cách tự nhiên. Bắt buộc dùng `\ref{}` để tham chiếu thay vì dùng từ "bảng sau".
@@ -98,6 +101,7 @@
 - Bổ sung quy định chặt chẽ về phong cách và giọng văn học thuật theo tiêu chuẩn HUCE (tính khách quan, ngôn từ định lượng, liêm chính).
 - Bổ sung **Quy tắc số 8 (Quy trình biên dịch LaTeX)**: compile đủ 3 lần, xử lý khi pdflatex bị ngắt giữa chừng, cấm dùng lệnh nội bộ package trong `\addtocontents`, và bắt buộc xác minh kết quả bằng `pdftotext` sau khi compile.
 - Bổ sung **Mục 8 (Quy trình làm slide LaTeX với AI)** chuẩn bị cho giai đoạn bảo vệ đồ án.
+- Bổ sung **Chiến lược vẽ sơ đồ linh hoạt (TikZ tọa độ tương đối vs draw.io)** vào Quy tắc làm việc để tối ưu hóa thời gian và thẩm mỹ.
 
 ---
-*(Cập nhật lần cuối: Tháng 7/2026 - Thêm quy trình làm slide Beamer với AI)*
+*(Cập nhật lần cuối: Tháng 7/2026 - Bổ sung chiến lược vẽ sơ đồ)*
