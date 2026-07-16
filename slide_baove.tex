@@ -41,7 +41,7 @@
 \newcommand{\highlightblue}[1]{\textcolor{NutriDark}{\textbf{#1}}}
 \newcommand{\highlightgreen}[1]{\textcolor{NutriGreen!80!black}{\textbf{#1}}}
 
-% Thông tin tiêu đề
+% Thông tin tiêu đề (dùng cho các frame khác nếu cần)
 \title{\textbf{HỆ THỐNG QUẢN LÝ DINH DƯỠNG CÁ NHÂN HÓA}}
 \subtitle{Personalized Nutrition Management System}
 \author{\textbf{Sinh viên: Nguyễn Văn Khánh}\\ MSSV: 0241967 \quad Lớp: 67CS2 \\ \vspace{0.3cm} \small GVHD: TS. Phạm Hồng Phong}
@@ -52,7 +52,87 @@
 
 % Thời lượng dự kiến: 20-30 giây
 \begin{frame}[plain]
-    \titlepage
+\begin{tikzpicture}[remember picture, overlay]
+
+    % === PANEL TRÁI: NỀN TỐI (58% chiều rộng) ===
+    \fill[NutriDark] (current page.south west)
+        rectangle ([xshift=0.58\paperwidth]current page.south west |- current page.north west);
+
+    % Vòng tròn trang trí góc trên trái
+    \draw[NutriGreen, line width=4pt, opacity=0.18]
+        ([xshift=-0.6cm, yshift=0.6cm]current page.north west) circle (1.8cm);
+    \draw[NutriGreen, line width=1.5pt, opacity=0.10]
+        ([xshift=-0.6cm, yshift=0.6cm]current page.north west) circle (2.8cm);
+
+    % Vòng tròn trang trí góc dưới trái
+    \fill[NutriGreen, opacity=0.07]
+        ([xshift=1.8cm, yshift=-0.3cm]current page.south west) circle (2.2cm);
+    \draw[NutriGreen, line width=2pt, opacity=0.18]
+        ([xshift=1.8cm, yshift=-0.3cm]current page.south west) circle (2.2cm);
+
+    % Thanh accent dọc màu xanh lá
+    \fill[NutriGreen]
+        ([xshift=0.85cm, yshift=3.2cm]current page.west)
+        rectangle ([xshift=1.15cm, yshift=6.2cm]current page.west);
+
+    % Tiêu đề đề tài (3 dòng, chữ lớn, bold, trắng)
+    \node[text=white, font=\bfseries, text width=7.6cm, align=left, anchor=west]
+        at ([xshift=1.6cm, yshift=1.3cm]current page.west) {
+        {\fontsize{14.5}{20}\selectfont HỆ THỐNG QUẢN LÝ}\\[5pt]
+        {\fontsize{14.5}{20}\selectfont DINH DƯỠNG}\\[5pt]
+        {\fontsize{14.5}{20}\selectfont CÁ NHÂN HÓA}
+    };
+
+    % Subtitle (chữ nghiêng màu xanh lá nhạt)
+    \node[text=NutriGreen!75, font=\itshape\small, text width=7.6cm, align=left, anchor=west]
+        at ([xshift=1.6cm, yshift=-0.65cm]current page.west) {
+        Personalized Nutrition Management System
+    };
+
+    % Nhãn nhỏ phía dưới trái
+    \node[text=white!40, font=\scriptsize, align=left, anchor=west]
+        at ([xshift=1.6cm, yshift=-1.65cm]current page.west) {
+        Đồ án tốt nghiệp $\cdot$ Năm 2026
+    };
+
+    % === PANEL PHẢI: NỀN SÁNG (42% còn lại) ===
+    % Logo trường
+    \node[anchor=center]
+        at ([xshift=0.79\paperwidth, yshift=0.74\paperheight]current page.south west) {
+        \includegraphics[height=1.9cm]{images/LOGO_DHXD.png}
+    };
+
+    % Tên trường
+    \node[text=NutriDark, font=\small\bfseries, text width=5.6cm, align=center, anchor=center]
+        at ([xshift=0.79\paperwidth, yshift=0.585\paperheight]current page.south west) {
+        Trường Đại học Xây dựng Hà Nội
+    };
+
+    % Đường kẻ accent ngang
+    \fill[NutriGreen]
+        ([xshift=0.625\paperwidth, yshift=0.495\paperheight]current page.south west)
+        rectangle ([xshift=0.955\paperwidth, yshift=0.508\paperheight]current page.south west);
+
+    % Thông tin sinh viên
+    \node[text=NutriDark!85, font=\small, text width=5.6cm, align=center, anchor=center]
+        at ([xshift=0.79\paperwidth, yshift=0.385\paperheight]current page.south west) {
+        {\bfseries Sinh viên: Nguyễn Văn Khánh}\\[5pt]
+        MSSV: 0241967 \quad Lớp: 67CS2
+    };
+
+    % Giảng viên hướng dẫn
+    \node[text=NutriDark!70, font=\small, text width=5.6cm, align=center, anchor=center]
+        at ([xshift=0.79\paperwidth, yshift=0.255\paperheight]current page.south west) {
+        {\bfseries GVHD:} TS. Phạm Hồng Phong
+    };
+
+    % Ngành học
+    \node[text=NutriDark!50, font=\scriptsize, text width=5.6cm, align=center, anchor=center]
+        at ([xshift=0.79\paperwidth, yshift=0.13\paperheight]current page.south west) {
+        Ngành CNTT -- Chuyên ngành Khoa học máy tính
+    };
+
+\end{tikzpicture}
 \end{frame}
 
 % Thời lượng dự kiến: 50 giây
