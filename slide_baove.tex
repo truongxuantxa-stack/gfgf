@@ -141,7 +141,7 @@
         \setlength{\itemsep}{10pt}
         \item Người dùng cần theo dõi nhiều loại dữ liệu: ăn uống, năng lượng, cân nặng, nước và luyện tập.
         \item Việc ghi chép và tổng hợp thủ công tốn thời gian, phân tán.
-        \item Các công thức năng lượng tĩnh (TDEE) chưa phản ánh hoàn toàn sự thay đổi thực tế của từng người theo thời gian.
+        \item Giá trị TDEE ước tính từ công thức tĩnh có thể chưa phản ánh đầy đủ mức tiêu hao năng lượng thực tế của từng người theo thời gian.
         \item \highlightblue{Yêu cầu:} Một hệ thống thống nhất để theo dõi, phân tích và hỗ trợ điều chỉnh chế độ dinh dưỡng cá nhân hóa.
     \end{itemize}
 
@@ -173,7 +173,7 @@
                 \item Theo dõi nhật ký ăn uống và các chỉ số cơ thể.
                 \item Tính toán nhu cầu năng lượng và dinh dưỡng.
                 \item Phân tích dữ liệu theo thời gian.
-                \item Hỗ trợ lập kế hoạch bữa ăn và nhận diện thực phẩm.
+                \item Hỗ trợ lập kế hoạch bữa ăn và nhập liệu thực phẩm bằng mã vạch, hình ảnh nhãn dinh dưỡng.
             \end{itemize}
         \end{column}
         
@@ -184,7 +184,7 @@
                 \item Hồ sơ và mục tiêu cá nhân.
                 \item Nhật ký dinh dưỡng.
                 \item Cân nặng, lượng nước, và luyện tập.
-                \item Dashboard và báo cáo.
+                \item Dashboard và báo cáo PDF theo tuần/tháng.
                 \item Lập kế hoạch bữa ăn (Meal Planner).
                 \item Quét thông tin sản phẩm (Scanner).
             \end{itemize}
@@ -209,7 +209,7 @@
         
         \node[layer, fill=NutriDark!10, below=0.5cm of service] (db) {\textbf{MySQL}};
         
-        \node[layer, dashed, right=2cm of react] (ext) {Dịch vụ ngoài (AI Vision, OpenFoodFacts)};
+        \node[layer, dashed, right=2cm of react] (ext) {Dịch vụ ngoài (AI Vision, Open Food Facts)};
         
         \draw[arrow] (client) -- (react);
         \draw[arrow] (react) -- node[right, font=\footnotesize] {Axios / TanStack Query} (api);
@@ -233,7 +233,7 @@
             \modulelabel{Frontend}
             \vspace{0.2cm}
             \begin{itemize}
-                \item \small \textbf{React SPA:} Trải nghiệm người dùng mượt mà.
+                \item \small \textbf{React SPA:} Điều hướng và hiển thị giao diện phía Client.
                 \item \small \textbf{React Router:} Quản lý điều hướng.
                 \item \small \textbf{AuthProvider / ProtectedRoute.}
                 \item \small \textbf{TanStack Query \& Axios.}
@@ -247,7 +247,7 @@
             \begin{itemize}
                 \item \small \textbf{Node.js / Express:} Xây dựng RESTful API.
                 \item \small \textbf{Middleware:} Xác thực JWT và kiểm tra dữ liệu.
-                \item \small \textbf{Controller:} Xử lý HTTP request.
+                \item \small \textbf{Controller:} Điều phối request/response.
                 \item \small \textbf{Service:} Chứa thuật toán và nghiệp vụ.
                 \item \small \textbf{Sequelize ORM / MySQL.}
             \end{itemize}
@@ -309,7 +309,7 @@
         \item \textbf{BMI:} Đánh giá tương quan cân nặng và chiều cao.
         \item \textbf{BMR:} Năng lượng chuyển hóa cơ bản (Mifflin-St Jeor).
         \item \textbf{TDEE tĩnh:} Tổng năng lượng tiêu hao ước tính dựa trên hệ số hoạt động.
-        \item Dựa vào mục tiêu cá nhân, hệ thống xác định năng lượng mục tiêu và phân bổ đa lượng chất (Carb, Protein, Fat).
+        \item Dựa vào mục tiêu cá nhân, hệ thống xác định năng lượng mục tiêu và phân bổ protein, carbohydrate và chất béo.
     \end{itemize}
     
     \vspace{0.5cm}
@@ -345,10 +345,10 @@
         arrow/.style={->, thick, NutriDark}]
         
         \node[box] (w1) {Cân nặng hằng ngày};
-        \node[box, right=of w1] (ema) {EMA lọc nhiễu xu hướng};
+        \node[box, right=of w1] (ema) {EMA làm mượt chuỗi cân nặng};
         \node[box, right=of ema] (agg) {Tổng hợp theo tuần};
         \node[box, below=0.5cm of agg] (est) {Ước lượng TDEE tuần};
-        \node[box, left=of est] (roll) {Rolling Average 4 tuần \& kiểm tra giới hạn};
+        \node[box, left=of est] (roll) {Trung bình trượt 4 tuần và kiểm tra giới hạn};
         \node[box, left=of roll, fill=NutriGreen!20] (update) {\textbf{Cập nhật Adaptive TDEE}};
         
         \draw[arrow] (w1) -- (ema);
@@ -435,7 +435,7 @@
 
 % Thời lượng dự kiến: 1 phút 30 giây
 \begin{frame}{Meal Planner – Tính khẩu phần bằng phương pháp khử Gauss}
-    \textbf{Bài toán:} Tính định lượng các nguyên liệu đã chọn nhằm đáp ứng mục tiêu Protein, Carb và Fat của bữa ăn.
+    \textbf{Bài toán:} Từ mục tiêu Protein, Carb và Fat của bữa ăn, hệ thống lựa chọn tổ hợp nguyên liệu phù hợp và tính khối lượng cần sử dụng.
     
     \vspace{0.3cm}
     \begin{columns}[T]
@@ -457,7 +457,7 @@
             \begin{tikzpicture}[>=Stealth, node distance=0.5cm,
                 box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.5cm, text centered, font=\scriptsize},
                 arrow/.style={->, NutriDark}]
-                \node[box] (select) {Chọn nguyên liệu};
+                \node[box] (select) {Chọn mẫu/tổ hợp nguyên liệu};
                 \node[box, below=of select] (goal) {Xác định mục tiêu bữa ăn};
                 \node[box, below=of goal] (matrix) {Xây dựng hệ $3\times3$};
                 \node[box, below=of matrix] (gauss) {\textbf{Khử Gauss}};
@@ -563,7 +563,7 @@
             \vspace{0.2cm}
             \begin{itemize}
                 \item Xây dựng được hệ thống web quản lý dinh dưỡng cá nhân với các chức năng chính theo mục tiêu đề tài.
-                \item Tích hợp chức năng theo dõi dinh dưỡng và sức khỏe cơ bản.
+                \item Tích hợp các chức năng theo dõi dinh dưỡng, cân nặng, nước uống và luyện tập.
                 \item Triển khai các module xử lý dữ liệu và thuật toán như Adaptive TDEE, Food Scoring và Meal Planner phục vụ cá nhân hóa.
                 \item Xây dựng kiến trúc Client–Server với Frontend và Backend giao tiếp qua RESTful API.
             \end{itemize}
