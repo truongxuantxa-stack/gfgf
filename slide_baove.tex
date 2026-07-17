@@ -359,25 +359,29 @@
     \end{tikzpicture}
     \end{center}
     
-    \vspace{0.2cm}
+    \vspace{0.1cm}
     \begin{center}
-        \colorbox{NutriDark!10}{\textbf{Công thức: } $TDEE\_\text{ước\_tính} = \text{AvgIntake} - \left( \frac{\Delta\text{Weight} \times 7700}{7} \right)$}
+        \colorbox{NutriDark!10}{\textbf{Công thức: } $TDEE\_\text{ước\_tính} = \text{AvgIntake} - \left( \frac{\Delta\text{Weight} \times 7700}{7} \right)$} \\
+        \vspace{0.15cm}
+        \small \textit{\textcolor{NutriDark}{TDEE tĩnh là điểm khởi đầu; Adaptive TDEE điều chỉnh dần theo dữ liệu thực tế của người dùng.}}
     \end{center}
     
-    \vspace{0.2cm}
+    \vspace{0.1cm}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \modulelabel{TDEE tĩnh}
+            \textcolor{NutriDark}{\textbf{\modulelabel{TDEE tĩnh} -- Ước tính từ công thức}}
             \begin{itemize}
-                \item \small Dựa trên hồ sơ và hệ số hoạt động.
-                \item \small Là giá trị ước tính ban đầu.
+                \item \small TDEE = BMR $\times$ PAL.
+                \item \small BMR và mức hoạt động đều là giá trị ước tính.
+                \item \small Phù hợp làm giá trị khởi tạo khi chưa có dữ liệu cá nhân.
             \end{itemize}
         \end{column}
-        \begin{column}{0.48\textwidth}
-            \modulelabel{Adaptive TDEE}
+        \begin{column}{0.5\textwidth}
+            \textcolor{NutriDark}{\textbf{\modulelabel{Adaptive TDEE} -- Hiệu chỉnh từ thực tế}}
             \begin{itemize}
-                \item \small Dựa trên dữ liệu thực tế theo thời gian.
-                \item \small Có cơ chế lọc nhiễu và kiểm soát mức cập nhật.
+                \item \small Dựa trên năng lượng nạp vào và xu hướng cân nặng.
+                \item \small Suy ngược mức tiêu hao trung bình theo thời gian.
+                \item \small Làm mượt và kiểm soát trước khi cập nhật.
             \end{itemize}
         \end{column}
     \end{columns}
