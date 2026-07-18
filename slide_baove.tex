@@ -430,11 +430,17 @@
                 \node[box] (log) {Nhật ký trong ngày};
                 \node[box, below=of log] (cmp) {Đánh giá theo ngữ cảnh \& mức hoàn thành mục tiêu};
                 \node[box, below=of cmp] (warn) {Sinh cảnh báo / nhận xét};
+                \node[box, below=of warn] (score) {Daily Health Score\\(Điểm sức khỏe trong ngày)};
                 \draw[arrow] (log) -- (cmp);
                 \draw[arrow] (cmp) -- (warn);
+                \draw[arrow] (warn) -- (score);
             \end{tikzpicture}
         \end{column}
     \end{columns}
+    
+    \vspace{0.3cm}
+    \centering
+    \scriptsize \textit{*Food Scoring đánh giá từng thực phẩm; Daily Health Score đánh giá tổng thể dữ liệu dinh dưỡng trong ngày.}
 \end{frame}
 
 % Thời lượng dự kiến: 1 phút 30 giây
