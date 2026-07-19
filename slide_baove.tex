@@ -416,22 +416,27 @@
         
         \begin{column}{0.44\textwidth}
             \modulelabel{Health Insights}
-            \vspace{0.2cm}
+            \vspace{0.1cm}
             \begin{itemize}
                 \item \small \textbf{Ví dụ:} thiếu nước, thiếu protein, vượt năng lượng, mất cân đối macro.
             \end{itemize}
             \vspace{0.1cm}
             \centering
-            \begin{tikzpicture}[>=Stealth, node distance=0.3cm,
-                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text width=3.5cm, text centered, font=\scriptsize},
+            \begin{tikzpicture}[>=Stealth, node distance=0.2cm,
+                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text width=5.5cm, text centered, font=\scriptsize},
                 arrow/.style={->, NutriDark}]
-                \node[box] (log) {Nhật ký trong ngày};
-                \node[box, below=of log] (cmp) {Đánh giá theo ngữ cảnh \& mức hoàn thành mục tiêu};
-                \node[box, below=of cmp] (warn) {Sinh cảnh báo / nhận xét};
-                \node[box, below=of warn, fill=NutriGreen!20] (score) {Daily Health Score\\(Điểm sức khỏe trong ngày)};
-                \draw[arrow] (log) -- (cmp);
-                \draw[arrow] (cmp) -- (warn);
-                \draw[arrow] (warn) -- (score);
+                \node[box] (n1) {Nhật ký + nước};
+                \node[box, below=of n1] (n2) {Tổng hợp \& nhóm theo bữa};
+                \node[box, below=of n2] (n3) {Mục tiêu, RDI, ngữ cảnh};
+                \node[box, below=of n3] (n4) {Dư thừa / thiếu hụt / nước};
+                \node[box, below=of n4] (n5) {Ưu tiên cảnh báo};
+                \node[box, below=of n5, fill=NutriGreen!20] (n6) {\textbf{Daily Health Score + Insights}\\[-0.3ex]\tiny Điểm phạt/thưởng + hệ số điều chỉnh + Hard Cap};
+                
+                \draw[arrow] (n1) -- (n2);
+                \draw[arrow] (n2) -- (n3);
+                \draw[arrow] (n3) -- (n4);
+                \draw[arrow] (n4) -- (n5);
+                \draw[arrow] (n5) -- (n6);
             \end{tikzpicture}
         \end{column}
     \end{columns}
