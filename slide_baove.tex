@@ -454,30 +454,33 @@
             \[ A\mathbf{x} = \mathbf{b} \]
             \small Trong đó:
             \begin{itemize}
-                \item $A$: ma trận thành phần Protein, Carb và Fat của nguyên liệu.
+                \item $A$: ma trận thành phần Protein, Carb và Fat của ba nguyên liệu.
                 \item $\mathbf{x}$: vector khối lượng của ba nguyên liệu cần xác định.
                 \item $\mathbf{b}$: mục tiêu macro của bữa ăn.
             \end{itemize}
             \vspace{0.2cm}
-            \scriptsize \textit{*Với bữa chính có thêm nguyên liệu nhóm rau/fiber, hệ thống cố định định lượng rau trước, điều chỉnh mục tiêu còn lại rồi giải hệ $3\times3$.}
+            \scriptsize \textit{*Nếu template có nhóm rau/fiber, hệ thống cố định lượng rau trước rồi điều chỉnh phần macro còn lại.}
         \end{column}
 
         \begin{column}{0.55\textwidth}
             \begin{center}
-            \begin{tikzpicture}[>=Stealth, node distance=0.5cm,
-                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.5cm, text centered, font=\scriptsize},
+            \begin{tikzpicture}[>=Stealth, node distance=0.32cm,
+                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.45cm, text centered, font=\scriptsize, align=center},
                 arrow/.style={->, NutriDark}]
-                \node[box] (select) {Chọn mẫu/tổ hợp nguyên liệu};
-                \node[box, below=of select] (goal) {Xác định mục tiêu bữa ăn};
-                \node[box, below=of goal] (matrix) {Xây dựng hệ $3\times3$};
-                \node[box, below=of matrix] (gauss) {\textbf{Khử Gauss}};
-                \node[box, below=of gauss] (check) {Kiểm tra nghiệm và khối lượng};
-                \node[box, below=of check, fill=NutriGreen!20] (res) {Trả kết quả hoặc thử tổ hợp khác};
-                \draw[arrow] (select) -- (goal);
-                \draw[arrow] (goal) -- (matrix);
-                \draw[arrow] (matrix) -- (gauss);
-                \draw[arrow] (gauss) -- (check);
-                \draw[arrow] (check) -- (res);
+                \node[box] (n1) {Mục tiêu ngày + cấu hình bữa};
+                \node[box, below=of n1] (n2) {Phân bổ mục tiêu từng bữa};
+                \node[box, below=of n2] (n3) {Chọn nguyên liệu theo template};
+                \node[box, below=of n3] (n4) {Rau/fiber: cố định 200 g, trừ macro};
+                \node[box, below=of n4] (n5) {\textbf{Giải hệ $3\times3$ bằng Gauss}};
+                \node[box, below=of n5] (n6) {Kiểm tra nghiệm \& khối lượng};
+                \node[box, below=of n6, fill=NutriGreen!20] (n7) {Hợp lệ $\rightarrow$ Meal Plan \\ Không hợp lệ $\rightarrow$ Retry $\le$ 15};
+                
+                \draw[arrow] (n1) -- (n2);
+                \draw[arrow] (n2) -- (n3);
+                \draw[arrow] (n3) -- (n4);
+                \draw[arrow] (n4) -- (n5);
+                \draw[arrow] (n5) -- (n6);
+                \draw[arrow] (n6) -- (n7);
             \end{tikzpicture}
             \end{center}
         \end{column}
