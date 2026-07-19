@@ -340,22 +340,26 @@
 % Thời lượng dự kiến: 1 phút 30 giây
 \begin{frame}{Adaptive TDEE – Điều chỉnh theo dữ liệu thực tế}
     \begin{center}
-    \begin{tikzpicture}[>=Stealth, node distance=0.3cm and 0.4cm,
-        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.6cm, text centered, font=\scriptsize},
+    \begin{tikzpicture}[>=Stealth, node distance=0.35cm and 0.4cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.7cm, text width=3.5cm, text centered, font=\scriptsize},
         arrow/.style={->, thick, NutriDark}]
         
-        \node[box] (w1) {Cân nặng hằng ngày};
-        \node[box, right=of w1] (ema) {EMA làm mượt chuỗi cân nặng};
-        \node[box, right=of ema] (agg) {Tổng hợp theo tuần};
-        \node[box, below=0.5cm of agg] (est) {Ước lượng TDEE tuần};
-        \node[box, left=of est] (roll) {Trung bình trượt 4 tuần và kiểm tra giới hạn};
-        \node[box, left=of roll, fill=NutriGreen!20] (update) {\textbf{Cập nhật Adaptive TDEE}};
+        \node[box] (n1) {Dữ liệu ăn uống + cân nặng theo tuần};
+        \node[box, right=of n1] (n2) {Kiểm tra đủ dữ liệu\\[-0.3ex]\tiny Không đủ $\rightarrow$ lưu trạng thái, chưa cập nhật};
+        \node[box, right=of n2] (n3) {Tính AvgIntake + EMA làm mượt cân nặng};
         
-        \draw[arrow] (w1) -- (ema);
-        \draw[arrow] (ema) -- (agg);
-        \draw[arrow] (agg) -- (est);
-        \draw[arrow] (est) -- (roll);
-        \draw[arrow] (roll) -- (update);
+        \node[box, below=0.4cm of n3] (n4) {Suy ra TDEE ước tính của tuần};
+        \node[box, left=of n4] (n5) {Giới hạn $\pm30\%$ quanh TDEE tĩnh};
+        \node[box, left=of n5] (n6) {Trung bình trượt tối đa 4 tuần};
+        
+        \node[box, below=0.4cm of n5, minimum width=11.3cm, text width=11cm, fill=NutriGreen!20] (n7) {\textbf{Lưu lịch sử; đủ $\ge 2$ tuần hợp lệ mới cập nhật Adaptive TDEE}};
+        
+        \draw[arrow] (n1) -- (n2);
+        \draw[arrow] (n2) -- (n3);
+        \draw[arrow] (n3) -- (n4);
+        \draw[arrow] (n4) -- (n5);
+        \draw[arrow] (n5) -- (n6);
+        \draw[arrow] (n6.south) -- (n6.south |- n7.north);
     \end{tikzpicture}
     \end{center}
     
@@ -363,25 +367,23 @@
     \begin{center}
         \colorbox{NutriDark!10}{\textbf{Công thức: } $TDEE\_\text{ước\_tính} = \text{AvgIntake} - \left( \frac{\Delta\text{Weight} \times 7700}{7} \right)$} \\
         \vspace{0.15cm}
-        \small \textit{\textcolor{NutriDark}{TDEE tĩnh là điểm khởi đầu; Adaptive TDEE điều chỉnh dần theo dữ liệu thực tế của người dùng.}}
+        \small \textit{\textcolor{NutriDark}{TDEE tĩnh là điểm khởi đầu; Adaptive TDEE hiệu chỉnh dần theo dữ liệu thực tế.}}
     \end{center}
     
     \vspace{0.1cm}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \textcolor{NutriDark}{\textbf{\modulelabel{TDEE tĩnh} -- Ước tính từ công thức}}
+            \textcolor{NutriDark}{\textbf{\modulelabel{TDEE tĩnh} -- Ước tính ban đầu}}
             \begin{itemize}
-                \item \small TDEE = BMR $\times$ PAL.
-                \item \small BMR và mức hoạt động đều là giá trị ước tính.
-                \item \small Phù hợp làm giá trị khởi tạo khi chưa có dữ liệu cá nhân.
+                \item \small Ước tính từ công thức tĩnh (BMR $\times$ PAL).
+                \item \small Phù hợp làm giá trị khởi tạo khi chưa đủ dữ liệu cá nhân.
             \end{itemize}
         \end{column}
         \begin{column}{0.5\textwidth}
-            \textcolor{NutriDark}{\textbf{\modulelabel{Adaptive TDEE} -- Hiệu chỉnh từ thực tế}}
+            \textcolor{NutriDark}{\textbf{\modulelabel{Adaptive TDEE} -- Hiệu chỉnh thực tế}}
             \begin{itemize}
-                \item \small Dựa trên năng lượng nạp vào và xu hướng cân nặng.
-                \item \small Suy ngược mức tiêu hao trung bình theo thời gian.
-                \item \small Làm mượt và kiểm soát trước khi cập nhật.
+                \item \small Suy ngược mức tiêu hao từ lượng nạp và xu hướng cân nặng.
+                \item \small Làm mượt, kiểm soát và cá nhân hóa khi đã đủ dữ liệu.
             \end{itemize}
         \end{column}
     \end{columns}
