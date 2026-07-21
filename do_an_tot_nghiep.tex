@@ -1409,14 +1409,14 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
     \centering
     \resizebox{\textwidth}{!}{
     \begin{tikzpicture}[
-        node distance=1cm,
+        node distance=0.8cm,
         box/.style={rectangle, draw=black, thick, fill=blue!5, rounded corners=4pt,
-                    text width=4cm, align=center, font=\small\sffamily, inner sep=5pt,
+                    text width=4.2cm, align=center, font=\small\sffamily, inner sep=5pt,
                     minimum height=1.2cm},
         storebox/.style={rectangle, draw=gray!60, thick, fill=gray!8, rounded corners=3pt,
-                    text width=3.5cm, align=center, font=\scriptsize\sffamily, inner sep=4pt, dashed},
+                    text width=3.8cm, align=center, font=\scriptsize\sffamily, inner sep=4pt, dashed},
         dbbox/.style={rectangle, draw=black, thick, fill=green!5, rounded corners=4pt,
-                    text width=3.5cm, align=center, font=\small\sffamily, inner sep=5pt,
+                    text width=3.8cm, align=center, font=\small\sffamily, inner sep=5pt,
                     minimum height=1cm},
         req/.style={thick, -Latex, blue!80!black},
         res/.style={thick, -Latex, red!80!black, dashed},
@@ -1441,23 +1441,26 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
     \node[box, below=of ctrl] (svc) {\textbf{Service}\\[0.5ex]
         \scriptsize Xử lý nghiệp vụ};
 
-    % ═══════════════ FRONTEND (cột trái, cách xa 4cm) ═══════════════
-    \node[box, fill=blue!10, left=4cm of api, yshift=-0.5cm] (react)
+    % ═══════════════ FRONTEND (cột trái, cách xa 4.5cm) ═══════════════
+    \node[box, fill=blue!10, left=4.5cm of api] (react)
         {\textbf{React Frontend}\\[0.5ex]
         \scriptsize Pages, Components, Modals};
 
-    \node[box, below=of react] (axios)
-        {\textbf{Axios / TanStack Query}\\[0.5ex]
-        \scriptsize Gắn Bearer token\\
-        Quản lý cache\\
-        Interceptor: bắt 401};
+    \node[box, below=of react] (query)
+        {\textbf{TanStack Query}\\[0.5ex]
+        \scriptsize Quản lý state, cache, invalidate};
+
+    \node[box, below=of query] (axios)
+        {\textbf{Axios Instance}\\[0.5ex]
+        \scriptsize Gắn Bearer token vào header\\
+        Interceptor: bắt 401 $\to$ refresh};
 
     \node[storebox, below=of axios] (ls)
-        {\textbf{localStorage}\\[0.3ex]
+        {\textbf{localStorage (Browser)}\\[0.3ex]
         \scriptsize Lưu \texttt{accessToken}};
 
-    % ═══════════════ DATABASE (cột phải, cách xa 4cm) ═══════════════
-    \node[dbbox, right=4cm of svc] (model)
+    % ═══════════════ DATABASE (cột phải, cách xa 3.5cm) ═══════════════
+    \node[dbbox, right=3.5cm of svc] (model)
         {\textbf{Sequelize Model}\\[0.3ex]
         \scriptsize ORM};
 
@@ -1476,15 +1479,16 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
     \draw[thick, dashed, gray!40] (s2 |- t_be.north) ++(0,0.3) -- (s2 |- db.south) ++(0,-0.3);
 
     % ═══════════════ REQUEST (xanh, nét liền) ═══════════════
-    % React → Axios
-    \draw[req] ([xshift=-4mm]react.south) -- ([xshift=-4mm]axios.north);
+    % React → Query → Axios
+    \draw[req] ([xshift=-4mm]react.south) -- ([xshift=-4mm]query.north);
+    \draw[req] ([xshift=-4mm]query.south) -- ([xshift=-4mm]axios.north);
 
     % Axios ↔ localStorage
     \draw[req, gray!60] ([xshift=3mm]axios.south) -- node[right, font=\tiny\sffamily, text=gray] {ghi} ([xshift=3mm]ls.north);
     \draw[req, gray!60] ([xshift=-3mm]ls.north) -- node[left, font=\tiny\sffamily, text=gray] {đọc} ([xshift=-3mm]axios.south);
 
-    % Axios → API Route (đường ngang dài, nhãn ở giữa)
-    \draw[req] ([yshift=2mm]axios.east) -- node[lreq, above, midway] {HTTP Request} ([yshift=2mm]api.west);
+    % Axios → API Route (đường ngang dài, nhãn ở nhánh đầu)
+    \draw[req] ([yshift=2mm]axios.east) -- node[lreq, above] {HTTP Request} ++(2.0,0) |- ([yshift=2mm]api.west);
 
     % Backend xuống: API → MW → Ctrl → Svc
     \draw[req] ([xshift=-4mm]api.south) -- ([xshift=-4mm]mw.north);
@@ -1492,7 +1496,7 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
     \draw[req] ([xshift=-4mm]ctrl.south) -- ([xshift=-4mm]svc.north);
 
     % Svc → Model → DB
-    \draw[req] ([yshift=2mm]svc.east) -- node[lreq, above, midway] {Query} ([yshift=2mm]model.west);
+    \draw[req] ([yshift=2mm]svc.east) -- node[lreq, above] {Query} ([yshift=2mm]model.west);
     \draw[req] ([xshift=-4mm]model.south) -- ([xshift=-4mm]db.north);
 
     % ═══════════════ RESPONSE (đỏ, đứt nét) ═══════════════
@@ -1500,22 +1504,23 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
     \draw[res] ([xshift=4mm]db.north) -- ([xshift=4mm]model.south);
 
     % Model → Svc
-    \draw[res] ([yshift=-2mm]model.west) -- node[lres, below, midway] {Data} ([yshift=-2mm]svc.east);
+    \draw[res] ([yshift=-2mm]model.west) -- node[lres, below] {Data} ([yshift=-2mm]svc.east);
 
     % Svc → Ctrl → MW → API
     \draw[res] ([xshift=4mm]svc.north)  -- node[lres, right] {Result} ([xshift=4mm]ctrl.south);
     \draw[res] ([xshift=4mm]ctrl.north) -- ([xshift=4mm]mw.south);
     \draw[res] ([xshift=4mm]mw.north)   -- ([xshift=4mm]api.south);
 
-    % API → Axios (đường ngang dài, nhãn ở giữa)
-    \draw[res] ([yshift=-2mm]api.west) -- node[lres, above, midway] {Response JSON} ([yshift=-2mm]axios.east);
+    % API → Axios (đường ngang dài, nhãn ở nhánh đầu)
+    \draw[res] ([yshift=-2mm]api.west) -- node[lres, above] {Response JSON} ++(-2.0,0) |- ([yshift=-2mm]axios.east);
 
-    % Axios → React
-    \draw[res] ([xshift=4mm]axios.north) -- ([xshift=4mm]react.south);
+    % Axios → Query → React
+    \draw[res] ([xshift=4mm]axios.north) -- ([xshift=4mm]query.south);
+    \draw[res] ([xshift=4mm]query.north) -- ([xshift=4mm]react.south);
 
-    % ═══════════════ LUỒNG 401 (riêng biệt, không đè) ═══════════════
-    % MW trả 401 → đi ngang sang Axios (offset y riêng, tránh đè đường khác)
-    \draw[err] (mw.west) -- node[lerr, above, midway] {401 JSON} (axios.east |- mw.west);
+    % ═══════════════ LUỒNG 401 (riêng biệt) ═══════════════
+    % MW trả 401 → đi ngang sang Axios
+    \draw[err] (mw.west) -- node[lerr, above] {401 JSON} ++(-1.0,0) |- ([yshift=6mm]axios.east);
 
     \end{tikzpicture}
     }
