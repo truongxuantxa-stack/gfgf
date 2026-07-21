@@ -310,6 +310,7 @@
         \item \textbf{BMR:} Năng lượng chuyển hóa cơ bản (Mifflin-St Jeor).
         \item \textbf{TDEE tĩnh:} Tổng năng lượng tiêu hao ước tính dựa trên hệ số hoạt động.
         \item Dựa vào mục tiêu cá nhân, hệ thống xác định năng lượng mục tiêu và phân bổ protein, carbohydrate và chất béo.
+        \item \textbf{Khóa an toàn:} mục tiêu giảm cân không thấp hơn BMR.
     \end{itemize}
     
     \vspace{0.5cm}
@@ -345,7 +346,7 @@
         arrow/.style={->, thick, NutriDark}]
         
         \node[box] (n1) {Dữ liệu ăn uống + cân nặng theo tuần};
-        \node[box, right=of n1] (n2) {Kiểm tra đủ dữ liệu\\[-0.3ex]\tiny Không đủ $\rightarrow$ Dừng cập nhật tuần này};
+        \node[box, right=of n1] (n2) {Kiểm tra đủ dữ liệu\\[-0.3ex]\tiny $\ge 5$ ngày nhật ký, $\ge 2$ lần cân};
         \node[box, right=of n2] (n3) {Tính AvgIntake + EMA làm mượt cân nặng};
         
         \node[box, below=0.4cm of n3] (n4) {Suy ra TDEE ước tính của tuần};
@@ -478,7 +479,7 @@
                 \node[box, below=of n1] (n2) {Phân bổ mục tiêu từng bữa};
                 \node[box, below=of n2] (n3) {Chọn nguyên liệu theo template};
                 \node[box, below=of n3] (n4) {Rau/fiber: cố định 200 g, trừ macro};
-                \node[box, below=of n4] (n5) {\textbf{Giải hệ $3\times3$ bằng Gauss}};
+                \node[box, below=of n4] (n5) {\textbf{Khử Gauss}\\[-0.3ex]\textbf{+ Partial Pivoting}};
                 \node[box, below=of n5] (n6) {Kiểm tra nghiệm \& khối lượng};
                 \node[box, below=of n6, fill=NutriGreen!20] (n7) {Hợp lệ $\rightarrow$ Meal Plan \\ Không hợp lệ $\rightarrow$ Retry $\le$ 15};
                 
