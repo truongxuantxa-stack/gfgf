@@ -1409,71 +1409,111 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
     \centering
     \resizebox{\textwidth}{!}{
     \begin{tikzpicture}[
+        node distance=0cm,
         box/.style={rectangle, draw=black, thick, fill=blue!5, rounded corners=4pt, 
                     text width=4.5cm, align=center, font=\small\sffamily, inner sep=6pt},
+        storebox/.style={rectangle, draw=gray!60, thick, fill=gray!8, rounded corners=3pt,
+                    text width=3.8cm, align=center, font=\scriptsize\sffamily, inner sep=5pt, dashed},
+        dbbox/.style={rectangle, draw=black, thick, fill=green!5, rounded corners=4pt,
+                    text width=3.8cm, align=center, font=\small\sffamily, inner sep=6pt},
         req/.style={thick, -Latex, blue!80!black},
         res/.style={thick, -Latex, red!80!black, dashed},
+        err/.style={thick, -Latex, red!60!black, dashed},
         label_req/.style={font=\scriptsize\sffamily, text=blue!80!black, fill=white, inner sep=2pt},
-        label_res/.style={font=\scriptsize\sffamily, text=red!80!black, fill=white, inner sep=2pt}
+        label_res/.style={font=\scriptsize\sffamily, text=red!80!black, fill=white, inner sep=2pt},
+        label_err/.style={font=\scriptsize\sffamily, text=red!60!black, fill=white, inner sep=2pt}
     ]
 
-    % Cần dùng thư viện positioning
-    % BACKEND
-    \node[box] (api) {\textbf{RESTful API Route}\\[1ex] \scriptsize \texttt{/api/v1/auth}, \texttt{/api/v1/diary/entries},\\[0.5ex] \texttt{/api/v1/dashboard}, ...};
-    \node[box, below=0.8cm of api] (middleware) {\textbf{Middleware xác thực}\\[1ex] \scriptsize Kiểm tra Access Token / JWT\\Nếu sai $\rightarrow$ trả 401 JSON};
-    \node[box, below=0.8cm of middleware] (controller) {\textbf{Controller}\\[1ex] \scriptsize Nhận request, gọi service, trả response};
-    \node[box, below=0.8cm of controller] (service) {\textbf{Service}\\[1ex] \scriptsize Xử lý nghiệp vụ, tính toán, tổng hợp dữ liệu};
+    % ── BACKEND (đặt trước để làm anchor) ───────────────────────────────────────
+    \node[box] (api) {\textbf{RESTful API Route}\\[1ex]
+        \scriptsize \texttt{/api/v1/auth},\\[0.3ex]
+        \texttt{/api/v1/diary/entries},\\[0.3ex]
+        \texttt{/api/v1/dashboard}, \ldots};
+    \node[box, below=0.8cm of api]       (middleware) {\textbf{Middleware xác thực}\\[1ex]
+        \scriptsize Kiểm tra \texttt{Authorization: Bearer <token>}\\[0.4ex]
+        Nếu sai $\rightarrow$ trả \textbf{401 JSON}};
+    \node[box, below=0.8cm of middleware] (controller) {\textbf{Controller}\\[1ex]
+        \scriptsize Nhận request, validate, gọi Service, trả response};
+    \node[box, below=0.8cm of controller] (service) {\textbf{Service}\\[1ex]
+        \scriptsize Xử lý nghiệp vụ, tính toán, tổng hợp dữ liệu};
 
-    % FRONTEND
-    \node[box, left=2.5cm of middleware, yshift=-1.1cm] (axios) {\textbf{Axios / TanStack Query}\\[1ex] \scriptsize Gửi HTTP request, quản lý cache, invalidate query};
-    \node[box, fill=blue!10, above=0.8cm of axios] (react) {\textbf{React Frontend}\\[1ex] \scriptsize Pages, Components, Forms, Modals};
+    % ── FRONTEND ─────────────────────────────────────────────────────────────────
+    % Axios ngang hàng với Controller (giữa backend)
+    \node[box, left=2.8cm of controller] (axios) {\textbf{Axios / TanStack Query}\\[1ex]
+        \scriptsize Gắn \texttt{Bearer token} vào header\\[0.3ex]
+        Gửi HTTP request, quản lý cache\\[0.3ex]
+        Response Interceptor: bắt 401 $\to$ tự gọi \texttt{/auth/refresh-token}};
+    \node[box, fill=blue!10, above=0.8cm of axios] (react) {\textbf{React Frontend}\\[1ex]
+        \scriptsize Pages, Components, Forms, Modals};
+    % localStorage node — bên dưới Axios
+    \node[storebox, below=0.8cm of axios] (localstorage) {%
+        \textbf{localStorage (Browser)}\\[0.5ex]
+        \scriptsize Lưu \texttt{accessToken}\\[0.2ex]
+        {\color{gray}(xóa khi 401 không refresh được)}};
 
-    % DATABASE
-    \node[box, right=2.5cm of controller] (model) {\textbf{Sequelize Model}};
-    \node[box, right=2.5cm of service] (db) {\textbf{MySQL Database}};
+    % ── DATABASE ─────────────────────────────────────────────────────────────────
+    % Sequelize Model và MySQL ngang hàng với Service
+    \node[dbbox, right=2.8cm of service]   (model) {\textbf{Sequelize Model}\\[0.5ex]
+        \scriptsize ORM — ánh xạ SQL $\leftrightarrow$ JS object};
+    \node[dbbox, below=0.8cm of model]     (db)    {\textbf{MySQL Database}\\[0.5ex]
+        \scriptsize Lưu trữ dữ liệu người dùng,\\nhật ký, thực phẩm, \ldots};
 
-    % Titles
-    \node[font=\large\bfseries\sffamily, text=black, above=1.2cm of react] (title_fe) {FRONTEND};
-    \node[font=\large\bfseries\sffamily, text=black] at (title_fe -| api) (title_be) {BACKEND};
-    \node[font=\large\bfseries\sffamily, text=black] at (title_fe -| model) (title_db) {DATABASE};
+    % ── TITLES ───────────────────────────────────────────────────────────────────
+    \node[font=\large\bfseries\sffamily, above=1.3cm of react]      (title_fe) {FRONTEND};
+    \node[font=\large\bfseries\sffamily] at (title_fe -| api)        (title_be) {BACKEND};
+    \node[font=\large\bfseries\sffamily] at (title_fe -| model)      (title_db) {DATABASE};
 
-    % Separators
-    \path (react.east) -- (api.west) coordinate[midway] (sep1);
-    \path (api.east) -- (model.west) coordinate[midway] (sep2);
-    \draw[thick, dashed, gray!50] (sep1 |- title_fe.north) -- (sep1 |- service.south);
-    \draw[thick, dashed, gray!50] (sep2 |- title_be.north) -- (sep2 |- service.south);
+    % ── SEPARATORS ───────────────────────────────────────────────────────────────
+    \path (axios.east) -- (api.west)   coordinate[midway] (sep1);
+    \path (api.east)   -- (model.west) coordinate[midway] (sep2);
+    \draw[thick, dashed, gray!40] (sep1 |- title_fe.north) -- (sep1 |- db.south);
+    \draw[thick, dashed, gray!40] (sep2 |- title_be.north) -- (sep2 |- db.south);
 
-    % Request Flows (Blue)
-    \draw[req] ([xshift=-0.5cm]react.south) -- ([xshift=-0.5cm]axios.north);
-    
-    % HTTP Request: label on first horizontal segment
-    \draw[req] ([yshift=0.2cm]axios.east) -- node[label_req, above] {HTTP Request} ++(1.5,0) |- (api.west);
-    
-    % Backend internal requests (straight down)
-    \draw[req] ([xshift=-0.5cm]api.south) -- ([xshift=-0.5cm]middleware.north);
-    \draw[req] ([xshift=-0.5cm]middleware.south) -- ([xshift=-0.5cm]controller.north);
-    \draw[req] ([xshift=-0.5cm]controller.south) -- ([xshift=-0.5cm]service.north);
-    
-    % Backend to DB
-    \draw[req] ([yshift=0.2cm]service.east) -- node[label_req, above] {Query} ++(1.2,0) |- ([yshift=0.2cm]model.west);
-    \draw[req] ([xshift=-0.5cm]model.south) -- ([xshift=-0.5cm]db.north);
+    % ── REQUEST FLOWS (Xanh đậm) ─────────────────────────────────────────────────
+    % React → Axios
+    \draw[req] ([xshift=-0.4cm]react.south) -- ([xshift=-0.4cm]axios.north);
+    % Axios → localStorage (ghi token)
+    \draw[req, gray!60] (axios.south) -- node[right, font=\scriptsize\sffamily, text=gray] {lưu token} (localstorage.north);
+    % Axios → API Route
+    \draw[req] ([yshift=0.25cm]axios.east)
+        -- node[label_req, above] {HTTP Request (Bearer token)}
+        ++(1.4,0) |- (api.west);
+    % API Route → Middleware → Controller → Service
+    \draw[req] ([xshift=-0.45cm]api.south)        -- ([xshift=-0.45cm]middleware.north);
+    \draw[req] ([xshift=-0.45cm]middleware.south)  -- ([xshift=-0.45cm]controller.north);
+    \draw[req] ([xshift=-0.45cm]controller.south)  -- ([xshift=-0.45cm]service.north);
+    % Service → Sequelize Model → MySQL
+    \draw[req] ([yshift=0.2cm]service.east)
+        -- node[label_req, above] {Query}
+        ++(1.2,0) |- ([yshift=0.2cm]model.west);
+    \draw[req] ([xshift=-0.4cm]model.south) -- ([xshift=-0.4cm]db.north);
 
-    % Response Flows (Red, Dashed)
-    \draw[res] ([xshift=0.5cm]db.north) -- ([xshift=0.5cm]model.south);
-    \draw[res] ([yshift=-0.2cm]model.west) -- node[label_res, below] {Data} ++(-0.8,0) |- ([yshift=-0.2cm]service.east);
-    
-    % Backend internal responses (straight up)
-    \draw[res] ([xshift=0.5cm]service.north) -- node[label_res, right] {Data} ([xshift=0.5cm]controller.south);
-    \draw[res] ([xshift=0.5cm]controller.north) -- ([xshift=0.5cm]middleware.south);
-    \draw[res] ([xshift=0.5cm]middleware.north) -- ([xshift=0.5cm]api.south);
-    
-    % Response JSON to Axios
-    \draw[res] ([yshift=-0.2cm]api.west) -- node[label_res, above] {Response JSON} ++(-1.5,0) |- ([yshift=-0.2cm]axios.east);
+    % ── RESPONSE FLOWS (Đỏ đứt nét) ──────────────────────────────────────────────
+    % MySQL → Sequelize Model
+    \draw[res] ([xshift=0.4cm]db.north) -- ([xshift=0.4cm]model.south);
+    % Sequelize Model → Service
+    \draw[res] ([yshift=-0.2cm]model.west)
+        -- node[label_res, below] {Data}
+        ++(-0.8,0) |- ([yshift=-0.2cm]service.east);
+    % Service → Controller → Middleware → API Route
+    \draw[res] ([xshift=0.45cm]service.north)    -- node[label_res, right] {Result} ([xshift=0.45cm]controller.south);
+    \draw[res] ([xshift=0.45cm]controller.north) -- ([xshift=0.45cm]middleware.south);
+    \draw[res] ([xshift=0.45cm]middleware.north) -- ([xshift=0.45cm]api.south);
+    % API Route → Axios (response JSON thành công)
+    \draw[res] ([yshift=-0.25cm]api.west)
+        -- node[label_res, above] {Response JSON}
+        ++(-1.4,0) |- ([yshift=-0.25cm]axios.east);
+    % Axios → React
+    \draw[res] ([xshift=0.4cm]axios.north) -- ([xshift=0.4cm]react.south);
 
-    % 401 Error flow to Axios
-    \draw[res, thick, red] (middleware.west) -- node[label_res, above] {401 Error} ++(-1.0,0) |- ([yshift=0.6cm]axios.east);
+    % ── LUỒNG 401 (Middleware → Axios interceptor bắt) ───────────────────────────
+    % 401 JSON từ Middleware đi theo tuyến response riêng, Axios interceptor bắt lại
+    \draw[err] (middleware.west)
+        -- node[label_err, above] {401 JSON}
+        ++(-0.9,0) |- ([yshift=0.35cm]axios.east);
 
-    \draw[res] ([xshift=0.5cm]axios.north) -- ([xshift=0.5cm]react.south);
+    % ── GHI CHÚ localStorage (đọc token) ─────────────────────────────────────────
+    \draw[req, gray!60] (localstorage.east) -| ([xshift=-0.4cm, yshift=0.25cm]axios.east);
 
     \end{tikzpicture}
     }
