@@ -396,7 +396,7 @@
             \modulelabel{Food Scoring}
             \vspace{0.3cm}
             \centering
-            \begin{tikzpicture}[>=Stealth, node distance=0.25cm,
+            \begin{tikzpicture}[>=Stealth, node distance=0.15cm,
                 box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text width=6cm, text centered, font=\scriptsize},
                 arrow/.style={->, NutriDark}]
                 \node[box] (n1) {Dữ liệu thực phẩm};
@@ -404,13 +404,15 @@
                 \node[box, below=of n2] (n3) {Chuẩn hóa mật độ dinh dưỡng theo 100 kcal};
                 \node[box, below=of n3] (n4) {Đánh giá đa lượng và vi chất\\[-0.3ex] \tiny Protein, Fiber, Sugar, Sodium + Vitamin A, C, Canxi, Sắt};
                 \node[box, below=of n4] (n5) {Cộng/trừ điểm, phạt vi chất, áp dụng Hard Cap};
-                \node[box, below=of n5, fill=NutriGreen!20] (n6) {\textbf{Giới hạn 0--100, phân loại \& gán nhãn}};
+                \node[box, below=of n5] (n6) {Giới hạn 0--100, phân loại \& gán nhãn};
+                \node[box, below=of n6, fill=NutriGreen!20] (n7) {\textbf{Tổng hợp tuần/tháng \& phát hiện thói quen tốt /xấu}};
                 
                 \draw[arrow] (n1) -- (n2);
                 \draw[arrow] (n2) -- (n3);
                 \draw[arrow] (n3) -- (n4);
                 \draw[arrow] (n4) -- (n5);
                 \draw[arrow] (n5) -- (n6);
+                \draw[arrow] (n6) -- (n7);
             \end{tikzpicture}
         \end{column}
         
@@ -418,7 +420,7 @@
             \modulelabel{Health Insights}
             \vspace{0.3cm}
             \centering
-            \begin{tikzpicture}[>=Stealth, node distance=0.2cm,
+            \begin{tikzpicture}[>=Stealth, node distance=0.15cm,
                 box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text width=5.5cm, text centered, font=\scriptsize},
                 arrow/.style={->, NutriDark}]
                 \node[box] (n1) {Nhật ký + nước};
@@ -445,7 +447,7 @@
     
     \vspace{0.3cm}
     \centering
-    \scriptsize \textit{*Food Scoring đánh giá từng thực phẩm; Daily Health Score đánh giá tổng thể dữ liệu dinh dưỡng trong ngày.}
+    \scriptsize \textit{*Food Scoring chấm điểm từng thực phẩm và tổng hợp xu hướng ăn uống theo tuần/tháng; Daily Health Score đánh giá tổng thể dữ liệu dinh dưỡng trong ngày.}
 \end{frame}
 
 % Thời lượng dự kiến: 1 phút 30 giây

@@ -1420,10 +1420,8 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
                     minimum height=1cm},
         req/.style={thick, -Latex, blue!80!black},
         res/.style={thick, -Latex, red!80!black, dashed},
-        err/.style={thick, -Latex, red!60!black, densely dashed},
         lreq/.style={font=\scriptsize\sffamily, text=blue!80!black, fill=white, inner sep=1.5pt},
         lres/.style={font=\scriptsize\sffamily, text=red!80!black, fill=white, inner sep=1.5pt},
-        lerr/.style={font=\scriptsize\sffamily, text=red!60!black, fill=white, inner sep=1.5pt},
         coltitle/.style={font=\large\bfseries\sffamily}
     ]
 
@@ -1432,8 +1430,7 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
         \scriptsize \texttt{/api/v1/*}};
 
     \node[box, below=of api] (mw) {\textbf{Middleware xác thực}\\[0.5ex]
-        \scriptsize Kiểm tra Bearer Token\\
-        Sai $\rightarrow$ 401 JSON};
+        \scriptsize Kiểm tra Bearer Token};
 
     \node[box, below=of mw] (ctrl) {\textbf{Controller}\\[0.5ex]
         \scriptsize Validate, gọi Service};
@@ -1452,8 +1449,8 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
 
     \node[box, below=of query] (axios)
         {\textbf{Axios Instance}\\[0.5ex]
-        \scriptsize Gắn Bearer token vào header\\
-        Interceptor: bắt 401 $\to$ refresh};
+        \scriptsize Gắn Bearer token vào header\\[0.3ex]
+        \scriptsize Đọc token từ \texttt{localStorage}};
 
     \node[storebox, below=of axios] (ls)
         {\textbf{localStorage (Browser)}\\[0.3ex]
@@ -1518,9 +1515,7 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
     \draw[res] ([xshift=4mm]axios.north) -- ([xshift=4mm]query.south);
     \draw[res] ([xshift=4mm]query.north) -- ([xshift=4mm]react.south);
 
-    % ═══════════════ LUỒNG 401 (riêng biệt) ═══════════════
-    % MW trả 401 → đi ngang sang Axios
-    \draw[err] (mw.west) -- node[lerr, above] {401 JSON} ++(-1.0,0) |- ([yshift=6mm]axios.east);
+
 
     \end{tikzpicture}
     }
@@ -1528,7 +1523,7 @@ Hệ thống kết nối Frontend và Backend thông qua luồng gọi HTTP Requ
     \label{fig:api_flow}
     
     \vspace{0.2cm}
-    \small \textit{* Ghi chú: Các API dữ liệu cá nhân yêu cầu Access Token trong header. Nếu xác thực hợp lệ, request được chuyển qua Controller, Service và Model để truy vấn cơ sở dữ liệu; kết quả được trả về Frontend dưới dạng JSON thống nhất.}
+    \small \textit{* Ghi chú: Các API dữ liệu cá nhân yêu cầu Access Token trong header. Nếu xác thực hợp lệ, request được chuyển qua Controller, Service và Model để truy vấn cơ sở dữ liệu; kết quả được trả về Frontend dưới dạng JSON thống nhất. Xử lý lỗi xác thực (401) và tự động cấp lại token được mô tả chi tiết tại Hình 2.4.}
 \end{figure}
 
 Quá trình xác thực được minh họa trong Hình \ref{fig:jwt-auth-flow}. Khi đăng nhập thành công, Backend trả về Access Token để Frontend đính kèm vào \texttt{Authorization Header} của các yêu cầu tiếp theo. Đồng thời, một Refresh Token được thiết lập ngầm vào trình duyệt thông qua cơ chế \texttt{HttpOnly Cookie}. Khi Access Token hết hạn, Frontend có thể sử dụng Refresh Token để tự động lấy token mới mà không yêu cầu người dùng đăng nhập lại.
