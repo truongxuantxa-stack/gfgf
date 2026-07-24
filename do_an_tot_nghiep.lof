@@ -1,6 +1,6 @@
 \babel@toc {vietnamese}{}\relax 
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces Mô hình tổng quan dữ liệu của hệ thống quản lý dinh dưỡng cá nhân}}{5}{figure.caption.9}%
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Mô hình tổng quan dữ liệu của hệ thống quản lý dinh dưỡng cá nhân hóa}}{5}{figure.caption.9}%
 \contentsline {figure}{\numberline {1.2}{\ignorespaces Mô hình liên kết các công nghệ trong hệ thống}}{8}{figure.caption.13}%
 \contentsline {figure}{\numberline {1.3}{\ignorespaces Kiến trúc tổng thể Client - Server của hệ thống}}{10}{figure.caption.14}%
 \contentsline {figure}{\numberline {1.4}{\ignorespaces Kiến trúc Frontend trong ứng dụng React SPA}}{11}{figure.caption.15}%
@@ -20,7 +20,7 @@
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Sơ đồ luồng gọi API ở Frontend (Happy Path)}}{37}{figure.caption.32}%
 \contentsline {figure}{\numberline {3.5}{\ignorespaces Sơ đồ luồng xử lý Nutrition Core}}{42}{figure.caption.33}%
 \contentsline {figure}{\numberline {3.6}{\ignorespaces Sơ đồ luồng xử lý Adaptive TDEE}}{48}{figure.caption.35}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng Food Scoring}}{52}{figure.caption.36}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Sơ đồ luồng Food Scoring}}{53}{figure.caption.36}%
 \contentsline {figure}{\numberline {3.8}{\ignorespaces Sơ đồ luồng xử lý của module Health Insights}}{58}{figure.caption.37}%
 \contentsline {figure}{\numberline {3.9}{\ignorespaces Sơ đồ luồng xử lý của Meal Planner}}{63}{figure.caption.38}%
 \contentsline {figure}{\numberline {3.10}{\ignorespaces Sơ đồ luồng xử lý của Hybrid Nutrition Scanner}}{68}{figure.caption.40}%
