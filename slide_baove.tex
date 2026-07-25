@@ -776,13 +776,13 @@
     
     Thay vì trừ điểm cố định (ví dụ: thiếu Protein luôn trừ 15 điểm), hệ thống \textbf{tính trọng số dựa trên mức độ sai lệch thực tế}:
     
-    \begin{block}{\small Công thức \texttt{getWeightedPenalty()}}
+    \begin{block}{\small Logic tính điểm phạt (Penalty)}
         \footnotesize
-        \texttt{deviation = isExcess ? (ratio - 1) : (1 - ratio)}\\
-        \texttt{deviation $\le$ 0\%  $\rightarrow$ basePenalty $\times$ 0.5 (vi phạm nhẹ / đã giải quyết)}\\
-        \texttt{deviation $>$ 20\% $\rightarrow$ basePenalty $\times$ 1.0 (sai lệch vừa)}\\
-        \texttt{deviation $>$ 40\% $\rightarrow$ basePenalty $\times$ 1.8 (sai lệch lớn)}\\
-        \texttt{deviation $>$ 60\% $\rightarrow$ basePenalty $\times$ 2.5 (sai lệch nghiêm trọng)}
+        \textbf{Mức độ sai lệch} so với mục tiêu sẽ quyết định trọng số phạt:\\
+        $\bullet$ \textbf{Sai lệch $\le$ 0\%} (Đã khắc phục): Phạt nhẹ (Hệ số $\times 0.5$)\\
+        $\bullet$ \textbf{Sai lệch $>$ 20\%} (Vừa phải): Phạt tiêu chuẩn (Hệ số $\times 1.0$)\\
+        $\bullet$ \textbf{Sai lệch $>$ 40\%} (Đáng kể): Phạt nặng (Hệ số $\times 1.8$)\\
+        $\bullet$ \textbf{Sai lệch $>$ 60\%} (Nghiêm trọng): Phạt rất nặng (Hệ số $\times 2.5$)
     \end{block}
     
     \textbf{Ví dụ thực tế:}
@@ -797,11 +797,12 @@
     \textbf{3. Context-Awareness — Nhận biết ngữ cảnh thời gian thực}
     \vspace{0.1cm}
     
-    \begin{block}{\small Cổng logic kiểm tra (Gate)}
+    \begin{block}{\small Cổng logic kiểm tra cảnh báo thiếu hụt}
         \footnotesize
-        \texttt{const isDayComplete = isHistorical || currentHour >= 20 ||}\\
-        \texttt{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (hasSang \&\& hasTrua \&\& hasToi);}\\
-        \texttt{const shouldWarnDeficiency = isDayComplete \&\& consumed.calories > 0;}
+        Chỉ kích hoạt cảnh báo khi ngày ăn uống được tính là \textbf{hoàn tất}, thỏa 1 trong 3 điều kiện:\\
+        $\bullet$ 1. Dữ liệu thuộc về ngày hôm trước (Historical).\\
+        $\bullet$ 2. Thời gian hiện tại đã qua 20:00 tối.\\
+        $\bullet$ 3. Đã ghi nhận đầy đủ 3 bữa: Sáng, Trưa, Tối.
     \end{block}
     
     \begin{itemize}
@@ -946,13 +947,12 @@
     
     \vspace{0.1cm}
     \textbf{8. Phát hiện Plateau (Chững cân)}
-    \begin{block}{\scriptsize Logic phát hiện}
+    \begin{block}{\scriptsize Logic phát hiện Plateau}
         \scriptsize
-        \texttt{if (adaptiveTDEE < staticTDEE * 0.88) \{} \\
-        \texttt{\ \ isPlateauing = true;}\\
-        \texttt{\ \ Đề xuất giảm targetCalories;}\\
-        \texttt{\ \ Thông báo: "Cơ thể đang thích ứng chuyển hóa";}\\
-        \texttt{\}}
+        $\bullet$ \textbf{Nếu:} TDEE thực tế giảm mạnh (dưới 88\% so với TDEE lý thuyết).\\
+        $\bullet$ \textbf{Hành động 1:} Gắn cờ chững cân (\texttt{isPlateauing = true}).\\
+        $\bullet$ \textbf{Hành động 2:} Tự động đề xuất giảm mục tiêu Calo hàng ngày.\\
+        $\bullet$ \textbf{Hành động 3:} Gửi thông báo: "Cơ thể đang thích ứng chuyển hóa".
     \end{block}
     
     \vspace{0.1cm}
