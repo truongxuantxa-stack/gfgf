@@ -665,28 +665,42 @@
 
 
 \begin{frame}[label=backup_toc]{Mục lục Backup (Q\&A)}
-    \vspace{0.3cm}
+    \vspace{0.5cm}
     \begin{columns}[T]
-        \begin{column}{0.5\textwidth}
-            \hyperlink{b1}{\beamerbutton{B1. Toán học Meal Planner}} \\[0.3cm]
-            \hyperlink{b2}{\beamerbutton{B2. Chấm điểm \& Hàm phạt}} \\[0.3cm]
-            \hyperlink{b3}{\beamerbutton{B3. Adaptive TDEE \& EMA}} \\[0.3cm]
-            \hyperlink{b4}{\beamerbutton{B4. Sơ đồ CSDL}}
+        \begin{column}{0.55\textwidth}
+            \begin{itemize}
+                \setlength\itemsep{0.8cm}
+                \Large
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b1}{\textbf{B1. Toán học Meal Planner}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b2}{\textbf{B2. Chấm điểm \& Hàm phạt}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b3}{\textbf{B3. Adaptive TDEE \& EMA}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b4}{\textbf{B4. Sơ đồ CSDL}}
+            \end{itemize}
         \end{column}
-        \begin{column}{0.5\textwidth}
-            \hyperlink{b5}{\beamerbutton{B5. Food Scoring \& Habit}} \\[0.3cm]
-            \hyperlink{b6}{\beamerbutton{B6. Trust Score Scanner}} \\[0.3cm]
-            \hyperlink{b7}{\beamerbutton{B7. Luồng xác thực Frontend}}
+        \begin{column}{0.45\textwidth}
+            \begin{itemize}
+                \setlength\itemsep{0.8cm}
+                \Large
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b5}{\textbf{B5. Food Scoring \& Habit}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b6}{\textbf{B6. Trust Score Scanner}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b7}{\textbf{B7. Luồng Auth Frontend}}
+            \end{itemize}
         \end{column}
     \end{columns}
 \end{frame}
 
 % --- BACKUP SLIDES ---
 \appendix
-\addtobeamertemplate{footline}{}{%
-  \begin{tikzpicture}[remember picture,overlay]
-    \node[anchor=south east, xshift=-0.5cm, yshift=0.5cm] at (current page.south east) {\hyperlink{backup_toc}{\beamerreturnbutton{Quay lại mục lục}}};
-  \end{tikzpicture}%
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{}%
+    \hspace*{2ex}\hyperlink{backup_toc}{\textcolor{NutriDark}{\textbf{$\hookleftarrow$ Quay lại Mục lục Backup}}}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{}%
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
 }
 
 {
