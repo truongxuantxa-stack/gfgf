@@ -208,6 +208,7 @@
         \node[layer, right=of service] (model) {Sequelize Model};
         
         \node[layer, fill=NutriDark!10, below=0.5cm of service] (db) {\textbf{MySQL}};
+        \node[layer, dashed, below=0.5cm of controller] (cron) {Cron Job};
         
         \node[layer, dashed, right=2cm of react] (ext) {Dịch vụ ngoài (AI Vision, Open Food Facts)};
         
@@ -217,6 +218,7 @@
         \draw[arrow] (controller) -- (service);
         \draw[arrow] (service) -- (model);
         \draw[arrow] (model) |- (db);
+        \draw[arrow, dashed] (cron) -- node[sloped, above, font=\tiny] {Tự động mỗi tuần} (service);
         
         \draw[<->, dashed, NutriDark] (service) -- (ext);
     \end{tikzpicture}
@@ -246,7 +248,7 @@
             \vspace{0.2cm}
             \begin{itemize}
                 \item \small \textbf{Node.js / Express:} Xây dựng RESTful API.
-                \item \small \textbf{Middleware:} Xác thực JWT và kiểm tra dữ liệu.
+                \item \small \textbf{Middleware:} Xác thực JWT + Refresh Token (HttpOnly Cookie).
                 \item \small \textbf{Controller:} Điều phối request/response.
                 \item \small \textbf{Service:} Chứa thuật toán và nghiệp vụ.
                 \item \small \textbf{Sequelize ORM / MySQL.}
@@ -373,18 +375,22 @@
     
     \vspace{0.1cm}
     \begin{columns}[T]
-        \begin{column}{0.48\textwidth}
-            \textcolor{NutriDark}{\textbf{\modulelabel{TDEE tĩnh} -- Ước tính ban đầu}}
+        \begin{column}{0.5\textwidth}
+            \textcolor{NutriDark}{\textbf{\modulelabel{Thuật toán EMA (Lý thuyết gốc)}}}
             \begin{itemize}
-                \item \small Ước tính từ công thức tĩnh (BMR $\times$ PAL).
-                \item \small Phù hợp làm giá trị khởi tạo khi chưa đủ dữ liệu cá nhân.
+                \item \scriptsize Công thức: $\text{EMA}_t = \alpha \cdot x_t + (1 - \alpha) \cdot \text{EMA}_{t-1}$
+                \item \scriptsize $\alpha \in (0, 1)$: Hệ số làm mượt.
+                \item \scriptsize $\alpha$ nhỏ $\rightarrow$ trọng số quá khứ lớn.
+                \item \scriptsize Ưu điểm: Bộ nhớ $O(1)$, thời gian $O(n)$.
             \end{itemize}
         \end{column}
-        \begin{column}{0.5\textwidth}
-            \textcolor{NutriDark}{\textbf{\modulelabel{Adaptive TDEE} -- Hiệu chỉnh thực tế}}
+        \begin{column}{0.48\textwidth}
+            \textcolor{NutriDark}{\textbf{\modulelabel{Áp dụng trong hệ thống}}}
             \begin{itemize}
-                \item \small Suy ngược mức tiêu hao từ lượng nạp và xu hướng cân nặng.
-                \item \small Làm mượt, kiểm soát và cá nhân hóa khi đã đủ dữ liệu.
+                \item \scriptsize $\alpha = 0.1$: Ít bị ảnh hưởng bởi dao động ngày.
+                \item \scriptsize Warm-up 14 ngày (khởi tạo EMA ổn định).
+                \item \scriptsize Anti-smoothing kép: Dùng $\text{TDEE}_{\text{thô}}$ để tính.
+                \item \scriptsize Confidence score: 7 ngày (High) $\rightarrow$ 5 ngày (Low).
             \end{itemize}
         \end{column}
     \end{columns}
@@ -457,20 +463,26 @@
     
     \vspace{0.3cm}
     \begin{columns}[T]
-        \begin{column}{0.4\textwidth}
-            Mô hình toán học:
-            \[ A\mathbf{x} = \mathbf{b} \]
-            \small Trong đó:
+        \begin{column}{0.46\textwidth}
+            \textbf{1. Mô hình $A\mathbf{x} = \mathbf{b}$} ($A$: ma trận macro, $\mathbf{x}$: k.lượng, $\mathbf{b}$: m.tiêu)
+            \vspace{0.15cm}
+            
+            \textbf{2. Thuật toán Khử Gauss ($n=3$):}
             \begin{itemize}
-                \item $A$: ma trận thành phần Protein, Carb và Fat của ba nguyên liệu.
-                \item $\mathbf{x}$: vector khối lượng của ba nguyên liệu cần xác định.
-                \item $\mathbf{b}$: mục tiêu macro của bữa ăn.
+                \item \scriptsize \textbf{Forward + Pivoting:} Đưa $A$ về tam giác trên, hoán vị dòng.
+                \item \scriptsize \textbf{Back Sub:} Giải ngược tìm $\mathbf{x}$.
+                \item \scriptsize Nếu $|pivot| < 10^{-10}$: Ma trận suy biến.
             \end{itemize}
-            \vspace{0.2cm}
-            \scriptsize \textit{*Nếu template có nhóm rau/fiber, hệ thống cố định lượng rau trước rồi điều chỉnh phần macro còn lại.}
+            \vspace{0.15cm}
+            
+            \textbf{3. Xử lý ngoại lệ (Edge cases):}
+            \begin{itemize}
+                \item \scriptsize Nghiệm âm, $<10$g, $>500$g $\rightarrow$ Không khả thi.
+                \item \scriptsize Retry tối đa 15 lần, lưu best-attempt.
+            \end{itemize}
         \end{column}
 
-        \begin{column}{0.55\textwidth}
+        \begin{column}{0.53\textwidth}
             \begin{center}
             \begin{tikzpicture}[>=Stealth, node distance=0.32cm,
                 box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.45cm, text centered, font=\scriptsize, align=center},
@@ -579,36 +591,35 @@
             \modulelabel{Chức năng chính}
             \vspace{0.2cm}
             
-            \small Các chức năng chính thực hiện theo luồng thiết kế.
+            \small \textbf{8 module} chức năng hoạt động end-to-end.
         \end{column}
         
         \begin{column}{0.33\textwidth}
             \modulelabel{Xử lý dữ liệu}
             \vspace{0.2cm}
             
-            \small Các thuật toán trả kết quả phù hợp với dữ liệu kiểm thử.
+            \small \textbf{4 thuật toán} chuyên biệt (Gauss, EMA, Food Scoring, Health Score).
         \end{column}
         
         \begin{column}{0.33\textwidth}
             \modulelabel{Kiến trúc kỹ thuật}
             \vspace{0.2cm}
             
-            \small Frontend – RESTful API – Backend – MySQL hoạt động thống nhất.
+            \small \textbf{40+ API endpoint}, Cron Job tự động hàng tuần.
         \end{column}
     \end{columns}
     
     \vspace{0.5cm}
     \begin{center}
-        \normalsize
-        \renewcommand{\arraystretch}{1.5}
-        \begin{tabularx}{0.98\textwidth}{>{\hsize=0.3\hsize}X | >{\hsize=0.7\hsize}X}
+        \small
+        \renewcommand{\arraystretch}{1.3}
+        \begin{tabularx}{0.98\textwidth}{>{\hsize=0.28\hsize}X | >{\hsize=0.72\hsize}X}
             \toprule
             \textbf{Nhóm kiểm thử} & \textbf{Kết quả} \\
             \midrule
-            Luồng xác thực \& CRUD & Các trường hợp kiểm thử chính đạt kết quả mong đợi. \\
-            Giải thuật khử Gauss (Meal Planner) & Trả khẩu phần khi tìm được nghiệm hợp lệ; cảnh báo hoặc thử lại khi nghiệm không phù hợp. \\
-            Adaptive TDEE & Trả kết quả nhất quán với dữ liệu lịch sử và dữ liệu thực nghiệm đã chuẩn bị. \\
-            Scanner API / AI Vision & Tra cứu và trích xuất dữ liệu trong các trường hợp thử nghiệm; dữ liệu chưa đạt điều kiện được yêu cầu kiểm tra và xác nhận. \\
+            Khử Gauss (Meal Planner) & Giải hệ 3×3; phát hiện ma trận suy biến ($|pivot| < 10^{-10}$); retry tối đa 15 lần, lưu best-attempt. \\
+            Adaptive TDEE & Test 7 ngày: TDEE tĩnh 2500 $\rightarrow$ Adaptive 2200 kcal (−12\%); phát hiện plateau, đề xuất giảm mục tiêu. \\
+            Scanner API / AI Vision & Tra cứu Barcode qua 3 lớp fallback; AI Vision trích xuất + Physics Validation kiểm tra tính hợp lý. \\
             \bottomrule
         \end{tabularx}
     \end{center}
@@ -645,10 +656,12 @@
             \modulelabel{Kết quả đạt được}
             \vspace{0.2cm}
             \begin{itemize}
-                \item Xây dựng được hệ thống web quản lý dinh dưỡng cá nhân với các chức năng chính theo mục tiêu đề tài.
-                \item Tích hợp các chức năng theo dõi dinh dưỡng, cân nặng, nước uống và luyện tập.
-                \item Triển khai các module xử lý dữ liệu và thuật toán như Adaptive TDEE, Food Scoring và Meal Planner phục vụ cá nhân hóa.
-                \item Xây dựng kiến trúc Client–Server với Frontend và Backend giao tiếp qua RESTful API.
+                \small \setlength{\itemsep}{2pt}
+                \item Xây dựng hệ thống web quản lý dinh dưỡng với đầy đủ chức năng đề ra.
+                \item Tích hợp theo dõi dinh dưỡng, cân nặng, nước uống và luyện tập.
+                \item Triển khai thuật toán Adaptive TDEE, Food Scoring và Meal Planner.
+                \item Xây dựng kiến trúc Client–Server giao tiếp qua RESTful API.
+                \item Xuất báo cáo PDF tổng hợp, tích hợp phân tích Adaptive TDEE.
             \end{itemize}
         \end{column}
         
@@ -656,6 +669,7 @@
             \modulelabel{Hướng phát triển}
             \vspace{0.2cm}
             \begin{itemize}
+                \small \setlength{\itemsep}{2pt}
                 \item Mở rộng cơ sở dữ liệu thực phẩm nội bộ.
                 \item Kiểm thử với nhiều người dùng và dữ liệu dài hạn.
                 \item Tiếp tục đánh giá thuật toán Adaptive TDEE.
