@@ -663,8 +663,32 @@
     \normalsize \textit{Q\&A}
 \end{frame}
 
+
+\begin{frame}[label=backup_toc]{Mục lục Backup (Q\&A)}
+    \vspace{0.3cm}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \hyperlink{b1}{\beamerbutton{B1. Toán học Meal Planner}} \\[0.3cm]
+            \hyperlink{b2}{\beamerbutton{B2. Chấm điểm \& Hàm phạt}} \\[0.3cm]
+            \hyperlink{b3}{\beamerbutton{B3. Adaptive TDEE \& EMA}} \\[0.3cm]
+            \hyperlink{b4}{\beamerbutton{B4. Sơ đồ CSDL}}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \hyperlink{b5}{\beamerbutton{B5. Food Scoring \& Habit}} \\[0.3cm]
+            \hyperlink{b6}{\beamerbutton{B6. Trust Score Scanner}} \\[0.3cm]
+            \hyperlink{b7}{\beamerbutton{B7. Luồng xác thực Frontend}}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 % --- BACKUP SLIDES ---
 \appendix
+\addtobeamertemplate{footline}{}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=south east, xshift=-0.5cm, yshift=0.5cm] at (current page.south east) {\hyperlink{backup_toc}{\beamerreturnbutton{Quay lại mục lục}}};
+  \end{tikzpicture}%
+}
+
 {
 \setbeamertemplate{background}{
     \begin{tikzpicture}
@@ -678,7 +702,7 @@
 }
 
 % --- BACKUP B1 ---
-\begin{frame}{BACKUP B1.1: Toán học đằng sau Meal Planner (Mô hình hóa)}
+\begin{frame}[label=b1]{BACKUP B1.1: Toán học đằng sau Meal Planner (Mô hình hóa)}
     \textbf{1. Mô hình hóa bài toán — Hệ phương trình tuyến tính $A\mathbf{x} = \mathbf{b}$}
     \vspace{0.2cm}
     
@@ -754,7 +778,7 @@
 \end{frame}
 
 % --- BACKUP B2 ---
-\begin{frame}{BACKUP B2.1: Thuật toán Chấm Điểm — Phân loại 3 tầng (Triage)}
+\begin{frame}[label=b2]{BACKUP B2.1: Thuật toán Chấm Điểm — Phân loại 3 tầng (Triage)}
     \textbf{1. Kiến trúc thuật toán — Phân loại 3 tầng (Calorie-Gated)}
     \vspace{0.1cm}
     
@@ -880,7 +904,7 @@
 \end{frame}
 
 % --- BACKUP B3 ---
-\begin{frame}{BACKUP B3.1: EMA \& Bộ Lọc Thông Thấp (Bài toán)}
+\begin{frame}[label=b3]{BACKUP B3.1: EMA \& Bộ Lọc Thông Thấp (Bài toán)}
     \textbf{1. Bài toán: Tách Tín hiệu khỏi Nhiễu}
     \vspace{0.1cm}
     
@@ -962,7 +986,7 @@
 \end{frame}
 
 % --- BACKUP B4 ---
-\begin{frame}{BACKUP B4.1: Sơ đồ CSDL — Các bảng chính}
+\begin{frame}[label=b4]{BACKUP B4.1: Sơ đồ CSDL — Các bảng chính}
     \textbf{Các bảng dữ liệu chính trong hệ thống}
     \vspace{0.1cm}
     
@@ -1009,7 +1033,7 @@
 \end{frame}
 
 % --- BACKUP B5 ---
-\begin{frame}{BACKUP B5.1: Food Scoring — Mật độ Dinh dưỡng}
+\begin{frame}[label=b5]{BACKUP B5.1: Food Scoring — Mật độ Dinh dưỡng}
     \textbf{1. Nguyên lý Mật độ Dinh dưỡng (Nutrient Density per 100 kcal)}
     \begin{itemize}
         \small
@@ -1109,7 +1133,7 @@
     \end{itemize}
 \end{frame}
 % --- BACKUP B6 ---
-\begin{frame}{BACKUP B6.1: Cơ chế Scanner \& Trust Score (Crowdsourcing)}
+\begin{frame}[label=b6]{BACKUP B6.1: Cơ chế Scanner \& Trust Score (Crowdsourcing)}
     \textbf{1. Physics Validation (Xác thực vật lý)}
     \begin{itemize}
         \item Đảm bảo dữ liệu nhãn thành phần dinh dưỡng hợp lý: Tổng khối lượng các chất (Protein + Carbs + Fat + $\dots$) không được vượt quá 100g.
@@ -1127,7 +1151,7 @@
 \end{frame}
 
 % --- BACKUP B7 ---
-\begin{frame}[fragile]{BACKUP B7.1: Luồng xác thực \& Đồng bộ Frontend}
+\begin{frame}[label=b7, fragile]{BACKUP B7.1: Luồng xác thực \& Đồng bộ Frontend}
     \textbf{1. Xử lý Route \& Code-splitting}
     \begin{itemize}
         \item Sử dụng \texttt{ProtectedRoute} và \texttt{AuthOnlyRoute} để bảo vệ các trang.
