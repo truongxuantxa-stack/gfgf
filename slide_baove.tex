@@ -898,24 +898,19 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{BACKUP B3.2: Tần số cắt \& Trọng số $\alpha$}
-    \textbf{3. Tần số cắt (Cutoff frequency)}
-    \vspace{0.1cm}
+\begin{frame}{BACKUP B3.2: Ý nghĩa của trọng số $\alpha$ trong EMA}
+    \textbf{3. Tại sao chọn $\alpha = 0.1$ (Hệ số làm mượt)?}
+    \vspace{0.2cm}
     
-    Công thức tần số cắt:
-    $$ f_c = \frac{\alpha}{2\pi \cdot \Delta t \cdot (1 - \alpha)} $$
-    
-    Với $\alpha = 0.1$, khoảng thời gian $\Delta t = 1$ ngày:
-    $$ f_c \approx \frac{0.1}{2\pi \times 0.9} \approx 0.0177 \text{ chu kỳ/ngày} \approx \frac{1}{56} \text{ chu kỳ/ngày} $$
-    $\rightarrow$ Hệ thống chỉ giữ lại các biến đổi có chu kỳ $> 56$ ngày (xu hướng thực sự), lọc hết mọi dao động ngắn hạn.
-    
-    \vspace{0.3cm}
-    \textbf{4. Tại sao chọn $\alpha = 0.1$?}
+    Thuật toán EMA sử dụng hệ số $\alpha$ để quyết định xem "sức nặng" của dữ liệu mới (ví dụ: cân nặng hôm nay) so với quá khứ là bao nhiêu.
+    \vspace{0.2cm}
     
     \begin{itemize}
-        \item $\alpha = 0.3$: Phản ứng nhanh nhưng \textbf{Nhiễu lọt qua} nhiều $\rightarrow$ TDEE nhảy loạn.
-        \item \textbf{$\alpha = 0.1$: Cân bằng hoàn hảo} $\rightarrow$ Lọc tốt nước dư, nhưng vẫn nhạy vừa đủ.
-        \item $\alpha = 0.05$: Quá mượt $\rightarrow$ Phản ứng cực chậm, trễ tín hiệu 3-4 tuần.
+        \item \textbf{Nếu $\alpha$ quá lớn (ví dụ $\alpha = 0.5$):} Thuật toán phản ứng quá nhạy. Nếu người dùng uống 2 lít nước, cân nặng tăng đột ngột, TDEE sẽ bị "nhảy loạn" theo lượng nước này (nhiễu).
+        \vspace{0.2cm}
+        \item \textbf{Nếu $\alpha$ quá nhỏ (ví dụ $\alpha = 0.01$):} Thuật toán quá "lì". Khi người dùng thực sự giảm cân, TDEE sẽ mất vài tháng mới bắt kịp (trễ tín hiệu).
+        \vspace{0.2cm}
+        \item \textcolor{NutriGreen!80!black}{\textbf{Chọn $\alpha = 0.1$ là mức cân bằng hoàn hảo:}} Giúp lọc bỏ hoàn toàn các dao động ảo hàng ngày (như nước dư, thức ăn chưa tiêu hóa), nhưng vẫn theo sát được xu hướng tăng/giảm cân thực sự của cơ thể qua các tuần.
     \end{itemize}
 \end{frame}
 
