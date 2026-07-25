@@ -235,10 +235,10 @@
             \modulelabel{Frontend}
             \vspace{0.2cm}
             \begin{itemize}
-                \item \small \textbf{React SPA:} Client-side rendering, tránh full-page reload.
-                \item \small \textbf{TanStack Query:} Cache + stale-while-revalidate, giảm request dư thừa.
+                \item \small \textbf{React SPA:} Tối ưu hóa trải nghiệm người dùng với kiến trúc ứng dụng trang đơn.
+                \item \small \textbf{TanStack Query:} Quản lý đồng bộ trạng thái dữ liệu và tối ưu hiệu suất gọi API.
                 \item \small \textbf{AuthProvider:} Quản lý phiên đăng nhập tập trung, auto-refresh token khi 401.
-                \item \small \textbf{Code-splitting:} Lazy loading theo route, giảm bundle size ban đầu.
+                \item \small \textbf{Code-splitting:} Phân mảnh mã nguồn, tải tài nguyên theo yêu cầu để giảm thời gian khởi chạy.
             \end{itemize}
         \end{column}
         
@@ -248,8 +248,8 @@
             \begin{itemize}
                 \item \small \textbf{Layered Architecture:} Router $\rightarrow$ Middleware $\rightarrow$ Controller $\rightarrow$ Service.
                 \item \small \textbf{JWT Dual-Token:} Access 15 phút + Refresh 7 ngày (HttpOnly Cookie).
-                \item \small \textbf{Tầng Service:} Tách biệt thuật toán khỏi HTTP layer — testable, reusable.
-                \item \small \textbf{Sequelize ORM:} Tách logic nghiệp vụ khỏi SQL, hỗ trợ migration schema.
+                \item \small \textbf{Tầng Service:} Tách biệt thuật toán và logic nghiệp vụ khỏi HTTP layer.
+                \item \small \textbf{Sequelize ORM:} Tương tác cơ sở dữ liệu qua mô hình đối tượng, giảm phụ thuộc SQL thuần.
             \end{itemize}
         \end{column}
     \end{columns}
