@@ -202,22 +202,20 @@
         
         \node[layer, fill=NutriGreen!20] (client) {\textbf{Người dùng}};
         \node[layer, below=of client] (react) {React SPA};
-        \node[layer, below=of react] (api) {RESTful API};
+        \node[layer, below=of react] (api) {RESTful API / Router};
         
-        \node[layer, below=1cm of api, xshift=-4.35cm] (router) {Router};
-        \node[layer, right=0.4cm of router] (controller) {Controller};
-        \node[layer, right=0.4cm of controller] (service) {Service};
-        \node[layer, right=0.4cm of service] (model) {Sequelize Model};
+        \node[layer, below left=1cm and -1cm of api] (controller) {Controller};
+        \node[layer, right=of controller] (service) {Service};
+        \node[layer, right=of service] (model) {Sequelize Model};
         
         \node[layer, fill=NutriDark!10, below=0.5cm of service] (db) {\textbf{MySQL}};
         \node[layer, dashed, below=0.5cm of controller] (cron) {Cron Job};
         
-        \node[layer, dashed, right=1.5cm of react] (ext) {Dịch vụ ngoài (AI Vision, Open Food Facts)};
+        \node[layer, dashed, right=2cm of react] (ext) {Dịch vụ ngoài (AI Vision, Open Food Facts)};
         
         \draw[arrow] (client) -- (react);
         \draw[arrow] (react) -- node[right, font=\footnotesize] {Axios} (api);
-        \draw[arrow] (api) -| (router);
-        \draw[arrow] (router) -- node[above, font=\footnotesize] {Middleware} (controller);
+        \draw[arrow] (api) -| node[above left, font=\footnotesize] {Middleware} (controller);
         \draw[arrow] (controller) -- (service);
         \draw[arrow] (service) -- (model);
         \draw[arrow] (model) |- (db);
