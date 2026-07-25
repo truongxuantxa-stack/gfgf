@@ -701,10 +701,12 @@
         \ \ \ \ $x[i] = (b'[i] - \sum A'[i][j]\cdot x[j]) / A'[i][i]$
     \end{block}
     
+    \vspace{0.2cm}
+    \textbf{Giải thích thêm về Bước 1 (Forward Elimination):}
     \begin{itemize}
         \small
-        \item \textbf{Partial Pivoting} chọn phần tử trội nhất trong cột để tránh chia cho số rất nhỏ $\rightarrow$ giảm sai số số học floating-point.
-        \item \textbf{Ngưỡng suy biến} ($|pivot| < 10^{-10}$): Xảy ra khi 2 nguyên liệu có tỷ lệ macro giống nhau (ví dụ: 2 loại gạo) $\rightarrow$ vô số nghiệm hoặc vô nghiệm.
+        \item \textbf{Partial Pivoting:} Chọn phần tử trội nhất trong cột để tránh chia cho số rất nhỏ $\rightarrow$ giảm sai số số học (floating-point).
+        \item \textbf{Ngưỡng suy biến} ($|pivot| < 10^{-10}$): Xảy ra khi 2 nguyên liệu có tỷ lệ macro giống nhau (ví dụ: 2 loại gạo) $\rightarrow$ vô số nghiệm / vô nghiệm.
     \end{itemize}
 \end{frame}
 
