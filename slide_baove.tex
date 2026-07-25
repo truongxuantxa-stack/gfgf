@@ -454,8 +454,9 @@
             
             \textbf{3. Xử lý ngoại lệ (Edge cases):}
             \begin{itemize}
-                \item \scriptsize Nghiệm âm, $<10$g, $>500$g $\rightarrow$ Không khả thi.
-                \item \scriptsize Retry tối đa 15 lần, lưu best-attempt.
+                \item \scriptsize Nghiệm âm $\rightarrow$ Lỗi (error).
+                \item \scriptsize $<10$g (trừ fat), $>500$g (trừ rau) $\rightarrow$ Cảnh báo (warning).
+                \item \scriptsize Retry tối đa 15 lần, chọn phương án ít lỗi error nhất.
             \end{itemize}
         \end{column}
 
@@ -594,9 +595,9 @@
             \toprule
             \textbf{Nhóm kiểm thử} & \textbf{Kết quả} \\
             \midrule
-            Khử Gauss (Meal Planner) & Giải hệ 3×3; phát hiện ma trận suy biến ($|pivot| < 10^{-10}$); retry tối đa 15 lần, lưu best-attempt. \\
-            Adaptive TDEE & Test 7 ngày: TDEE tĩnh 2500 $\rightarrow$ Adaptive 2200 kcal (−12\%); phát hiện plateau, đề xuất giảm mục tiêu. \\
-            Scanner API / AI Vision & Tra cứu Barcode qua 3 lớp fallback; AI Vision trích xuất + Physics Validation kiểm tra tính hợp lý. \\
+            Khử Gauss (Meal Planner) & Giải hệ 3×3; phát hiện ma trận suy biến ($|pivot| < 10^{-10}$); retry tối đa 15 lần, chọn phương án ít lỗi error nhất. \\
+            Adaptive TDEE & Test 7 ngày: TDEE tĩnh 2500 $\rightarrow$ Adaptive 2350 kcal (−6\%); phát hiện plateau, đề xuất giảm mục tiêu. \\
+            Scanner API / AI Vision & Tra cứu theo pipeline 4 lớp; AI Vision trích xuất + Physics Validation kiểm tra tính hợp lý. \\
             \bottomrule
         \end{tabularx}
     \end{center}
@@ -732,7 +733,7 @@
         \vspace{0.2cm}
         \item \textbf{Tự chủ mã nguồn (Self-contained):} Thuật toán được code trực tiếp bằng JavaScript mà không cần cài thêm bất kỳ thư viện toán học nặng nề nào.
         \vspace{0.2cm}
-        \item \textbf{Độ chính xác cao:} Cung cấp nghiệm thực chính xác tuyệt đối, không bị sai số như các phương pháp dò dẫm xấp xỉ.
+        \item \textbf{Độ chính xác cao:} Khử Gauss với Partial Pivoting cho nghiệm có độ chính xác số học cao đối với hệ 3×3 và giúp giảm sai số khi pivot nhỏ. Tuy nhiên, do sử dụng số thực dấu phẩy động và làm tròn khối lượng sang gram nên vẫn có thể tồn tại sai số nhỏ.
         \vspace{0.2cm}
         \item \textbf{Phát hiện trùng lặp ngay lập tức:} Cơ chế kiểm tra ma trận suy biến ($|pivot| < 10^{-10}$) giúp hệ thống loại bỏ ngay các tổ hợp nguyên liệu bất hợp lý (ví dụ: chọn 2 loại gạo cùng lúc) mà không mất công tính toán sâu.
     \end{itemize}
@@ -746,10 +747,9 @@
     
     \begin{itemize}
         \small
-        \item \textbf{Nghiệm âm} ($w_i < 0$): Xảy ra khi một nguyên liệu "đóng góp ngược" (ví dụ: thịt mỡ chứa quá nhiều fat làm lấn át phần fat riêng) $\rightarrow$ Đề xuất đổi sang nguồn protein nạc hơn.
-        \item \textbf{Quá nhỏ} ($< 10$g, trừ dầu/fat): Lượng quá ít để chế biến, không mang tính thực tế.
-        \item \textbf{Quá lớn} ($> 500$g, trừ rau): Khẩu phần ăn một bữa quá lớn, vượt mức tiêu hóa thông thường.
-        \item \textbf{Cơ chế Retry:} Tối đa 15 lần với các tổ hợp thực phẩm thay thế, hệ thống sẽ lưu lại \texttt{bestAttempt} (phương án có tổng sai lệch calo nhỏ nhất) nếu không tìm được nghiệm hoàn hảo.
+        \item \textbf{Nghiệm âm} ($w_i < 0$): Phân loại là \textbf{Error} (Lỗi), kết quả không hợp lệ. Xảy ra khi một nguyên liệu "đóng góp ngược".
+        \item \textbf{Dưới 10g (trừ fat) / Trên 500g (trừ rau):} Phân loại là \textbf{Warning} (Cảnh báo). Hệ thống vẫn có thể trả về \texttt{success: true} nếu có warning.
+        \item \textbf{Cơ chế Retry:} Tối đa 15 lần với các tổ hợp thực phẩm thay thế, hệ thống sẽ chọn lại \texttt{bestAttempt} là phương án có số lỗi mức \textbf{Error} ít nhất.
     \end{itemize}
 \end{frame}
 
@@ -951,9 +951,9 @@
     \textbf{8. Phát hiện Plateau (Chững cân)}
     \begin{block}{\scriptsize Logic phát hiện Plateau}
         \scriptsize
-        $\bullet$ \textbf{Nếu:} TDEE thực tế giảm mạnh (dưới 88\% so với TDEE lý thuyết).\\
+        $\bullet$ \textbf{Nếu:} TDEE thực tế thấp hơn trên 5\% so với TDEE tĩnh (\texttt{diffPct < -5}).\\
         $\bullet$ \textbf{Hành động 1:} Gắn cờ chững cân (\texttt{isPlateauing = true}).\\
-        $\bullet$ \textbf{Hành động 2:} Tự động đề xuất giảm mục tiêu Calo hàng ngày.\\
+        $\bullet$ \textbf{Hành động 2:} Tính mục tiêu calo mới chặn dưới bằng BMR.\\
         $\bullet$ \textbf{Hành động 3:} Gửi thông báo: "Cơ thể đang thích ứng chuyển hóa".
     \end{block}
     
@@ -962,42 +962,47 @@
 \end{frame}
 
 % --- BACKUP B4 ---
-\begin{frame}{BACKUP B4.1: Sơ đồ CSDL — 9 Bảng Chính}
+\begin{frame}{BACKUP B4.1: Sơ đồ CSDL — Các bảng chính}
     \textbf{Các bảng dữ liệu chính trong hệ thống}
-    \vspace{0.2cm}
+    \vspace{0.1cm}
     
     \resizebox{\textwidth}{!}{
-    \renewcommand{\arraystretch}{1.3}
+    \renewcommand{\arraystretch}{1.2}
     \begin{tabular}{lll}
         \toprule
         \textbf{Bảng} & \textbf{Vai trò chính} & \textbf{Trường đặc biệt \& Ghi chú} \\
         \midrule
-        \textbf{Users} & Tài khoản \& hồ sơ & \texttt{adaptiveTDEE}, \texttt{isOnboarded}, \texttt{goal} \\
-        \textbf{Foods} & Danh mục thực phẩm & \texttt{dataSource}, \texttt{deletedAt} (Soft delete) \\
-        \textbf{DiaryEntries} & Nhật ký ăn uống & \texttt{caloriesSnapshot} (Bảo toàn lịch sử quá khứ) \\
-        \textbf{WeightLogs} & Lịch sử cân nặng & \texttt{note} (Ghi chú bối cảnh: sáng/tối) \\
-        \textbf{WaterLogs} & Lịch sử uống nước & \texttt{amount} (ml) \\
-        \textbf{ExerciseLogs} & Lịch sử vận động & \texttt{caloriesBurned} (kcal) \\
-        \textbf{MealPlans} & Kế hoạch bữa ăn & \texttt{items} (JSON kết quả thuật toán Khử Gauss) \\
+        \textbf{User} & Tài khoản \& hồ sơ & \texttt{adaptiveTDEE}, \texttt{isOnboarded}, \texttt{goal} \\
+        \textbf{Food} & Danh mục thực phẩm & \texttt{dataSource}, \texttt{deletedAt} (Soft delete) \\
+        \textbf{DiaryEntry} & Nhật ký ăn uống & \texttt{caloriesSnapshot} (Bảo toàn lịch sử quá khứ) \\
+        \textbf{WeightLog} & Lịch sử cân nặng & \texttt{note} (Ghi chú bối cảnh: sáng/tối) \\
+        \textbf{WaterLog} & Lịch sử uống nước & \texttt{amount} (ml) \\
+        \textbf{ExerciseLog} & Lịch sử vận động & \texttt{caloriesBurned} (kcal) \\
+        \textbf{MealTemplate} & Cấu trúc bữa ăn & Lưu tỷ lệ macro cho bữa ăn \\
+        \textbf{UserMealConfig} & Cấu hình bữa ăn & Liên kết User với MealTemplate \\
         \textbf{AdaptiveTDEELog} & Lịch sử TDEE & \texttt{calculatedTDEE}, \texttt{rollingTDEE}, \texttt{confidence} \\
-        \textbf{UserGoals} & Mục tiêu dinh dưỡng & \texttt{targetCalories}, \texttt{macros}, \texttt{waterGoal} \\
+        \textbf{ScannedProduct} & Sản phẩm đã quét & Lưu trữ thông tin quét từ Barcode/AI \\
+        \textbf{ProductContribution}& Đóng góp dữ liệu & Lịch sử người dùng thêm sản phẩm mới \\
         \bottomrule
     \end{tabular}
     }
+    
+    \vspace{0.1cm}
+    \small \textit{*Ghi chú: Báo cáo PDF được tổng hợp từ dữ liệu theo thời gian thực chứ không lưu thành bảng riêng.}
 \end{frame}
 
 \begin{frame}{BACKUP B4.2: Quan hệ \& Điểm thiết kế nổi bật}
     \textbf{Quan hệ giữa các bảng:}
     \begin{itemize}
-        \item \textbf{Users (1) $\rightarrow$ (N):} DiaryEntries, WeightLogs, WaterLogs, ExerciseLogs, MealPlans, AdaptiveTDEELog.
-        \item \textbf{DiaryEntries (N) $\rightarrow$ (1):} Foods (thông qua khóa ngoại \texttt{foodId}).
-        \item \textbf{Foods:} Nếu \texttt{userId} là \texttt{NULL} thì đó là thực phẩm của hệ thống (OpenFoodFacts/Admin). Nếu có \texttt{userId} thì là thực phẩm cá nhân.
+        \item \textbf{User (1) $\rightarrow$ (N):} DiaryEntry, WeightLog, WaterLog, ExerciseLog, UserMealConfig, AdaptiveTDEELog, ProductContribution.
+        \item \textbf{DiaryEntry (N) $\rightarrow$ (1):} Food (thông qua khóa ngoại \texttt{foodId}).
+        \item \textbf{Food:} Nếu \texttt{userId} là \texttt{NULL} thì đó là thực phẩm của hệ thống (OpenFoodFacts/Admin). Nếu có \texttt{userId} thì là thực phẩm cá nhân.
     \end{itemize}
     
     \vspace{0.3cm}
     \textbf{Điểm thiết kế kiến trúc nổi bật:}
     \begin{itemize}
-        \item \textbf{Snapshot Pattern (Hình ảnh chụp):} \texttt{DiaryEntries} sao chép lưu trực tiếp \texttt{caloriesSnapshot, proteinSnapshot...} tại thời điểm ghi nhận. Nếu tương lai Admin sửa thực phẩm trong \texttt{Foods}, dữ liệu quá khứ của người dùng không bị ảnh hưởng.
+        \item \textbf{Snapshot Pattern (Hình ảnh chụp):} \texttt{DiaryEntry} sao chép lưu trực tiếp \texttt{caloriesSnapshot...} tại thời điểm ghi nhận. Nếu tương lai Admin sửa thực phẩm trong \texttt{Food}, dữ liệu quá khứ của người dùng không bị ảnh hưởng.
         \item \textbf{Soft Delete (Paranoid Mode):} Sequelize set \texttt{deletedAt} khi xóa, không xóa dữ liệu vật lý. Tránh vi phạm khóa ngoại và vẫn giữ được khả năng truy xuất báo cáo cũ.
     \end{itemize}
 \end{frame}
