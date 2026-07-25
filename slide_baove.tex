@@ -385,7 +385,7 @@
             \begin{itemize}
                 \item \scriptsize $\alpha = 0.1$: Ít bị ảnh hưởng bởi dao động ngày.
                 \item \scriptsize Warm-up 14 ngày (khởi tạo EMA ổn định).
-                \item \scriptsize Anti-smoothing kép: Dùng $\text{TDEE}_{\text{thô}}$ để tính.
+                \item \scriptsize Tránh làm mượt kép: Dùng $\text{TDEE}_{\text{thô}}$ để tính.
                 \item \scriptsize Confidence score: 7 ngày (High) $\rightarrow$ 5 ngày (Low).
             \end{itemize}
         \end{column}
@@ -407,7 +407,7 @@
                 \item \textbf{Cộng điểm:} Protein $\geq 5$g/100kcal (+25), Fiber $\geq 1.25$g (+25).
                 \item \textbf{Trừ điểm:} Sodium $> 150$mg/100kcal (−25), Sugar $> 5$g (−25).
                 \item \textbf{Vi chất:} Vitamin A, C, Canxi, Sắt — bonus tối đa +10/vi chất.
-                \item \textbf{Hard Cap:} Vi chất quá kém $\rightarrow$ trần 50; Thiếu xơ $\rightarrow$ trần 60.
+                \item \textbf{Giới hạn trần (Hard Cap):} Vi chất quá kém $\rightarrow$ trần 50; Thiếu xơ $\rightarrow$ trần 60.
             \end{itemize}
         \end{column}
         
@@ -420,11 +420,11 @@
             \vspace{0.1cm}
             \begin{itemize}
                 \item Điểm cơ sở = \textbf{100} (thang 0--100).
-                \item \textbf{Triage 3 tầng:} $< 50\%$ calo $\rightarrow$ mute vi chất; $\geq 70\%$ $\rightarrow$ đầy đủ.
-                \item \textbf{Context-Awareness:} Chỉ báo thiếu hụt khi $\geq$ 20h.
+                \item \textbf{Phân loại 3 tầng (Triage):} $< 50\%$ calo $\rightarrow$ mute vi chất; $\geq 70\%$ $\rightarrow$ đầy đủ.
+                \item \textbf{Nhận biết ngữ cảnh (Context):} Chỉ báo thiếu hụt khi $\geq$ 20h.
                 \item \textbf{Cơ chế Penalty:} Danger $-15$đ, nhân hệ số lệch ($\times 0.5 \rightarrow 2.5$).
-                \item \textbf{Sliding Multiplier:} Calo $< 30\% \rightarrow \times 0.3$; Đường $> 200\%$ AHA $\rightarrow \times 0.7$.
-                \item \textbf{Hard Cap:} Thiếu vi chất $\rightarrow$ trần 50; Thiếu xơ $\rightarrow$ trần 60.
+                \item \textbf{Hệ số trượt (Multiplier):} Calo $< 30\% \rightarrow \times 0.3$; Đường $> 200\%$ AHA $\rightarrow \times 0.7$.
+                \item \textbf{Giới hạn trần (Hard Cap):} Thiếu vi chất $\rightarrow$ trần 50; Thiếu xơ $\rightarrow$ trần 60.
             \end{itemize}
         \end{column}
     \end{columns}
@@ -750,8 +750,8 @@
 \end{frame}
 
 % --- BACKUP B2 ---
-\begin{frame}{BACKUP B2.1: Thuật toán Chấm Điểm — Triage 3 Tầng}
-    \textbf{1. Kiến trúc thuật toán — Triage 3 Tầng (Calorie-Gated)}
+\begin{frame}{BACKUP B2.1: Thuật toán Chấm Điểm — Phân loại 3 tầng (Triage)}
+    \textbf{1. Kiến trúc thuật toán — Phân loại 3 tầng (Calorie-Gated)}
     \vspace{0.1cm}
     
     \textbf{Ý tưởng cốt lõi:} Không có ý nghĩa cảnh báo "thiếu Vitamin C" khi người dùng mới ăn 300 kcal (dưới 50\% mục tiêu). Cần ưu tiên cảnh báo theo tháp nhu cầu.
@@ -796,8 +796,8 @@
     \textit{$\rightarrow$ Phản ánh chính xác mức độ nghiêm trọng của sự thiếu hụt/dư thừa.}
 \end{frame}
 
-\begin{frame}[fragile]{BACKUP B2.3: Context-Awareness}
-    \textbf{3. Context-Awareness — Nhận biết ngữ cảnh thời gian thực}
+\begin{frame}[fragile]{BACKUP B2.3: Nhận biết ngữ cảnh (Context-Awareness)}
+    \textbf{3. Nhận biết ngữ cảnh (Context-Awareness) — Xử lý theo thời gian thực}
     \vspace{0.1cm}
     
     \begin{block}{\small Cổng logic kiểm tra cảnh báo thiếu hụt}
@@ -816,7 +816,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{BACKUP B2.4: Sliding Multiplier \& Hard Cap}
+\begin{frame}{BACKUP B2.4: Hệ số trượt \& Giới hạn trần (Multiplier \& Hard Cap)}
     \textbf{4. Sliding Calorie Multiplier (Nhân toàn bộ điểm)}
     
     \begin{columns}[T]
