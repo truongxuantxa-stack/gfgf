@@ -10,14 +10,13 @@
 
     \vspace{0.1cm}
     \textbf{8. Phát hiện Plateau (Chững cân)}
-    \begin{block}{\scriptsize Logic phát hiện}
+    \begin{block}{\scriptsize Logic phát hiện Plateau}
         \scriptsize
-        \texttt{if (adaptiveTDEE < staticTDEE * 0.88) \{} \\
-        \texttt{\ \ isPlateauing = true;}\\
-        \texttt{\ \ Đề xuất giảm targetCalories;}\\
-        \texttt{\ \ Thông báo: "Cơ thể đang thích ứng chuyển hóa";}\\
-        \texttt{\}}
+        $\bullet$ \textbf{Nếu:} TDEE thực tế giảm mạnh (dưới 88\% so với TDEE lý thuyết).\\
+        $\bullet$ \textbf{Hành động 1:} Gắn cờ chững cân (\texttt{isPlateauing = true}).\\
+        $\bullet$ \textbf{Hành động 2:} Tự động đề xuất giảm mục tiêu Calo hàng ngày.\\
+        $\bullet$ \textbf{Hành động 3:} Gửi thông báo: "Cơ thể đang thích ứng chuyển hóa".
     \end{block}
 
     \vspace{0.1cm}
-    \textbf{9. Cron Job tự động:} Chạy mỗi Thứ Hai lúc 3:00 sáng. Duyệt $U$ user, độ phức tạp $O(U \cdot D)$ (với $D$ số entry/tuần).
+    \textbf{9. Tự động hóa (Cron Job):} Chạy ngầm vào 0:00 sáng mỗi Thứ Hai để tổng hợp dữ liệu dinh dưỡng/cân nặng của toàn bộ người dùng trong tuần cũ, từ đó tự động tính toán và cập nhật TDEE cho tuần mới.

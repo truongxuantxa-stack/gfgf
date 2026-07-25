@@ -664,12 +664,17 @@
 
 % --- BACKUP SLIDES ---
 \appendix
-\begin{frame}[plain]
-    \begin{tikzpicture}[remember picture, overlay]
-        \fill[NutriDark] (current page.south west) rectangle (current page.north east);
-        \node[text=white, font=\LARGE\bfseries, align=center] at (current page.center) {BACKUP SLIDES\\[0.3cm]\large \normalfont\textcolor{NutriLightGray}{Phân tích Chuyên sâu Kỹ thuật \& Thuật toán}};
+{
+\setbeamertemplate{background}{
+    \begin{tikzpicture}
+        \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
+        \fill[NutriDark] (0,0) rectangle (\paperwidth, \paperheight);
+        \node[text=white, font=\LARGE\bfseries, align=center] at (0.5\paperwidth, 0.5\paperheight) {BACKUP SLIDES\\[0.3cm]\large \normalfont\textcolor{NutriLightGray}{Phân tích Chuyên sâu Kỹ thuật \& Thuật toán}};
     \end{tikzpicture}
+}
+\begin{frame}[plain]
 \end{frame}
+}
 
 % --- BACKUP B1 ---
 \begin{frame}{BACKUP B1.1: Toán học đằng sau Meal Planner (Mô hình hóa)}
