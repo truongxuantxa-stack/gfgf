@@ -665,25 +665,26 @@
 
 
 \begin{frame}[label=backup_toc]{Mục lục Backup (Q\&A)}
+\hypertarget{backup_toc_target}{}
     \vspace{0.5cm}
     \begin{columns}[T]
         \begin{column}{0.55\textwidth}
             \begin{itemize}
                 \setlength\itemsep{0.8cm}
                 \Large
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b1}{\textbf{B1. Toán học Meal Planner}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b2}{\textbf{B2. Chấm điểm \& Hàm phạt}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b3}{\textbf{B3. Adaptive TDEE \& EMA}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b4}{\textbf{B4. Sơ đồ CSDL}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b1_target}{\textbf{B1. Toán học Meal Planner}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b2_target}{\textbf{B2. Chấm điểm \& Hàm phạt}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b3_target}{\textbf{B3. Adaptive TDEE \& EMA}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b4_target}{\textbf{B4. Sơ đồ CSDL}}
             \end{itemize}
         \end{column}
         \begin{column}{0.45\textwidth}
             \begin{itemize}
                 \setlength\itemsep{0.8cm}
                 \Large
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b5}{\textbf{B5. Food Scoring \& Habit}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b6}{\textbf{B6. Trust Score Scanner}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b7}{\textbf{B7. Luồng Auth Frontend}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b5_target}{\textbf{B5. Food Scoring \& Habit}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b6_target}{\textbf{B6. Trust Score Scanner}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b7_target}{\textbf{B7. Luồng Auth Frontend}}
             \end{itemize}
         \end{column}
     \end{columns}
@@ -695,7 +696,7 @@
   \leavevmode%
   \hbox{%
   \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{}%
-    \hspace*{2ex}\hyperlink{backup_toc}{\textcolor{NutriDark}{\textbf{$\hookleftarrow$ Quay lại Mục lục Backup}}}
+    \hspace*{2ex}\hyperlink{backup_toc_target}{\textcolor{NutriDark}{\textbf{$\hookleftarrow$ Quay lại Mục lục Backup}}}
   \end{beamercolorbox}%
   \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{}%
     \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
@@ -717,6 +718,7 @@
 
 % --- BACKUP B1 ---
 \begin{frame}[label=b1]{BACKUP B1.1: Toán học đằng sau Meal Planner (Mô hình hóa)}
+\hypertarget{b1_target}{}
     \textbf{1. Mô hình hóa bài toán — Hệ phương trình tuyến tính $A\mathbf{x} = \mathbf{b}$}
     \vspace{0.2cm}
     
@@ -793,6 +795,7 @@
 
 % --- BACKUP B2 ---
 \begin{frame}[label=b2]{BACKUP B2.1: Thuật toán Chấm Điểm — Phân loại 3 tầng (Triage)}
+\hypertarget{b2_target}{}
     \textbf{1. Kiến trúc thuật toán — Phân loại 3 tầng (Calorie-Gated)}
     \vspace{0.1cm}
     
@@ -919,6 +922,7 @@
 
 % --- BACKUP B3 ---
 \begin{frame}[label=b3]{BACKUP B3.1: EMA \& Bộ Lọc Thông Thấp (Bài toán)}
+\hypertarget{b3_target}{}
     \textbf{1. Bài toán: Tách Tín hiệu khỏi Nhiễu}
     \vspace{0.1cm}
     
@@ -1001,6 +1005,7 @@
 
 % --- BACKUP B4 ---
 \begin{frame}[label=b4]{BACKUP B4.1: Sơ đồ CSDL — Các bảng chính}
+\hypertarget{b4_target}{}
     \textbf{Các bảng dữ liệu chính trong hệ thống}
     \vspace{0.1cm}
     
@@ -1048,6 +1053,7 @@
 
 % --- BACKUP B5 ---
 \begin{frame}[label=b5]{BACKUP B5.1: Food Scoring — Mật độ Dinh dưỡng}
+\hypertarget{b5_target}{}
     \textbf{1. Nguyên lý Mật độ Dinh dưỡng (Nutrient Density per 100 kcal)}
     \begin{itemize}
         \small
@@ -1148,6 +1154,7 @@
 \end{frame}
 % --- BACKUP B6 ---
 \begin{frame}[label=b6]{BACKUP B6.1: Cơ chế Scanner \& Trust Score (Crowdsourcing)}
+\hypertarget{b6_target}{}
     \textbf{1. Physics Validation (Xác thực vật lý)}
     \begin{itemize}
         \item Đảm bảo dữ liệu nhãn thành phần dinh dưỡng hợp lý: Tổng khối lượng các chất (Protein + Carbs + Fat + $\dots$) không được vượt quá 100g.
@@ -1166,6 +1173,7 @@
 
 % --- BACKUP B7 ---
 \begin{frame}[label=b7, fragile]{BACKUP B7.1: Luồng xác thực \& Đồng bộ Frontend}
+\hypertarget{b7_target}{}
     \textbf{1. Xử lý Route \& Code-splitting}
     \begin{itemize}
         \item Sử dụng \texttt{ProtectedRoute} và \texttt{AuthOnlyRoute} để bảo vệ các trang.

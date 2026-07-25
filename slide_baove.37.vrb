@@ -1,5 +1,6 @@
 \frametitle{BACKUP B7.1: Luồng xác thực \& Đồng bộ Frontend}
-\textbf{1. Xử lý Route \& Code-splitting}
+\hypertarget{b7_target}{}
+    \textbf{1. Xử lý Route \& Code-splitting}
     \begin{itemize}
         \item Sử dụng \texttt{ProtectedRoute} và \texttt{AuthOnlyRoute} để bảo vệ các trang.
         \item Áp dụng Code-splitting để tối ưu hóa thời gian tải trang (lazy loading).
