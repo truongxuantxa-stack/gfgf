@@ -690,16 +690,19 @@
 \begin{frame}[fragile]{BACKUP B1.2: Thuật toán Khử Gauss + Partial Pivoting}
     \textbf{2. Thuật toán: Khử Gauss + Partial Pivoting}
     
-    \begin{block}{Các bước thực hiện}
+    \begin{block}{Luồng thực thi của thuật toán}
         \footnotesize
-        \textbf{Bước 1 — Forward Elimination:} For col = 0 $\rightarrow$ 2:\\
-        \ \ (1) \textbf{Partial Pivoting:} Tìm hàng có $|A[\text{row}][\text{col}]|$ lớn nhất $\rightarrow$ hoán vị lên.\\
-        \ \ (2) Nếu $|pivot| < 10^{-10} \rightarrow$ Ma trận suy biến $\rightarrow$ return null.\\
-        \ \ (3) \textbf{Khử:} $A[\text{row}][\text{col}] \rightarrow 0$ cho mọi row $>$ col.\\
+        \textbf{Bước 1 — Quá trình khử (Forward Elimination):} Đưa hệ phương trình về dạng tam giác.\\
+        $\bullet$ Lần lượt xét từng cột (tương ứng với Protein, Carb, Fat).\\
+        $\bullet$ Đổi chỗ hàng có giá trị lớn nhất lên trên cùng để thuật toán chạy ổn định nhất (Partial Pivoting).\\
+        $\bullet$ Dừng thuật toán ngay lập tức nếu phát hiện các nguyên liệu bị trùng lặp tỷ lệ dinh dưỡng (Ma trận suy biến).\\
+        $\bullet$ Dùng phép trừ tỷ lệ để triệt tiêu dần các biến ở các hàng bên dưới.\\
+        
         \vspace{0.2cm}
-        \textbf{Bước 2 — Back Substitution:}\\
-        \ \ For i = 2 $\rightarrow$ 0:\\
-        \ \ \ \ $x[i] = (b'[i] - \sum A'[i][j]\cdot x[j]) / A'[i][i]$
+        \textbf{Bước 2 — Quá trình thế ngược (Back Substitution):}\\
+        $\bullet$ Bắt đầu từ phương trình cuối cùng (lúc này đã bị triệt tiêu chỉ còn đúng 1 ẩn số).\\
+        $\bullet$ Giải ra ngay được khối lượng của nguyên liệu thứ 3.\\
+        $\bullet$ Lấy kết quả đó thế ngược dần lên các phương trình bên trên để tìm ra khối lượng nguyên liệu 2 và 1.
     \end{block}
     
     \vspace{0.2cm}
