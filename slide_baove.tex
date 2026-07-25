@@ -235,11 +235,10 @@
             \modulelabel{Frontend}
             \vspace{0.2cm}
             \begin{itemize}
-                \item \small \textbf{React SPA:} Điều hướng và hiển thị giao diện phía Client.
-                \item \small \textbf{React Router:} Quản lý điều hướng.
-                \item \small \textbf{AuthProvider / ProtectedRoute.}
-                \item \small \textbf{TanStack Query \& Axios.}
-                \item \small \textbf{Lazy Loading:} Tối ưu hóa hiệu suất.
+                \item \small \textbf{React SPA:} Client-side rendering, tránh full-page reload.
+                \item \small \textbf{TanStack Query:} Cache + stale-while-revalidate, giảm request dư thừa.
+                \item \small \textbf{AuthProvider:} Quản lý phiên đăng nhập tập trung, auto-refresh token khi 401.
+                \item \small \textbf{Code-splitting:} Lazy loading theo route, giảm bundle size ban đầu.
             \end{itemize}
         \end{column}
         
@@ -247,11 +246,10 @@
             \modulelabel{Backend}
             \vspace{0.2cm}
             \begin{itemize}
-                \item \small \textbf{Node.js / Express:} Xây dựng RESTful API.
-                \item \small \textbf{Middleware:} Xác thực JWT + Refresh Token (HttpOnly Cookie).
-                \item \small \textbf{Controller:} Điều phối request/response.
-                \item \small \textbf{Service:} Chứa thuật toán và nghiệp vụ.
-                \item \small \textbf{Sequelize ORM / MySQL.}
+                \item \small \textbf{Layered Architecture:} Router $\rightarrow$ Middleware $\rightarrow$ Controller $\rightarrow$ Service.
+                \item \small \textbf{JWT Dual-Token:} Access 15 phút + Refresh 7 ngày (HttpOnly Cookie).
+                \item \small \textbf{Tầng Service:} Tách biệt thuật toán khỏi HTTP layer — testable, reusable.
+                \item \small \textbf{Sequelize ORM:} Tách logic nghiệp vụ khỏi SQL, hỗ trợ migration schema.
             \end{itemize}
         \end{column}
     \end{columns}
@@ -308,14 +306,12 @@
 % Thời lượng dự kiến: 1 phút
 \begin{frame}{Nền tảng tính toán dinh dưỡng (Nutrition Core)}
     \begin{itemize}
-        \item \textbf{BMI:} Đánh giá tương quan cân nặng và chiều cao.
-        \item \textbf{BMR:} Năng lượng chuyển hóa cơ bản (Mifflin-St Jeor).
-        \item \textbf{TDEE tĩnh:} Tổng năng lượng tiêu hao ước tính dựa trên hệ số hoạt động.
-        \item Dựa vào mục tiêu cá nhân, hệ thống xác định năng lượng mục tiêu và phân bổ protein, carbohydrate và chất béo.
-        \item \textbf{Khóa an toàn:} mục tiêu giảm cân không thấp hơn BMR.
+        \item \textbf{BMI \& BMR (Mifflin-St Jeor):} Đánh giá thể trạng và tính chuyển hóa cơ bản.
+        \item \textbf{TDEE tĩnh:} $\text{BMR} \times \text{PAL}$ — ước tính tổng năng lượng tiêu hao theo hệ số hoạt động.
+        \item \textbf{Phân bổ macro:} Protein / Carb / Fat theo mục tiêu. \textit{Khóa an toàn:} mục tiêu $\geq$ BMR.
     \end{itemize}
     
-    \vspace{0.5cm}
+    \vspace{0.2cm}
     \begin{center}
     \begin{tikzpicture}[>=Stealth, node distance=0.8cm,
         steplabel/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.6cm, text centered, font=\footnotesize},
@@ -337,7 +333,7 @@
     \end{center}
     
     \vspace{0.3cm}
-    \centering\small \textit{\textbf{Nutrition Core} là nền tảng đầu vào cho các module phân tích và cá nhân hóa phía sau.}
+    \centering\small \textit{TDEE tĩnh là \textbf{điểm khởi đầu} — slide tiếp theo sẽ trình bày cách hệ thống \textbf{hiệu chỉnh} giá trị này theo dữ liệu thực tế.}
 \end{frame}
 
 % Thời lượng dự kiến: 1 phút 30 giây
@@ -401,60 +397,40 @@
     \begin{columns}[T]
         \begin{column}{0.52\textwidth}
             \modulelabel{Food Scoring}
-            \vspace{0.3cm}
-            \centering
-            \begin{tikzpicture}[>=Stealth, node distance=0.15cm,
-                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text width=6cm, text centered, font=\scriptsize},
-                arrow/.style={->, NutriDark}]
-                \node[box] (n1) {Dữ liệu thực phẩm};
-                \node[box, below=of n1] (n2) {Kiểm tra dữ liệu \& loại trường hợp $< 20$ kcal};
-                \node[box, below=of n2] (n3) {Chuẩn hóa mật độ dinh dưỡng theo 100 kcal};
-                \node[box, below=of n3] (n4) {Đánh giá đa lượng và vi chất\\[-0.3ex] \tiny Protein, Fiber, Sugar, Sodium + Vitamin A, C, Canxi, Sắt};
-                \node[box, below=of n4] (n5) {Cộng/trừ điểm, phạt vi chất, áp dụng Hard Cap};
-                \node[box, below=of n5] (n6) {Giới hạn 0--100, phân loại \& gán nhãn};
-                \node[box, below=of n6, fill=NutriGreen!20] (n7) {\textbf{Tổng hợp tuần/tháng \& phát hiện thói quen tốt /xấu}};
-                
-                \draw[arrow] (n1) -- (n2);
-                \draw[arrow] (n2) -- (n3);
-                \draw[arrow] (n3) -- (n4);
-                \draw[arrow] (n4) -- (n5);
-                \draw[arrow] (n5) -- (n6);
-                \draw[arrow] (n6) -- (n7);
-            \end{tikzpicture}
+            \vspace{0.2cm}
+            
+            \scriptsize
+            \textbf{Ý tưởng:} Đánh giá mật độ dinh dưỡng trên 100 kcal.
+            \vspace{0.1cm}
+            \begin{itemize}
+                \item Điểm cơ sở = \textbf{50} (thang 0--100).
+                \item \textbf{Cộng điểm:} Protein $\geq 5$g/100kcal (+25), Fiber $\geq 1.25$g (+25).
+                \item \textbf{Trừ điểm:} Sodium $> 150$mg/100kcal (−25), Sugar $> 5$g (−25).
+                \item \textbf{Vi chất:} Vitamin A, C, Canxi, Sắt — bonus tối đa +10/vi chất.
+                \item \textbf{Hard Cap:} Vi chất quá kém $\rightarrow$ trần 50; Thiếu xơ $\rightarrow$ trần 60.
+            \end{itemize}
         \end{column}
         
         \begin{column}{0.44\textwidth}
-            \modulelabel{Health Insights}
-            \vspace{0.3cm}
-            \centering
-            \begin{tikzpicture}[>=Stealth, node distance=0.15cm,
-                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text width=5.5cm, text centered, font=\scriptsize},
-                arrow/.style={->, NutriDark}]
-                \node[box] (n1) {Nhật ký + nước};
-                \node[box, below=of n1] (n2) {Tổng hợp \& nhóm theo bữa};
-                \node[box, below=of n2] (n3) {Mục tiêu, RDI, ngữ cảnh};
-                \node[box, below=of n3] (n4) {Dư thừa, thiếu hụt dinh dưỡng \& nước};
-                \node[box, below=of n4] (n5) {Ưu tiên cảnh báo};
-                \node[box, below=of n5, fill=NutriGreen!20] (n6) {\textbf{Daily Health Score + Insights}\\[-0.3ex]\tiny Điểm phạt/thưởng + hệ số điều chỉnh + Hard Cap};
-                
-                \draw[arrow] (n1) -- (n2);
-                \draw[arrow] (n2) -- (n3);
-                \draw[arrow] (n3) -- (n4);
-                \draw[arrow] (n4) -- (n5);
-                \draw[arrow] (n5) -- (n6);
-            \end{tikzpicture}
+            \modulelabel{Daily Health Score}
+            \vspace{0.2cm}
             
-            \vspace{0.15cm}
-            \raggedright
+            \scriptsize
+            \textbf{Ý tưởng:} Đánh giá tổng thể 1 ngày ăn uống.
+            \vspace{0.1cm}
             \begin{itemize}
-                \item \small \textbf{Ví dụ:} thiếu nước, thiếu protein, vượt năng lượng, mất cân đối macro.
+                \item Tổng hợp dữ liệu nhật ký (calo, macro, nước) theo ngày.
+                \item So sánh với mục tiêu cá nhân + RDI (Recommended Daily Intake).
+                \item Phát hiện: vượt calo, thiếu protein, mất cân đối macro, thiếu nước.
+                \item Ưu tiên cảnh báo theo mức độ nghiêm trọng.
+                \item Điểm sức khỏe 0--100 (điểm phạt/thưởng + Hard Cap).
             \end{itemize}
         \end{column}
     \end{columns}
     
     \vspace{0.3cm}
     \centering
-    \scriptsize \textit{*Food Scoring chấm điểm từng thực phẩm và tổng hợp xu hướng ăn uống theo tuần/tháng; Daily Health Score đánh giá tổng thể dữ liệu dinh dưỡng trong ngày.}
+    \scriptsize \textit{*Các ngưỡng dinh dưỡng tham khảo FDA Daily Values (2000 kcal/ngày).}
 \end{frame}
 
 % Thời lượng dự kiến: 1 phút 30 giây
