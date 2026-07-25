@@ -711,27 +711,22 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{BACKUP B1.3: Tại sao chọn Gauss? (So sánh phương pháp)}
-    \textbf{3. So sánh các phương pháp}
+\begin{frame}{BACKUP B1.3: Ưu điểm của phương pháp Khử Gauss}
+    \textbf{3. Tại sao chọn Khử Gauss cho hệ thống này?}
     \vspace{0.2cm}
     
-    \resizebox{\textwidth}{!}{
-    \renewcommand{\arraystretch}{1.3}
-    \begin{tabular}{llll}
-        \toprule
-        \textbf{Tiêu chí} & \textbf{Khử Gauss (Đang dùng)} & \textbf{Vét cạn (Brute-force)} & \textbf{Quy hoạch tuyến tính (LP)} \\
-        \midrule
-        \textbf{Độ phức tạp} & \textbf{$O(n^3)$, với $n=3 \rightarrow O(1)$ hằng số} & $O(k^n)$ ($k$ = số mức rời rạc) & $O(n^{2.5})$ $\rightarrow$ overhead cao \\
-        \textbf{Nghiệm} & \textbf{Chính xác} (nghiệm thực) & Xấp xỉ (phụ thuộc bước nhảy) & Chính xác nhưng cần solver \\
-        \textbf{Thư viện ngoài} & \textbf{Không} (self-contained) & Không & Cần \texttt{glpk} hoặc \texttt{lp\_solve} \\
-        \textbf{Phát hiện suy biến} & \textbf{Có} (pivot check) & Không & Có \\
-        \textbf{Phù hợp} & \textcolor{NutriGreen!80!black}{\textbf{Tối ưu cho $n=3$ cố định, real-time}} & \textcolor{red}{\textbf{Quá chậm}} & \textcolor{red}{\textbf{Overkill cho $n=3$}} \\
-        \bottomrule
-    \end{tabular}
-    }
+    Trong hệ thống Meal Planner, chúng ta cần tìm nghiệm cho hệ phương trình 3 ẩn (Protein, Carb, Fat). Khử Gauss là lựa chọn tối ưu vì:
+    \vspace{0.2cm}
     
-    \vspace{0.3cm}
-    \textbf{Kết luận:} Với $n=3$ cố định, Gauss chạy trong thời gian hằng số $O(1)$, không cần thư viện ngoài, và cho nghiệm chính xác — lựa chọn tối ưu nhất.
+    \begin{itemize}
+        \item \textbf{Tốc độ cực nhanh (Thời gian hằng số):} Với số ẩn cố định $n = 3$, độ phức tạp $O(n^3)$ thực chất trở thành $O(1)$. Hệ thống có thể tính toán hàng ngàn tổ hợp trong nháy mắt (Real-time).
+        \vspace{0.2cm}
+        \item \textbf{Tự chủ mã nguồn (Self-contained):} Thuật toán được code trực tiếp bằng JavaScript mà không cần cài thêm bất kỳ thư viện toán học nặng nề nào.
+        \vspace{0.2cm}
+        \item \textbf{Độ chính xác cao:} Cung cấp nghiệm thực chính xác tuyệt đối, không bị sai số như các phương pháp dò dẫm xấp xỉ.
+        \vspace{0.2cm}
+        \item \textbf{Phát hiện trùng lặp ngay lập tức:} Cơ chế kiểm tra ma trận suy biến ($|pivot| < 10^{-10}$) giúp hệ thống loại bỏ ngay các tổ hợp nguyên liệu bất hợp lý (ví dụ: chọn 2 loại gạo cùng lúc) mà không mất công tính toán sâu.
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{BACKUP B1.4: Xử lý ngoại lệ (Edge Cases)}
