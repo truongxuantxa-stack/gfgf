@@ -1108,5 +1108,63 @@
         \item Độ phức tạp tổng thể là $O(M + N \log N)$, phù hợp với quy mô dữ liệu hiện tại của đồ án.
     \end{itemize}
 \end{frame}
+% --- BACKUP B6 ---
+\begin{frame}{BACKUP B6.1: Cơ chế Scanner \& Trust Score (Crowdsourcing)}
+    \textbf{1. Physics Validation (Xác thực vật lý)}
+    \begin{itemize}
+        \item Đảm bảo dữ liệu nhãn thành phần dinh dưỡng hợp lý: Tổng khối lượng các chất (Protein + Carbs + Fat + $\dots$) không được vượt quá 100g.
+        \item Lượng năng lượng (kcal) phải tính toán khớp hoặc xấp xỉ với macro (1g Protein/Carbs $\approx$ 4 kcal, 1g Fat $\approx$ 9 kcal).
+    \end{itemize}
+    
+    \vspace{0.2cm}
+    \textbf{2. Trust Score \& Crowdsourcing (Cơ chế đóng góp cộng đồng)}
+    \begin{itemize}
+        \item \textbf{Một đóng góp:} Khởi tạo dữ liệu với mức độ tin cậy (\textit{confidence}) là $0.3$.
+        \item \textbf{Hai đóng góp tương đồng:} Hệ thống tự động nâng \textit{confidence} lên $0.5$.
+        \item \textbf{Từ ba đóng góp tương đồng:} \textit{Confidence} đạt $0.8$ và sản phẩm có thể được chuyển sang trạng thái \textbf{Verified} (Đã xác minh).
+        \item \textbf{Xử lý báo cáo sai phạm:} Khi người dùng báo cáo dữ liệu sai, sản phẩm chuyển sang trạng thái \textbf{Disputed} (Tranh chấp) để quản trị viên kiểm tra.
+    \end{itemize}
+\end{frame}
+
+% --- BACKUP B7 ---
+\begin{frame}[fragile]{BACKUP B7.1: Luồng xác thực \& Đồng bộ Frontend}
+    \textbf{1. Xử lý Route \& Code-splitting}
+    \begin{itemize}
+        \item Sử dụng \texttt{ProtectedRoute} và \texttt{AuthOnlyRoute} để bảo vệ các trang.
+        \item Áp dụng Code-splitting để tối ưu hóa thời gian tải trang (lazy loading).
+    \end{itemize}
+    
+    \vspace{0.1cm}
+    \textbf{2. Luồng Refresh Token tự động (Axios Interceptor)}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.3cm and 0.4cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text centered, font=\scriptsize, inner sep=4pt},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[box] (req) {Gửi Request};
+        \node[box, right=of req] (err) {Lỗi 401};
+        \node[box, right=of err] (ref) {Gọi API Refresh};
+        \node[box, right=of ref] (new) {Nhận Token mới};
+        \node[box, below=0.4cm of ref] (retry) {Gửi lại Request cũ};
+        \node[box, left=of retry] (cache) {Cập nhật Cache \& UI};
+        
+        \draw[arrow] (req) -- (err);
+        \draw[arrow] (err) -- (ref);
+        \draw[arrow] (ref) -- (new);
+        \draw[arrow] (new) |- (retry);
+        \draw[arrow] (retry) -- (cache);
+    \end{tikzpicture}
+    \end{center}
+    
+    \begin{itemize}
+        \item \textbf{Queue Request:} Các request gửi đến trong lúc đang refresh sẽ được đưa vào hàng đợi (queue) và đồng loạt gọi lại khi Refresh Token thành công.
+    \end{itemize}
+
+    \vspace{0.1cm}
+    \textbf{3. Đồng bộ trạng thái UI (TanStack Query)}
+    \begin{itemize}
+        \item Quản lý bộ nhớ đệm (cache) phía client, tự động \texttt{invalidateQueries} sau mỗi \texttt{mutation} (thêm/sửa/xóa) để giao diện luôn đồng bộ.
+    \end{itemize}
+\end{frame}
 
 \end{document}

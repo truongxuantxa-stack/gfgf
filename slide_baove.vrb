@@ -1,22 +1,38 @@
-\frametitle{BACKUP B3.4: Guardrails \& Phát hiện Plateau \& Cron Job}
-\textbf{7. Guardrails — Cơ chế an toàn}
+\frametitle{BACKUP B7.1: Luồng xác thực \& Đồng bộ Frontend}
+\textbf{1. Xử lý Route \& Code-splitting}
     \begin{itemize}
-        \scriptsize
-        \item \textbf{TDEE clamp:} Giới hạn $TDEE_{\text{tĩnh}} \pm 30\%$ để ngăn outlier từ dữ liệu sai.
-        \item \textbf{Minimum data:} Yêu cầu $\ge 5$ ngày nhật ký + $\ge 2$ lần cân để đảm bảo ý nghĩa thống kê.
-        \item \textbf{Min valid weeks:} Cần đủ $\ge 2$ tuần hợp lệ mới cập nhật Adaptive TDEE cho User.
-        \item \textbf{Confidence:} 7 ngày (High), 6 ngày (Medium), 5 ngày (Low) $\rightarrow$ Minh bạch độ tin cậy.
+        \item Sử dụng \texttt{ProtectedRoute} và \texttt{AuthOnlyRoute} để bảo vệ các trang.
+        \item Áp dụng Code-splitting để tối ưu hóa thời gian tải trang (lazy loading).
     \end{itemize}
 
     \vspace{0.1cm}
-    \textbf{8. Phát hiện Plateau (Chững cân)}
-    \begin{block}{\scriptsize Logic phát hiện Plateau}
-        \scriptsize
-        $\bullet$ \textbf{Nếu:} TDEE thực tế thấp hơn trên 5\% so với TDEE tĩnh (\texttt{diffPct < -5}).\\
-        $\bullet$ \textbf{Hành động 1:} Gắn cờ chững cân (\texttt{isPlateauing = true}).\\
-        $\bullet$ \textbf{Hành động 2:} Tính mục tiêu calo mới chặn dưới bằng BMR.\\
-        $\bullet$ \textbf{Hành động 3:} Gửi thông báo: "Cơ thể đang thích ứng chuyển hóa".
-    \end{block}
+    \textbf{2. Luồng Refresh Token tự động (Axios Interceptor)}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.3cm and 0.4cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text centered, font=\scriptsize, inner sep=4pt},
+        arrow/.style={->, thick, NutriDark}]
+
+        \node[box] (req) {Gửi Request};
+        \node[box, right=of req] (err) {Lỗi 401};
+        \node[box, right=of err] (ref) {Gọi API Refresh};
+        \node[box, right=of ref] (new) {Nhận Token mới};
+        \node[box, below=0.4cm of ref] (retry) {Gửi lại Request cũ};
+        \node[box, left=of retry] (cache) {Cập nhật Cache \& UI};
+
+        \draw[arrow] (req) -- (err);
+        \draw[arrow] (err) -- (ref);
+        \draw[arrow] (ref) -- (new);
+        \draw[arrow] (new) |- (retry);
+        \draw[arrow] (retry) -- (cache);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Queue Request:} Các request gửi đến trong lúc đang refresh sẽ được đưa vào hàng đợi (queue) và đồng loạt gọi lại khi Refresh Token thành công.
+    \end{itemize}
 
     \vspace{0.1cm}
-    \textbf{9. Tự động hóa (Cron Job):} Chạy ngầm vào 0:00 sáng mỗi Thứ Hai để tổng hợp dữ liệu dinh dưỡng/cân nặng của toàn bộ người dùng trong tuần cũ, từ đó tự động tính toán và cập nhật TDEE cho tuần mới.
+    \textbf{3. Đồng bộ trạng thái UI (TanStack Query)}
+    \begin{itemize}
+        \item Quản lý bộ nhớ đệm (cache) phía client, tự động \texttt{invalidateQueries} sau mỗi \texttt{mutation} (thêm/sửa/xóa) để giao diện luôn đồng bộ.
+    \end{itemize}
