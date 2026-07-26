@@ -381,7 +381,7 @@
                 \item \scriptsize Công thức: $\text{EMA}_t = \alpha \cdot x_t + (1 - \alpha) \cdot \text{EMA}_{t-1}$
                 \item \scriptsize $\alpha \in (0, 1)$: Hệ số làm mượt.
                 \item \scriptsize $\alpha$ nhỏ $\rightarrow$ trọng số quá khứ lớn.
-                \item \scriptsize Ưu điểm: Bộ nhớ $O(1)$, thời gian $O(n)$.
+                \item \scriptsize Ưu điểm: Tính toán nhanh, tốn ít bộ nhớ.
             \end{itemize}
         \end{column}
         \begin{column}{0.48\textwidth}
@@ -1111,50 +1111,31 @@
     \small \textit{*Ghi chú: Phạt/trần vi chất được miễn cho nhóm thịt, protein hoặc nguồn protein rất giàu đạm; trần chất xơ cũng có các nhóm được miễn.}
 \end{frame}
 
-\begin{frame}{BACKUP B5.3: Phân tích chất lượng bữa ăn (Habit Extraction)}
-    \textbf{4. Luồng phân tích và trích xuất thói quen}
-    
+\begin{frame}{BACKUP B5.3: Chi tiết Thuật toán Trích xuất thói quen \& Đánh giá}
+    \textbf{Luồng xử lý dữ liệu (\texttt{buildWeeklyFoodReport}):}
     \vspace{0.1cm}
-    \begin{center}
-    \begin{tikzpicture}[>=Stealth,
-        box/.style={draw=NutriDark, fill=NutriLightGray, rounded corners, inner sep=3pt, text width=9cm, text centered, font=\scriptsize},
-        arrow/.style={->, thick, NutriDark}]
-        
-        \node[box, fill=NutriGreen!20] (n1) {Danh sách nhật ký ăn uống (diaryEntries)};
-        \node[box, below=0.12cm of n1] (n2) {Gọi hàm \texttt{buildWeeklyFoodReport(diaryEntries, range)}};
-        \node[box, below=0.12cm of n2] (n3) {Gộp các mục ăn uống (entry) theo từng món ăn};
-        \node[box, below=0.12cm of n3] (n4) {Chấm điểm từng món bằng hàm \texttt{scoreFoodItem()}};
-        \node[box, below=0.12cm of n4] (n5) {Sắp xếp món có điểm thấp lên trước để ưu tiên cảnh báo};
-        \node[box, below=0.12cm of n5] (n6) {Tìm thói quen tốt / thói quen cần hạn chế};
-        \node[box, below=0.12cm of n6] (n7) {Tính thống kê mức độ an toàn (đỏ / vàng / xanh)};
-        \node[box, below=0.12cm of n7, fill=NutriGreen!20] (n8) {\textbf{Kết luận chất lượng ăn uống tuần/tháng}};
-        
-        \draw[arrow] (n1) -- (n2);
-        \draw[arrow] (n2) -- (n3);
-        \draw[arrow] (n3) -- (n4);
-        \draw[arrow] (n4) -- (n5);
-        \draw[arrow] (n5) -- (n6);
-        \draw[arrow] (n6) -- (n7);
-        \draw[arrow] (n7) -- (n8);
-    \end{tikzpicture}
-    \end{center}
+    
+    \small
+    \begin{enumerate}
+        \item \textbf{Tổng hợp (Aggregation):} Quét toàn bộ nhật ký ăn uống (\texttt{diaryEntries}), gộp các món ăn giống nhau và tính lượng calo tiêu thụ trung bình.
+        \item \textbf{Chấm điểm (Scoring):} Dùng \texttt{scoreFoodItem()} đánh giá mật độ dinh dưỡng (thang 100 điểm) dựa trên lượng vi chất (Vitamin, Canxi...) và đa lượng (Đạm, Xơ, Đường, Muối).
+        \item \textbf{Lọc tần suất (Frequency Filter):} Chỉ xét các món xuất hiện $\ge 2$ lần/tuần (hoặc $\ge 4$ lần/tháng) để xác nhận đây là "thói quen".
+        \item \textbf{Phân loại thói quen (Branching \& Top-K):}
+        \begin{itemize}
+            \item \textbf{Thói quen Tốt:} Điểm $\ge 70$. Trích xuất Top 5 món điểm cao nhất để khích lệ.
+            \item \textbf{Vùng Im lặng (Neutral):} Điểm $60 - 69$. Bỏ qua để giảm nhiễu thông tin (Cognitive Load).
+            \item \textbf{Thói quen Cần hạn chế:} Điểm $< 60$. Trích xuất Top 5 món điểm thấp nhất.
+        \end{itemize}
+        \item \textbf{Kết luận Toàn cục (Weekly Verdict):} Dựa vào \textit{Điểm trung bình} và \textit{Tỷ lệ Cờ đỏ} (\% lượng bữa ăn $< 60$ điểm) để xếp loại:
+        \begin{itemize}
+            \item \textbf{Xuất sắc (Xanh):} Cờ đỏ $\le 15\%$ VÀ Điểm TB $\ge 75$.
+            \item \textbf{Khá (Xanh/Vàng):} Cờ đỏ $\le 30\%$ VÀ Điểm TB $\ge 65$.
+            \item \textbf{Cần lưu ý (Cam):} Cờ đỏ $\le 50\%$ VÀ Điểm TB $\ge 50$.
+            \item \textbf{Tệ (Đỏ):} Các trường hợp còn lại.
+        \end{itemize}
+    \end{enumerate}
 \end{frame}
 
-\begin{frame}{BACKUP B5.4: Vùng Neutral, Weekly Verdict \& Độ phức tạp}
-    \textbf{5. Vùng Neutral (60–69 điểm) — Thiết kế có chủ đích}
-    \begin{itemize}
-        \item Món ăn đạt $60-69$ điểm (VD: Cơm Gà Hải Nam 65đ) "không xuất sắc nhưng không vi phạm".
-        \item Nếu khen thì không xứng, chê thì oan. Cố ý đưa vào vùng \textbf{Im lặng (Neutral)} để giảm noise cho User, giúp tập trung vào các thói quen cực kỳ Tốt hoặc cực kỳ Xấu.
-    \end{itemize}
-    
-    \vspace{0.2cm}
-    \textbf{6. Thống kê tổng hợp (Weekly Verdict)}
-    \begin{itemize}
-        \item \texttt{avgQualityScore}: Điểm chất lượng trung bình \textbf{có trọng số} (món ăn nhiều $\rightarrow$ ảnh hưởng nhiều).
-        \item \texttt{redFlagPercentage}: Tỷ lệ \% bữa ăn sử dụng thực phẩm kém.
-        \item \textbf{Verdict:} Xuất sắc (redFlag $\le 15\%$ \& avg $\ge 75$), Khá ($\le 30\%$ \& $\ge 65$), Cần lưu ý ($\le 50\%$ \& $\ge 50$), và Tệ.
-    \end{itemize}
-\end{frame}
 % --- BACKUP B6 ---
 \begin{frame}[label=b6]{BACKUP B6.1: Cơ chế Scanner \& Trust Score (Crowdsourcing)}
 \hypertarget{b6_target}{}
