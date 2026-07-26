@@ -1,0 +1,39 @@
+\frametitle{BACKUP B7.1: Luồng xác thực \& Đồng bộ Frontend}
+\hypertarget{b7_target}{}
+    \textbf{1. Xử lý Route \& Code-splitting}
+    \begin{itemize}
+        \item Sử dụng \texttt{ProtectedRoute} và \texttt{AuthOnlyRoute} để bảo vệ các trang.
+        \item Áp dụng Code-splitting để tối ưu hóa thời gian tải trang (lazy loading).
+    \end{itemize}
+
+    \vspace{0.1cm}
+    \textbf{2. Luồng Refresh Token tự động (Axios Interceptor)}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.3cm and 0.4cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text centered, font=\scriptsize, inner sep=4pt},
+        arrow/.style={->, thick, NutriDark}]
+
+        \node[box] (req) {Gửi Request};
+        \node[box, right=of req] (err) {Lỗi 401};
+        \node[box, right=of err] (ref) {Gọi API Refresh};
+        \node[box, right=of ref] (new) {Nhận Token mới};
+        \node[box, below=0.4cm of ref] (retry) {Gửi lại Request cũ};
+        \node[box, left=of retry] (cache) {Cập nhật Cache \& UI};
+
+        \draw[arrow] (req) -- (err);
+        \draw[arrow] (err) -- (ref);
+        \draw[arrow] (ref) -- (new);
+        \draw[arrow] (new) |- (retry);
+        \draw[arrow] (retry) -- (cache);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Queue Request:} Các request gửi đến trong lúc đang refresh sẽ được đưa vào hàng đợi (queue) và đồng loạt gọi lại khi Refresh Token thành công.
+    \end{itemize}
+
+    \vspace{0.1cm}
+    \textbf{3. Đồng bộ trạng thái UI (TanStack Query)}
+    \begin{itemize}
+        \item Quản lý bộ nhớ đệm (cache) phía client, tự động \texttt{invalidateQueries} sau mỗi \texttt{mutation} (thêm/sửa/xóa) để giao diện luôn đồng bộ.
+    \end{itemize}
