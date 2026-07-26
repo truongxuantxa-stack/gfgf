@@ -784,13 +784,13 @@
     \textbf{4. Xử lý ngoại lệ (Edge Cases)}
     \vspace{0.2cm}
     
-    Sau khi giải ra $w_1, w_2, w_3$, hệ thống validate bằng \texttt{validateSolution()}:
+    Sau khi giải ra $w_1, w_2, w_3$, hệ thống kiểm tra tính hợp lệ bằng \texttt{validateSolution()}:
     
     \begin{itemize}
         \small
-        \item \textbf{Nghiệm âm} ($w_i < 0$): Phân loại là \textbf{Error} (Lỗi), kết quả không hợp lệ. Xảy ra khi một nguyên liệu "đóng góp ngược".
-        \item \textbf{Dưới 10g (trừ fat) / Trên 500g (trừ rau):} Phân loại là \textbf{Warning} (Cảnh báo). Hệ thống vẫn có thể trả về \texttt{success: true} nếu có warning.
-        \item \textbf{Cơ chế Retry:} Tối đa 15 lần với các tổ hợp thực phẩm thay thế, hệ thống sẽ chọn lại \texttt{bestAttempt} là phương án có số lỗi mức \textbf{Error} ít nhất.
+        \item \textbf{Nghiệm âm} ($w_i < 0$) hoặc khối lượng quá bất thường: Đánh dấu là \textbf{Error} (Lỗi).
+        \item \textbf{Cơ chế Retry (Tối đa 15 lần):} Thay vì cố ép ra kết quả sai, hệ thống chủ động thử nghiệm với các tổ hợp thực phẩm thay thế khác.
+        \item \textbf{Quyết định cuối cùng:} Nếu có tổ hợp hợp lệ, trả về kết quả (\texttt{success: true}). Nếu toàn bộ 15 lần thử đều gặp lỗi, hệ thống chủ động trả về phương án ít lỗi nhất (\texttt{bestAttempt}) kèm \texttt{success: false} để người dùng tự thay đổi nguyên liệu, thay vì đưa ra khẩu phần phi lý.
     \end{itemize}
 \end{frame}
 
@@ -819,27 +819,22 @@
     \small \textit{Nguồn code: Hàm \texttt{getCalorieLevel(calPct)} và \texttt{getHealthInsights()} trong \texttt{suggestion.service.js}.}
 \end{frame}
 
-\begin{frame}[fragile]{BACKUP B2.2: Weighted Penalty — Hàm phạt theo mức sai lệch}
-    \textbf{2. Weighted Penalty — Hàm phạt phân đoạn theo mức độ sai lệch}
+\begin{frame}[fragile]{BACKUP B2.2: Weighted Penalty — Hàm phạt tỷ lệ theo mức độ sai lệch}
+    \textbf{2. Weighted Penalty — Hàm phạt tỷ lệ theo mức độ sai lệch}
     \vspace{0.1cm}
     
-    Thay vì trừ điểm cố định (ví dụ: thiếu Protein luôn trừ 15 điểm), hệ thống \textbf{tính trọng số dựa trên mức độ sai lệch thực tế}:
+    Thay vì trừ điểm cố định gây cứng nhắc, hệ thống sử dụng công thức linh hoạt:
     
-    \begin{block}{\small Logic tính điểm phạt (Penalty)}
-        \footnotesize
-        \textbf{Mức độ sai lệch} so với mục tiêu sẽ quyết định trọng số phạt:\\
-        $\bullet$ \textbf{Sai lệch $\le$ 0\%} (Đã khắc phục): Phạt nhẹ (Hệ số $\times 0.5$)\\
-        $\bullet$ \textbf{Sai lệch $>$ 20\%} (Vừa phải): Phạt tiêu chuẩn (Hệ số $\times 1.0$)\\
-        $\bullet$ \textbf{Sai lệch $>$ 40\%} (Đáng kể): Phạt nặng (Hệ số $\times 1.8$)\\
-        $\bullet$ \textbf{Sai lệch $>$ 60\%} (Nghiêm trọng): Phạt rất nặng (Hệ số $\times 2.5$)
-    \end{block}
+    \begin{center}
+        \colorbox{NutriDark!10}{\textbf{Điểm phạt = Mức lỗi gốc $\times$ Hệ số sai lệch}}
+    \end{center}
     
-    \textbf{Ví dụ thực tế:}
     \begin{itemize}
-        \item Protein thiếu 25\% $\rightarrow$ penalty là $15 \times 1.0 = 15$ điểm.
-        \item Protein thiếu 60\% $\rightarrow$ penalty là $15 \times 2.5 = 37.5$ điểm.
+        \small
+        \item \textbf{Mức lỗi gốc (Base Penalty):} Xác định theo loại cảnh báo (Danger, Warning, Suggestion). Ví dụ: Lỗi liên quan đến Protein có mức lỗi gốc cao hơn lỗi thiếu một loại vi chất.
+        \item \textbf{Hệ số sai lệch (Multiplier):} Tăng dần theo mức độ thiếu hụt hoặc dư thừa thực tế (Ví dụ: sai lệch $>$ 60\% thì nhân hệ số 2.5).
+        \item \textbf{Mục đích thực tế:} Đảm bảo sự công bằng. Việc thiếu 1g Protein sẽ bị trừ rất ít điểm so với việc thiếu 50g Protein. Điểm số phản ánh đúng mức độ nghiêm trọng của vấn đề dinh dưỡng.
     \end{itemize}
-    \textit{$\rightarrow$ Phản ánh chính xác mức độ nghiêm trọng của sự thiếu hụt/dư thừa.}
 \end{frame}
 
 \begin{frame}[fragile]{BACKUP B2.3: Nhận biết ngữ cảnh (Context-Awareness)}
@@ -897,6 +892,7 @@
                 \small
                 \item \texttt{avgMicroRatio < 0.20}: Trần 50 điểm (Vi chất quá kém).
                 \item \texttt{fiberRatio < 0.30}: Trần 60 điểm (Thiếu xơ nghiêm trọng).
+                \item \textcolor{NutriDark}{\textbf{Lưu ý quan trọng:}} Cơ chế Hard Cap vi chất/xơ \textbf{chỉ áp dụng} khi đã nạp đủ mức Calo cơ bản. Nếu đang thiếu đói (Calo $< 50\%$), hệ thống bỏ qua việc phạt vi chất để ưu tiên cảnh báo lượng Calo sinh tồn.
             \end{itemize}
         \end{column}
     \end{columns}
@@ -971,14 +967,16 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{BACKUP B3.4: Guardrails \& Phát hiện Plateau \& Cron Job}
-    \textbf{7. Guardrails — Cơ chế an toàn}
+\begin{frame}[fragile]{BACKUP B3.4: Guardrails — Chống nhiễu dữ liệu (Anti-Noise)}
+    \textbf{7. Tránh cập nhật sai lệch (Guardrails)}
+    
+    TDEE tĩnh chỉ là ước lượng. TDEE thực tế được tính bằng calo và cân nặng đã làm mượt (EMA). Để chống người dùng nhập sai, hệ thống bảo vệ bằng các lớp:
+    
     \begin{itemize}
         \scriptsize
-        \item \textbf{TDEE clamp:} Giới hạn $TDEE_{\text{tĩnh}} \pm 30\%$ để ngăn outlier từ dữ liệu sai.
-        \item \textbf{Minimum data:} Yêu cầu $\ge 5$ ngày nhật ký + $\ge 2$ lần cân để đảm bảo ý nghĩa thống kê.
-        \item \textbf{Min valid weeks:} Cần đủ $\ge 2$ tuần hợp lệ mới cập nhật Adaptive TDEE cho User.
-        \item \textbf{Confidence:} 7 ngày (High), 6 ngày (Medium), 5 ngày (Low) $\rightarrow$ Minh bạch độ tin cậy.
+        \item \textbf{Không cập nhật ngay:} Yêu cầu \textbf{tối thiểu 2 tuần hợp lệ} (\texttt{validWeeksCount} $\ge 2$) mới được cập nhật vào User. Tuần đầu tiên chỉ đóng vai trò khởi tạo (Warm-up).
+        \item \textbf{Minimum data:} Mỗi tuần phải có $\ge 5$ ngày nhật ký + $\ge 2$ lần cân để đảm bảo ý nghĩa thống kê.
+        \item \textbf{Giới hạn biên (Clamp):} TDEE thực tế bị khóa ở mức $\pm 30\%$ so với TDEE tĩnh để chặn các đột biến từ dữ liệu rác.
     \end{itemize}
     
     \vspace{0.1cm}
@@ -986,13 +984,11 @@
     \begin{block}{\scriptsize Logic phát hiện Plateau}
         \scriptsize
         $\bullet$ \textbf{Nếu:} TDEE thực tế thấp hơn trên 5\% so với TDEE tĩnh (\texttt{diffPct < -5}).\\
-        $\bullet$ \textbf{Hành động 1:} Gắn cờ chững cân (\texttt{isPlateauing = true}).\\
-        $\bullet$ \textbf{Hành động 2:} Tính mục tiêu calo mới chặn dưới bằng BMR.\\
-        $\bullet$ \textbf{Hành động 3:} Gửi thông báo: "Cơ thể đang thích ứng chuyển hóa".
+        $\bullet$ \textbf{Hành động:} Gắn cờ chững cân, chặn dưới mục tiêu bằng BMR và thông báo.
     \end{block}
     
     \vspace{0.1cm}
-    \textbf{9. Tự động hóa (Cron Job):} Chạy ngầm vào 0:00 sáng mỗi Thứ Hai để tổng hợp dữ liệu dinh dưỡng/cân nặng của toàn bộ người dùng trong tuần cũ, từ đó tự động tính toán và cập nhật TDEE cho tuần mới.
+    \textbf{9. Tự động hóa (Cron Job):} Chạy ngầm vào 0:00 sáng Thứ Hai để tổng hợp và cập nhật TDEE cho tuần mới.
 \end{frame}
 
 % --- BACKUP B4 ---
@@ -1125,21 +1121,22 @@
 \end{frame}
 
 % --- BACKUP B6 ---
-\begin{frame}[label=b6]{BACKUP B6.1: Cơ chế Scanner \& Trust Score (Crowdsourcing)}
+\begin{frame}[label=b6]{BACKUP B6.1: Pipeline Scanner \& Xử lý rủi ro AI}
 \hypertarget{b6_target}{}
-    \textbf{1. Physics Validation (Xác thực vật lý)}
+    \textbf{1. Pipeline Ưu tiên Dữ liệu \& Chống rủi ro (Hallucination)}
     \begin{itemize}
-        \item Đảm bảo dữ liệu nhãn thành phần dinh dưỡng hợp lý: Tổng khối lượng các chất (Protein + Carbs + Fat + $\dots$) không được vượt quá 100g.
-        \item Lượng năng lượng (kcal) phải tính toán khớp hoặc xấp xỉ với macro (1g Protein/Carbs $\approx$ 4 kcal, 1g Fat $\approx$ 9 kcal).
+        \small
+        \item \textbf{Thứ tự quét:} Ưu tiên Local DB Verified $\rightarrow$ Unverified $\rightarrow$ Open Food Facts $\rightarrow$ AI Vision. AI chỉ là giải pháp cuối cùng.
+        \item \textbf{Không tin tưởng tuyệt đối AI:} Dữ liệu AI trả về phải qua lớp \textbf{Physics Validation} (Tổng chất $\le 100$g, calo phải xấp xỉ tổng macro). Nếu vi phạm logic vật lý, hệ thống từ chối lưu.
     \end{itemize}
     
     \vspace{0.2cm}
-    \textbf{2. Trust Score \& Crowdsourcing (Cơ chế đóng góp cộng đồng)}
+    \textbf{2. Trust Score (Cơ chế Xác minh Đóng góp)}
     \begin{itemize}
-        \item \textbf{Một đóng góp:} Khởi tạo dữ liệu với mức độ tin cậy (\textit{confidence}) là $0.3$.
-        \item \textbf{Hai đóng góp tương đồng:} Hệ thống tự động nâng \textit{confidence} lên $0.5$.
-        \item \textbf{Từ ba đóng góp tương đồng:} \textit{Confidence} đạt $0.8$ và sản phẩm có thể được chuyển sang trạng thái \textbf{Verified} (Đã xác minh).
-        \item \textbf{Xử lý báo cáo sai phạm:} Khi người dùng báo cáo dữ liệu sai, sản phẩm chuyển sang trạng thái \textbf{Disputed} (Tranh chấp) để quản trị viên kiểm tra.
+        \small
+        \item \textbf{Đóng góp đầu tiên:} Dù từ AI hay người dùng, mức độ tin cậy ban đầu chỉ ở mức \textbf{0.3} (Chưa xác minh).
+        \item \textbf{Nâng cấp tin cậy:} Đòi hỏi có nhiều đóng góp tương đồng từ các người dùng khác nhau để nâng \textit{confidence} lên 0.5 và 0.8 (\textbf{Verified}).
+        \item \textbf{Giải quyết tranh chấp:} Mọi báo cáo sai lệch đều đẩy sản phẩm về trạng thái \textbf{Disputed} để Admin kiểm duyệt.
     \end{itemize}
 \end{frame}
 
