@@ -2679,11 +2679,7 @@ Ngoài cơ chế cộng và trừ điểm, thuật toán còn có bước giới
 
 Sau khi tính điểm, hệ thống ánh xạ điểm số sang các mức phân loại để Frontend hiển thị. Kết quả trả về không chỉ gồm điểm chất lượng, mà còn có nhãn, cấp độ, biểu tượng huy hiệu, tooltip giải thích và trạng thái bỏ qua nếu dữ liệu không hợp lệ. Nhờ vậy, Frontend không cần tự viết lại logic phân loại và kết quả được giữ thống nhất ở các màn hình.
 
-\textbf{Khoảng điểm}
 
-\textbf{Mức phân loại}
-
-Có dấu hiệu nghèo dinh dưỡng hoặc nhiều thành phần cần kiểm soát
 
 Các mức ngưỡng, trọng số cộng–trừ, ngoại lệ theo nhóm và khoảng phân loại được cấu hình trong phạm vi triển khai của NutriTrack nhằm tạo kết quả dễ giải thích. Những tham số này không được lấy trực tiếp từ mô hình NRF9.3. Các mức phân loại này là quy ước nội bộ của hệ thống, không phải kết luận y khoa. Một thực phẩm có điểm thấp không có nghĩa là bị loại bỏ trong mọi trường hợp, và một thực phẩm có điểm cao cũng không tự động phù hợp với mọi mục tiêu. Một điểm nutrient profiling có thể hỗ trợ phân loại và so sánh thực phẩm, nhưng không phản ánh đầy đủ toàn bộ chất lượng của thực phẩm hoặc chế độ ăn, đặc biệt khi mô hình chỉ xem xét một tập hợp giới hạn các chất dinh dưỡng \cite{drewnowski2019}. Điểm số chủ yếu đóng vai trò tham khảo trong quá trình so sánh và lựa chọn thực phẩm.
 
@@ -2730,6 +2726,14 @@ Dữ liệu đầu vào của Health Insights gồm dữ liệu thực tế tron
 
 Trong mã nguồn, hàm getHealthInsights nhận các nhóm dữ liệu chính như consumed, metrics, mealGroups, waterTotal, waterGoal, gender, isHistorical và clientHour. Trong đó, consumed chứa dữ liệu dinh dưỡng đã tổng hợp; metrics chứa mục tiêu cá nhân; mealGroups cho biết người dùng đã ghi nhận những bữa nào; clientHour hỗ trợ xác định thời điểm trong ngày theo phía người dùng. Đây là các dữ liệu cần thiết để hệ thống không chỉ biết người dùng ăn bao nhiêu, mà còn biết nên đưa ra cảnh báo vào thời điểm nào. Bảng \ref{tab:health_insights_data} trình bày các nhóm dữ liệu đầu vào chính của Health Insights.
 
+AHA khuyến nghị giới hạn added sugars ở khoảng 100 kcal mỗi ngày đối với phần lớn phụ nữ và 150 kcal đối với nam giới, tương ứng xấp xỉ 25 g và 36 g đường bổ sung \cite{aha_addedsugars}. Đối với natri, AHA khuyến nghị không vượt quá 2.300 mg mỗi ngày, đồng thời xác định 1.500 mg là mục tiêu tối ưu cho phần lớn người trưởng thành \cite{aha_sodium}. NutriTrack sử dụng các mức này làm ngưỡng tham chiếu trong Health Insights. Tuy nhiên, dữ liệu đường hiện được tổng hợp từ trường total sugar nên chưa thể phản ánh chính xác added sugar; vì vậy, cảnh báo đường chỉ mang tính tham khảo và không được xem là đánh giá chính xác mức đường bổ sung đã tiêu thụ.
+
+Đối với vitamin và khoáng chất, hệ thống sử dụng một bộ giá trị tham chiếu rút gọn để phục vụ hiển thị tiến độ và tạo Health Insights. Dietary Reference Intakes gồm nhiều loại giá trị tham chiếu và thay đổi theo tuổi, giới tính cũng như giai đoạn sinh lý \cite{nihNutrientRecommendations}. Trong phạm vi người trưởng thành thông thường, NutriTrack cấu hình mục tiêu vitamin A là 900~µg RAE/ngày đối với nam và 700~µg RAE/ngày đối với nữ, phù hợp với mức RDA do NIH Office of Dietary Supplements công bố \cite{nihVitaminA}. Mục tiêu vitamin C tương ứng là 90~mg/ngày đối với nam và 75~mg/ngày đối với nữ \cite{nihVitaminC}. Các giá trị này được sử dụng như ngưỡng tham chiếu của hệ thống, không đại diện cho khuyến nghị cá nhân hóa đối với mọi nhóm tuổi hoặc các trường hợp mang thai, cho con bú và tình trạng sức khỏe đặc biệt.
+
+Đối với giao diện hiện tại, mục tiêu canxi được cấu hình ở mức 1.000~mg/ngày, trong khi mục tiêu sắt là 8~mg/ngày đối với nam và 18~mg/ngày đối với nữ. Đây là các tham số tham chiếu của phiên bản hiện tại và được sử dụng thống nhất giữa thẻ vi chất và Health Insights.
+
+Nếu người dùng chưa ghi nhận món ăn và cũng chưa ghi nhận nước uống, hệ thống trả về danh sách insight rỗng. Cách xử lý này giúp giao diện không hiển thị nhận xét khi dữ liệu chưa có cơ sở.
+
 \begin{longtable}{|>{\raggedright\arraybackslash}p{4cm}|>{\raggedright\arraybackslash}p{4cm}|p{7cm}|}
 \caption{Các nhóm dữ liệu đầu vào của Health Insights}
 \label{tab:health_insights_data} \\
@@ -2755,15 +2759,6 @@ Giờ phía client & Giao diện người dùng & Hỗ trợ tránh cảnh báo 
 Giới tính & Hồ sơ người dùng & Chọn một số ngưỡng tham chiếu phù hợp \\
 \hline
 \end{longtable}
-
-
-AHA khuyến nghị giới hạn added sugars ở khoảng 100 kcal mỗi ngày đối với phần lớn phụ nữ và 150 kcal đối với nam giới, tương ứng xấp xỉ 25 g và 36 g đường bổ sung \cite{aha_addedsugars}. Đối với natri, AHA khuyến nghị không vượt quá 2.300 mg mỗi ngày, đồng thời xác định 1.500 mg là mục tiêu tối ưu cho phần lớn người trưởng thành \cite{aha_sodium}. NutriTrack sử dụng các mức này làm ngưỡng tham chiếu trong Health Insights. Tuy nhiên, dữ liệu đường hiện được tổng hợp từ trường total sugar nên chưa thể phản ánh chính xác added sugar; vì vậy, cảnh báo đường chỉ mang tính tham khảo và không được xem là đánh giá chính xác mức đường bổ sung đã tiêu thụ.
-
-Đối với vitamin và khoáng chất, hệ thống sử dụng một bộ giá trị tham chiếu rút gọn để phục vụ hiển thị tiến độ và tạo Health Insights. Dietary Reference Intakes gồm nhiều loại giá trị tham chiếu và thay đổi theo tuổi, giới tính cũng như giai đoạn sinh lý \cite{nihNutrientRecommendations}. Trong phạm vi người trưởng thành thông thường, NutriTrack cấu hình mục tiêu vitamin A là 900~µg RAE/ngày đối với nam và 700~µg RAE/ngày đối với nữ, phù hợp với mức RDA do NIH Office of Dietary Supplements công bố \cite{nihVitaminA}. Mục tiêu vitamin C tương ứng là 90~mg/ngày đối với nam và 75~mg/ngày đối với nữ \cite{nihVitaminC}. Các giá trị này được sử dụng như ngưỡng tham chiếu của hệ thống, không đại diện cho khuyến nghị cá nhân hóa đối với mọi nhóm tuổi hoặc các trường hợp mang thai, cho con bú và tình trạng sức khỏe đặc biệt.
-
-Đối với giao diện hiện tại, mục tiêu canxi được cấu hình ở mức 1.000~mg/ngày, trong khi mục tiêu sắt là 8~mg/ngày đối với nam và 18~mg/ngày đối với nữ. Đây là các tham số tham chiếu của phiên bản hiện tại và được sử dụng thống nhất giữa thẻ vi chất và Health Insights.
-
-Nếu người dùng chưa ghi nhận món ăn và cũng chưa ghi nhận nước uống, hệ thống trả về danh sách insight rỗng. Cách xử lý này giúp giao diện không hiển thị nhận xét khi dữ liệu chưa có cơ sở.
 
 \textbf{b. Cơ chế Triage theo mức đạt calo}
 

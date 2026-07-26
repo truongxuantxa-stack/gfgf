@@ -378,10 +378,7 @@
         \begin{column}{0.5\textwidth}
             \textcolor{NutriDark}{\textbf{\modulelabel{Thuật toán EMA (Lý thuyết gốc)}}}
             \begin{itemize}
-                \item \scriptsize Công thức: $\text{EMA}_t = \alpha \cdot x_t + (1 - \alpha) \cdot \text{EMA}_{t-1}$
-                \item \scriptsize $\alpha \in (0, 1)$: Hệ số làm mượt.
-                \item \scriptsize $\alpha$ nhỏ $\rightarrow$ trọng số quá khứ lớn.
-                \item \scriptsize Ưu điểm: Tính toán nhanh, tốn ít bộ nhớ.
+                \item \scriptsize \textbf{Định nghĩa:} EMA (Exponential Moving Average – Trung bình trượt hàm mũ) là phương pháp làm mượt chuỗi dữ liệu theo thời gian, trong đó dữ liệu mới được gán trọng số lớn hơn và ảnh hưởng của dữ liệu cũ giảm dần theo hàm mũ.
             \end{itemize}
         \end{column}
         \begin{column}{0.48\textwidth}
@@ -905,22 +902,13 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{BACKUP B2.5: Điểm thưởng \& Độ phức tạp}
+\begin{frame}[t]{BACKUP B2.5: Điểm thưởng}
     \textbf{5. Điểm thưởng (Bonus Rules)}
     \begin{itemize}
         \item Calo đạt 90–110\% mục tiêu: \textbf{+5 điểm}.
         \item Đạt mục tiêu Protein: \textbf{+3 điểm}.
         \item Uống đủ nước mục tiêu: \textbf{+5 điểm}.
         \item Đạt mục tiêu Chất xơ: \textbf{+2 điểm}.
-    \end{itemize}
-    
-    \vspace{0.3cm}
-    \textbf{6. Độ phức tạp tính toán (Complexity)}
-    \begin{itemize}
-        \item \textbf{Health Insights:} $O(N)$ — duyệt qua $N=8$ chỉ số dinh dưỡng cố định $\rightarrow O(1)$.
-        \item \textbf{Daily Health Score:} $O(I)$ — duyệt mảng insights (tối đa $\approx 15$) $\rightarrow O(1)$.
-        \item \textbf{Food Scoring:} $O(1)$ per food item — tính mật độ dinh dưỡng và 8 tiêu chí.
-        \item \textbf{Weekly Food Report:} $O(M)$ — $M$ là số entry trong tuần (chấm điểm từng món).
     \end{itemize}
 \end{frame}
 
