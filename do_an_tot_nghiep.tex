@@ -94,7 +94,15 @@
 % TRANG BÌA CỨNG (Mẫu ĐATN-14 - Trang bìa cứng và gáy)
 % ============================================================
 \begin{titlepage}
-    \newgeometry{left=2cm, right=2cm, top=1.5cm, bottom=1.5cm}
+    \newgeometry{left=3.0cm, right=2.0cm, top=2.0cm, bottom=2.0cm}
+    
+    % Vẽ khung viền trang bìa
+    \begin{tikzpicture}[remember picture, overlay]
+        \draw[line width=1.2pt] 
+            ([xshift=3.0cm, yshift=-2.0cm]current page.north west) 
+            rectangle 
+            ([xshift=-2.0cm, yshift=2.0cm]current page.south east);
+    \end{tikzpicture}
     
     \begin{center}
         \vspace*{0.5cm}
@@ -119,7 +127,17 @@
         
         % Ngành + Chuyên ngành
         {\fontsize{13pt}{15.6pt}\selectfont \textbf{Ngành: Công nghệ thông tin}}\\[6pt]
-        {\fontsize{13pt}{15.6pt}\selectfont \textbf{Chuyên ngành: Khoa học máy tính}}\\
+        {\fontsize{13pt}{15.6pt}\selectfont \textbf{Chuyên ngành: Khoa học máy tính}}\\[30pt]
+        
+        % Bảng thông tin GVHD + SV
+        {\fontsize{13pt}{15.6pt}\selectfont
+        \begin{tabular}{@{}l@{\hspace{0.5em}}l}
+            \textbf{Giáo viên hướng dẫn:} & TS. Phạm Hồng Phong \\[6pt]
+            \textbf{Sinh viên thực hiện:}  & Nguyễn Văn Khánh \\[6pt]
+            \textbf{Mã số sinh viên:}      & 0241967 \\[6pt]
+            \textbf{Lớp:}                  & 67CS2 \\
+        \end{tabular}
+        }
         
         \vfill
         
@@ -134,7 +152,15 @@
 % TRANG BÌA PHỤ (Mẫu ĐATN-14 - Trang phụ bìa Đồ án)
 % ============================================================
 \begin{titlepage}
-    \newgeometry{left=2.5cm, right=2.5cm, top=1.5cm, bottom=1.5cm}
+    \newgeometry{left=3.0cm, right=2.0cm, top=2.0cm, bottom=2.0cm}
+    
+    % Vẽ khung viền trang bìa
+    \begin{tikzpicture}[remember picture, overlay]
+        \draw[line width=1.2pt] 
+            ([xshift=3.0cm, yshift=-2.0cm]current page.north west) 
+            rectangle 
+            ([xshift=-2.0cm, yshift=2.0cm]current page.south east);
+    \end{tikzpicture}
     
     \begin{center}
         \vspace*{0.5cm}
