@@ -390,45 +390,38 @@
     
     \vspace{0.3cm}
     \begin{columns}[T]
-        \begin{column}{0.46\textwidth}
-            \textbf{1. Mô hình $A\mathbf{x} = \mathbf{b}$} ($A$: ma trận macro, $\mathbf{x}$: k.lượng, $\mathbf{b}$: m.tiêu)
-            \vspace{0.15cm}
-            
-            \textbf{2. Thuật toán Khử Gauss ($n=3$):}
+        \begin{column}{0.48\textwidth}
+            \vspace{0.1cm}
             \begin{itemize}
-                \item \scriptsize \textbf{Forward + Pivoting:} Đưa $A$ về tam giác trên, hoán vị dòng.
-                \item \scriptsize \textbf{Back Sub:} Giải ngược tìm $\mathbf{x}$.
-                \item \scriptsize Nếu $|pivot| < 10^{-10}$: Ma trận suy biến.
-            \end{itemize}
-            \vspace{0.15cm}
-            
-            \textbf{3. Xử lý ngoại lệ (Edge cases):}
-            \begin{itemize}
-                \item \scriptsize Nghiệm âm $\rightarrow$ Lỗi (error).
-                \item \scriptsize $<10$g (trừ fat), $>500$g (trừ rau) $\rightarrow$ Cảnh báo (warning).
-                \item \scriptsize Retry tối đa 15 lần, chọn phương án ít lỗi error nhất.
+                \item \small \textbf{Cố định lượng rau:} Ưu tiên chất xơ trước, sau đó trừ đi các macro tương ứng.
+                \vspace{0.25cm}
+                \item \small \textbf{Lập hệ phương trình $A\mathbf{x} = \mathbf{b}$:} Trong đó $A$ là hàm lượng dinh dưỡng, $\mathbf{b}$ là mục tiêu.
+                \vspace{0.25cm}
+                \item \small \textbf{Khử Gauss + Partial Pivoting:} Giải hệ tuyến tính an toàn, phát hiện tỷ lệ trùng lặp.
+                \vspace{0.25cm}
+                \item \small \textbf{Kiểm tra nghiệm:} Lọc các nghiệm âm hoặc khối lượng bất thường.
+                \vspace{0.25cm}
+                \item \small \textbf{Xử lý ngoại lệ:} Nếu không khả thi, tự động \textbf{chọn tổ hợp khác}.
             \end{itemize}
         \end{column}
 
-        \begin{column}{0.53\textwidth}
+        \begin{column}{0.50\textwidth}
             \begin{center}
-            \begin{tikzpicture}[>=Stealth, node distance=0.32cm,
-                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.45cm, text centered, font=\scriptsize, align=center},
+            \begin{tikzpicture}[>=Stealth, node distance=0.25cm,
+                box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.5cm, text centered, font=\small, align=center},
                 arrow/.style={->, NutriDark}]
                 \node[box] (n1) {Mục tiêu ngày + cấu hình bữa};
-                \node[box, below=of n1] (n2) {Phân bổ mục tiêu từng bữa};
-                \node[box, below=of n2] (n3) {Chọn nguyên liệu theo template};
-                \node[box, below=of n3] (n4) {Rau/fiber: cố định 200 g, trừ macro};
-                \node[box, below=of n4] (n5) {\textbf{Khử Gauss}\\[-0.3ex]\textbf{+ Partial Pivoting}};
-                \node[box, below=of n5] (n6) {Kiểm tra nghiệm \& khối lượng};
-                \node[box, below=of n6, fill=NutriGreen!20] (n7) {Hợp lệ $\rightarrow$ Meal Plan \\ Không hợp lệ $\rightarrow$ Retry $\le$ 15};
+                \node[box, below=of n1] (n2) {Chọn nguyên liệu theo template};
+                \node[box, below=of n2] (n3) {Cố định lượng rau, trừ macro};
+                \node[box, below=of n3] (n4) {\textbf{Khử Gauss}\\[-0.3ex]\textbf{+ Partial Pivoting}};
+                \node[box, below=of n4] (n5) {Kiểm tra nghiệm hợp lệ};
+                \node[box, below=of n5, fill=NutriGreen!20] (n6) {Hợp lệ $\rightarrow$ Meal Plan \\ Không hợp lệ $\rightarrow$ Chọn tổ hợp khác};
                 
                 \draw[arrow] (n1) -- (n2);
                 \draw[arrow] (n2) -- (n3);
                 \draw[arrow] (n3) -- (n4);
                 \draw[arrow] (n4) -- (n5);
                 \draw[arrow] (n5) -- (n6);
-                \draw[arrow] (n6) -- (n7);
             \end{tikzpicture}
             \end{center}
         \end{column}
@@ -513,13 +506,13 @@
 
 
 % Thời lượng dự kiến: 50 giây
-\begin{frame}{Kết quả thực nghiệm và kiểm thử}
+\begin{frame}{Kết quả triển khai và kiểm thử}
     \begin{columns}[T]
         \begin{column}{0.33\textwidth}
             \modulelabel{Chức năng chính}
             \vspace{0.2cm}
             
-            \small \textbf{8 module} chức năng hoạt động end-to-end.
+            \small Các module chức năng chính đã hoạt động end-to-end.
         \end{column}
         
         \begin{column}{0.33\textwidth}
@@ -533,7 +526,7 @@
             \modulelabel{Kiến trúc kỹ thuật}
             \vspace{0.2cm}
             
-            \small \textbf{40+ API endpoint}, Cron Job tự động hàng tuần.
+            \small Hệ thống cung cấp đầy đủ RESTful API và Cron Job tự động hàng tuần.
         \end{column}
     \end{columns}
     
@@ -546,7 +539,7 @@
             \textbf{Nhóm kiểm thử} & \textbf{Kết quả} \\
             \midrule
             Khử Gauss (Meal Planner) & Giải hệ 3×3; phát hiện ma trận suy biến ($|pivot| < 10^{-10}$); retry tối đa 15 lần, chọn phương án ít lỗi error nhất. \\
-            Adaptive TDEE & Kịch bản 7 ngày: TDEE tĩnh 2500 $\rightarrow$ Adaptive TDEE 2200 kcal (−12\%); phát hiện plateau và đề xuất mục tiêu 1700 kcal. \\
+            Adaptive TDEE & Kịch bản kiểm thử mô phỏng 7 ngày: TDEE tĩnh 2500 $\rightarrow$ Adaptive TDEE 2200 kcal; hệ thống phát hiện chênh lệch và sinh khuyến nghị. \\
             Scanner API / AI Vision & Tra cứu theo pipeline 4 lớp; AI Vision trích xuất + Physics Validation kiểm tra tính hợp lý. \\
             \bottomrule
         \end{tabularx}
