@@ -642,19 +642,19 @@
             \begin{itemize}
                 \setlength\itemsep{0.8cm}
                 \Large
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b1_target}{\textbf{B1. Toán học Meal Planner}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b2_target}{\textbf{B2. Chấm điểm \& Hàm phạt}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b3_target}{\textbf{B3. Adaptive TDEE \& EMA}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b4_target}{\textbf{B4. Sơ đồ CSDL}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b1_target}{\textbf{B1. Thuật toán Meal Planner (Gauss)}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b2_target}{\textbf{B2. Đánh giá Sức khỏe (Health Score)}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b3_target}{\textbf{B3. Thuật toán TDEE (EMA)}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b4_target}{\textbf{B4. Kiến trúc Cơ sở dữ liệu}}
             \end{itemize}
         \end{column}
         \begin{column}{0.45\textwidth}
             \begin{itemize}
                 \setlength\itemsep{0.8cm}
                 \Large
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b5_target}{\textbf{B5. Food Scoring \& Habit}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b6_target}{\textbf{B6. Trust Score Scanner}}
-                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b7_target}{\textbf{B7. Luồng Auth Frontend}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b5_target}{\textbf{B5. Phân tích Thực phẩm (Food Scoring)}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b6_target}{\textbf{B6. Xử lý Ảnh \& Barcode (Scanner)}}
+                \item[\textcolor{NutriDark}{$\blacktriangleright$}] \hyperlink{b7_target}{\textbf{B7. Xác thực \& Phân quyền (Auth)}}
             \end{itemize}
         \end{column}
     \end{columns}
@@ -713,7 +713,7 @@
     \vspace{0.2cm}
     
     \begin{itemize}
-        \item \textbf{Tốc độ cực nhanh (Thời gian hằng số):} Với số ẩn cố định $n = 3$, độ phức tạp $O(n^3)$ thực chất trở thành $O(1)$, chi phí giải hệ rất nhỏ.
+        \item \textbf{Tốc độ cực nhanh:} Thuật toán khử Gauss có độ phức tạp $O(n^3)$. Trong hệ thống, $n = 3$ được cố định nên chi phí tính toán rất nhỏ và gần như không đáng kể.
         \vspace{0.2cm}
         \item \textbf{Tự chủ mã nguồn (Self-contained):} Thuật toán được code trực tiếp bằng JavaScript mà không cần cài thêm bất kỳ thư viện toán học nặng nề nào.
         \vspace{0.2cm}
@@ -731,7 +731,8 @@
     
     \begin{itemize}
         \small
-        \item \textbf{Nghiệm âm} ($w_i < 0$) hoặc khối lượng quá bất thường: Đánh dấu là \textbf{Error} (Lỗi).
+        \item \textbf{Nghiệm âm:} Error, làm kết quả không hợp lệ.
+        \item \textbf{Khối lượng quá nhỏ hoặc quá lớn:} Warning, vẫn có thể trả kết quả kèm cảnh báo.
         \item \textbf{Cơ chế Retry (Tối đa 15 lần):} Thay vì cố ép ra kết quả sai, hệ thống chủ động thử nghiệm với các tổ hợp thực phẩm thay thế khác.
         \item \textbf{Quyết định cuối cùng:} Nếu có tổ hợp hợp lệ, trả về kết quả (\texttt{success: true}). Nếu toàn bộ 15 lần thử đều gặp lỗi, hệ thống chủ động trả về phương án ít lỗi nhất (\texttt{bestAttempt}) kèm \texttt{success: false} để người dùng tự thay đổi nguyên liệu, thay vì đưa ra khẩu phần phi lý.
     \end{itemize}
@@ -952,8 +953,8 @@
         \textbf{WeightLog} & Lịch sử cân nặng & \texttt{note} (Ghi chú bối cảnh: sáng/tối) \\
         \textbf{WaterLog} & Lịch sử uống nước & \texttt{amount} (ml) \\
         \textbf{ExerciseLog} & Lịch sử vận động & \texttt{caloriesBurned} (kcal) \\
-        \textbf{MealTemplate} & Cấu trúc bữa ăn & Lưu tỷ lệ macro cho bữa ăn \\
-        \textbf{UserMealConfig} & Cấu hình bữa ăn & Liên kết User với MealTemplate \\
+        \textbf{MealTemplate} & Cấu trúc bữa ăn & Lưu cấu trúc các slot nguyên liệu của bữa ăn \\
+        \textbf{UserMealConfig} & Cấu hình bữa ăn & Lưu tỷ lệ phân bổ dinh dưỡng giữa các bữa của người dùng \\
         \textbf{AdaptiveTDEELog} & Lịch sử TDEE & \texttt{calculatedTDEE}, \texttt{rollingTDEE}, \texttt{confidence} \\
         \textbf{ScannedProduct} & Sản phẩm đã quét & Lưu trữ thông tin quét từ Barcode/AI \\
         \textbf{ProductContribution}& Đóng góp dữ liệu & Lịch sử người dùng thêm sản phẩm mới \\
@@ -1121,7 +1122,7 @@
     \vspace{0.1cm}
     \textbf{3. Đồng bộ trạng thái UI (TanStack Query)}
     \begin{itemize}
-        \item Quản lý bộ nhớ đệm (cache) phía client, tự động \texttt{invalidateQueries} sau mỗi \texttt{mutation} (thêm/sửa/xóa) để giao diện luôn đồng bộ.
+        \item Quản lý bộ nhớ đệm (cache) phía client. Các mutation chủ động gọi \texttt{invalidateQueries} cho những query key bị ảnh hưởng để giao diện refetch và đồng bộ với backend.
     \end{itemize}
 \end{frame}
 
