@@ -232,7 +232,7 @@
     \centering\small \textit{Frontend và Backend được tách biệt thông qua RESTful API, trong đó tầng Service đảm nhiệm nghiệp vụ và thuật toán.}
 \end{frame}
 
-% Thời lượng dự kiến: 1 phút
+% Thời lượng dự kiến: 30-40 giây (nói ngắn gọn về 4 lựa chọn công nghệ cốt lõi; KHÔNG đọc lại sơ đồ luồng vì slide 4 đã trình bày)
 \begin{frame}{Công nghệ và tổ chức hệ thống}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
@@ -241,8 +241,8 @@
             \begin{itemize}
                 \item \small \textbf{React SPA:} Tối ưu hóa trải nghiệm người dùng với kiến trúc ứng dụng trang đơn.
                 \item \small \textbf{TanStack Query:} Quản lý đồng bộ trạng thái dữ liệu và tối ưu hiệu suất gọi API.
-                \item \small \textbf{AuthProvider:} Quản lý phiên đăng nhập tập trung, auto-refresh token khi 401.
-                \item \small \textbf{Code-splitting:} Phân mảnh mã nguồn, tải tài nguyên theo yêu cầu để giảm thời gian khởi chạy.
+                \item \small \textbf{AuthProvider:} Quản lý tập trung trạng thái đăng nhập và thông tin người dùng.
+                \item \small \textbf{Axios Interceptor:} Tự động làm mới Access Token khi gặp lỗi 401.
             \end{itemize}
         \end{column}
         
@@ -258,29 +258,7 @@
         \end{column}
     \end{columns}
     
-    \vspace{0.8cm}
-    \begin{center}
-    \begin{tikzpicture}[>=Stealth, node distance=0.4cm and 0.4cm,
-        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text centered, font=\scriptsize, minimum height=0.5cm},
-        arrow/.style={->, thick, NutriDark}]
-        
-        \node[box] (fe) {Frontend};
-        \node[box, right=of fe] (axios) {Axios / TanStack Query};
-        \node[box, right=of axios] (api) {RESTful API};
-        
-        \node[box, below=0.5cm of fe] (mid) {Middleware};
-        \node[box, right=of mid] (ctrl) {Controller};
-        \node[box, right=of ctrl] (srv) {Service};
-        \node[box, right=of srv, fill=NutriGreen!20] (db) {Model / MySQL};
-        
-        \draw[arrow] (fe) -- (axios);
-        \draw[arrow] (axios) -- (api);
-        \draw[arrow, rounded corners] (api.south) -- ++(0,-0.25) -| (mid.north);
-        \draw[arrow] (mid) -- (ctrl);
-        \draw[arrow] (ctrl) -- (srv);
-        \draw[arrow] (srv) -- (db);
-    \end{tikzpicture}
-    \end{center}
+    % Sơ đồ luồng đã trình bày ở Slide 4 (Kiến trúc tổng thể) — không cần đọc lại ở đây.
 \end{frame}
 
 % Thời lượng dự kiến: 40 giây
@@ -310,7 +288,7 @@
 % Thời lượng dự kiến: 1 phút
 \begin{frame}{Nền tảng tính toán dinh dưỡng (Nutrition Core)}
     \begin{itemize}
-        \item \textbf{BMI \& BMR (Mifflin-St Jeor):} Đánh giá thể trạng và tính chuyển hóa cơ bản.
+        \item \textbf{BMI} đánh giá thể trạng; \textbf{BMR} tính theo công thức \textbf{Mifflin--St Jeor}.
         \item \textbf{TDEE tĩnh:} $\text{BMR} \times \text{PAL}$ — ước tính tổng năng lượng tiêu hao theo hệ số hoạt động.
         \item \textbf{Phân bổ macro:} Protein / Carb / Fat theo mục tiêu. \textit{Khóa an toàn:} mục tiêu $\geq$ BMR.
     \end{itemize}
