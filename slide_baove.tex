@@ -318,22 +318,23 @@
     \centering\small \textit{TDEE tĩnh là \textbf{điểm khởi đầu} — slide tiếp theo sẽ trình bày cách hệ thống \textbf{hiệu chỉnh} giá trị này theo dữ liệu thực tế.}
 \end{frame}
 
-% Thời lượng dự kiến: 1 phút 30 giây
+% Thời lượng dự kiến: 50-60 giây
 \begin{frame}{Adaptive TDEE – Điều chỉnh theo dữ liệu thực tế}
+    \vspace{0.2cm}
     \begin{center}
-    \begin{tikzpicture}[>=Stealth, node distance=0.35cm and 0.4cm,
-        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.7cm, text width=3.5cm, text centered, font=\scriptsize},
+    \begin{tikzpicture}[>=Stealth, node distance=0.6cm and 0.5cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.8cm, text width=3.3cm, text centered, font=\small},
         arrow/.style={->, thick, NutriDark}]
         
-        \node[box] (n1) {Dữ liệu ăn uống + cân nặng theo tuần};
-        \node[box, right=of n1] (n2) {Kiểm tra đủ dữ liệu\\[-0.3ex]\tiny $\ge 5$ ngày nhật ký, $\ge 2$ lần cân};
-        \node[box, right=of n2] (n3) {Tính AvgIntake + EMA làm mượt cân nặng};
+        \node[box] (n1) {Dữ liệu ăn uống và cân nặng theo tuần};
+        \node[box, right=of n1] (n2) {Kiểm tra đủ dữ liệu};
+        \node[box, right=of n2] (n3) {EMA làm mượt cân nặng};
         
-        \node[box, below=0.4cm of n3] (n4) {Suy ra TDEE ước tính của tuần};
-        \node[box, left=of n4] (n5) {Giới hạn $\pm30\%$ quanh TDEE tĩnh};
-        \node[box, left=of n5] (n6) {Trung bình trượt tối đa 4 tuần};
+        \node[box, below=0.8cm of n3] (n4) {Ước tính TDEE của tuần};
+        \node[box, left=of n4] (n5) {Giới hạn quanh TDEE tĩnh};
+        \node[box, left=of n5] (n6) {Làm mượt qua nhiều tuần};
         
-        \node[box, below=0.4cm of n5, minimum width=11.3cm, text width=11cm, fill=NutriGreen!20] (n7) {\textbf{Lưu lịch sử; đủ $\ge 2$ tuần hợp lệ mới cập nhật Adaptive TDEE}};
+        \node[box, below=0.8cm of n5, minimum width=11.5cm, text width=11cm, fill=NutriGreen!20, font=\normalsize] (n7) {\textbf{Cập nhật Adaptive TDEE}};
         
         \draw[arrow] (n1) -- (n2);
         \draw[arrow] (n2) -- (n3);
@@ -344,72 +345,43 @@
     \end{tikzpicture}
     \end{center}
     
-    \vspace{0.1cm}
+    \vspace{0.6cm}
     \begin{center}
+        \large
         \colorbox{NutriDark!10}{\textbf{Công thức: } $TDEE\_\text{ước\_tính} = \text{AvgIntake} - \left( \frac{\Delta\text{Weight} \times 7700}{7} \right)$} \\
-        \vspace{0.15cm}
-        \small \textit{\textcolor{NutriDark}{TDEE tĩnh là điểm khởi đầu; Adaptive TDEE hiệu chỉnh dần theo dữ liệu thực tế.}}
+        \vspace{0.4cm}
+        \normalsize \textit{\textcolor{NutriDark}{TDEE tĩnh là điểm khởi đầu; Adaptive TDEE hiệu chỉnh dần theo dữ liệu thực tế.}}
     \end{center}
-    
-    \vspace{0.1cm}
-    \begin{columns}[T]
-        \begin{column}{0.5\textwidth}
-            \textcolor{NutriDark}{\textbf{\modulelabel{Thuật toán EMA (Lý thuyết gốc)}}}
-            \begin{itemize}
-                \item \scriptsize \textbf{Định nghĩa:} EMA (Exponential Moving Average – Trung bình trượt hàm mũ) là phương pháp làm mượt chuỗi dữ liệu theo thời gian, trong đó dữ liệu mới được gán trọng số lớn hơn và ảnh hưởng của dữ liệu cũ giảm dần theo hàm mũ.
-            \end{itemize}
-        \end{column}
-        \begin{column}{0.48\textwidth}
-            \textcolor{NutriDark}{\textbf{\modulelabel{Áp dụng trong hệ thống}}}
-            \begin{itemize}
-                \item \scriptsize $\alpha = 0.1$: Ít bị ảnh hưởng bởi dao động ngày.
-                \item \scriptsize Warm-up 14 ngày (khởi tạo EMA ổn định).
-                \item \scriptsize Tránh làm mượt kép: Dùng $\text{TDEE}_{\text{thô}}$ để tính.
-                \item \scriptsize Confidence score: 7 ngày (High) $\rightarrow$ 5 ngày (Low).
-            \end{itemize}
-        \end{column}
-    \end{columns}
 \end{frame}
 
-% Thời lượng dự kiến: 1 phút
+% Thời lượng dự kiến: 40-50 giây
 \begin{frame}{Phân tích chất lượng dinh dưỡng}
+    \vspace{0.3cm}
     \begin{columns}[T]
-        \begin{column}{0.52\textwidth}
+        \begin{column}{0.48\textwidth}
             \modulelabel{Food Scoring}
-            \vspace{0.2cm}
-            
-            \scriptsize
-            \textbf{Ý tưởng:} Đánh giá mật độ dinh dưỡng trên 100 kcal.
-            \vspace{0.1cm}
+            \vspace{0.4cm}
             \begin{itemize}
-                \item Điểm cơ sở = \textbf{50} (thang 0--100).
-                \item \textbf{Cộng/Trừ điểm:} Dựa trên Protein, Xơ (+), Sodium, Đường (-).
-                \item \textbf{Vi chất:} Thưởng tối đa +10đ/vi chất (Vitamin A, C, Canxi, Sắt).
-                \item \textbf{Giới hạn trần:} Vi chất quá kém $\rightarrow$ trần 50; Thiếu xơ $\rightarrow$ trần 60.
-                \item \textbf{Tổng hợp 7/30 ngày:} Phân tích \& xuất báo cáo Top thực phẩm tốt/xấu nhất.
+                \item \normalsize \textbf{Đánh giá từng món} theo mật độ dinh dưỡng (trên 100 kcal).
+                \vspace{0.3cm}
+                \item \normalsize Xét các chỉ số: protein, chất xơ, đường, natri và vi chất.
+                \vspace{0.3cm}
+                \item \normalsize \textbf{Ứng dụng:} Báo cáo PDF tổng hợp 7/30 ngày $\rightarrow$ Tìm ra Top 5 thực phẩm tốt/xấu nhất.
             \end{itemize}
         \end{column}
         
-        \begin{column}{0.44\textwidth}
+        \begin{column}{0.48\textwidth}
             \modulelabel{Daily Health Score}
-            \vspace{0.2cm}
-            
-            \scriptsize
-            \textbf{Ý tưởng:} Đánh giá tổng thể 1 ngày ăn uống.
-            \vspace{0.1cm}
+            \vspace{0.4cm}
             \begin{itemize}
-                \item Điểm cơ sở = \textbf{100} (thang 0--100).
-                \item \textbf{Phân loại 3 tầng:} $< 50\%$ calo $\rightarrow$ mute vi chất; $\geq 70\%$ $\rightarrow$ đầy đủ.
-                \item \textbf{Nhận biết ngữ cảnh:} Chỉ báo thiếu hụt rõ ràng khi $\geq$ 20h.
-                \item \textbf{Cơ chế Penalty \& Multiplier:} Phạt biến thiên theo tỷ lệ thiếu hụt/vượt ngưỡng.
-                \item \textbf{Giới hạn trần:} Thiếu vi chất $\rightarrow$ trần 50; Thiếu xơ $\rightarrow$ trần 60.
-                \item \textbf{Tổng hợp 7/30 ngày:} Theo dõi xu hướng \& trung bình điểm sức khỏe.
+                \item \normalsize \textbf{Chấm điểm dinh dưỡng trong ngày}.
+                \vspace{0.3cm}
+                \item \normalsize Đưa ra \textbf{cảnh báo dinh dưỡng} (có xét ngữ cảnh calo và thời điểm trong ngày).
+                \vspace{0.3cm}
+                \item \normalsize Tổng hợp thành Insight và xu hướng sức khỏe (7/30 ngày).
             \end{itemize}
         \end{column}
     \end{columns}
-    \vspace{0.3cm}
-    \centering
-    \scriptsize \textit{*Ngưỡng tham khảo: AHA (Sodium, Sugar), WHO (Sugar), NIH (vi chất).}
 \end{frame}
 
 % Thời lượng dự kiến: 1 phút 30 giây
