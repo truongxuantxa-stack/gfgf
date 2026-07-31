@@ -681,6 +681,9 @@
 \begin{frame}[fragile]{BACKUP B1.2: Thuật toán Khử Gauss + Partial Pivoting}
     \textbf{2. Thuật toán: Khử Gauss + Partial Pivoting}
     
+    \footnotesize \textit{Khử Gauss là phương pháp giải hệ phương trình tuyến tính bằng các phép biến đổi sơ cấp trên hàng, đưa ma trận về dạng tam giác trên, sau đó thế ngược để tìm nghiệm.}
+    \vspace{0.1cm}
+    
     \begin{block}{Luồng thực thi của thuật toán}
         \footnotesize
         \textbf{Bước 1 — Quá trình khử (Forward Elimination):} Đưa hệ phương trình về dạng tam giác.\\
@@ -689,14 +692,14 @@
         $\bullet$ Dừng thuật toán ngay lập tức nếu phát hiện các nguyên liệu bị trùng lặp tỷ lệ dinh dưỡng (Ma trận suy biến).\\
         $\bullet$ Dùng phép trừ tỷ lệ để triệt tiêu dần các biến ở các hàng bên dưới.\\
         
-        \vspace{0.2cm}
+        \vspace{0.1cm}
         \textbf{Bước 2 — Quá trình thế ngược (Back Substitution):}\\
         $\bullet$ Bắt đầu từ phương trình cuối cùng (lúc này đã bị triệt tiêu chỉ còn đúng 1 ẩn số).\\
         $\bullet$ Giải ra ngay được khối lượng của nguyên liệu thứ 3.\\
         $\bullet$ Lấy kết quả đó thế ngược dần lên các phương trình bên trên để tìm ra khối lượng nguyên liệu 2 và 1.
     \end{block}
     
-    \vspace{0.2cm}
+    \vspace{0.1cm}
     \textbf{Giải thích thêm về Bước 1 (Forward Elimination):}
     \begin{itemize}
         \small
