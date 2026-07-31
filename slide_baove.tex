@@ -362,11 +362,11 @@
             \modulelabel{Food Scoring}
             \vspace{0.4cm}
             \begin{itemize}
-                \item \normalsize \textbf{Đánh giá từng món} theo mật độ dinh dưỡng (trên 100 kcal).
+                \item \normalsize \textbf{Chấm điểm món ăn} chuẩn hóa theo 100 kcal.
                 \vspace{0.3cm}
                 \item \normalsize Xét các chỉ số: protein, chất xơ, đường, natri và vi chất.
                 \vspace{0.3cm}
-                \item \normalsize \textbf{Ứng dụng:} Báo cáo PDF tổng hợp 7/30 ngày $\rightarrow$ Tìm ra Top 5 thực phẩm tốt/xấu nhất.
+                \item \normalsize \textbf{Ứng dụng:} Báo cáo PDF chấm điểm thực phẩm 7/30 ngày $\rightarrow$ Tìm ra Top 5 thực phẩm tốt/xấu nhất.
             \end{itemize}
         \end{column}
         
@@ -861,25 +861,30 @@
     \textbf{1. Bài toán: Tách Tín hiệu khỏi Nhiễu}
     \vspace{0.1cm}
     
-    Cân nặng hàng ngày bao gồm \textbf{Tín hiệu (Signal)} và \textbf{Nhiễu (Noise)}:
+    \small Cân nặng hàng ngày bao gồm \textbf{Tín hiệu (Signal)} và \textbf{Nhiễu (Noise)}:
     \begin{itemize}
         \item \textbf{Signal:} Xu hướng thay đổi mỡ thực sự của cơ thể (thay đổi rất chậm, khoảng $0.1 - 0.2$ kg/tuần).
         \item \textbf{Noise:} Dao động nước trong cơ thể, lượng thức ăn chưa tiêu hóa ($\pm 0.5 - 1.5$ kg/ngày).
     \end{itemize}
     
-    \textbf{Mục tiêu:} Loại bỏ nhiễu, giữ lại tín hiệu cốt lõi $\rightarrow$ tính $\Delta\text{Weight}$ chính xác $\rightarrow$ ước tính TDEE thực tế.
+    \textbf{Mục tiêu:} Giảm ảnh hưởng của dao động ngắn hạn, giữ lại tín hiệu cốt lõi $\rightarrow$ tính $\Delta\text{Weight}$ chính xác $\rightarrow$ ước tính TDEE thực tế.
     
-    \vspace{0.3cm}
-    \textbf{2. EMA = Bộ lọc thông thấp bậc 1 (First-order IIR Low-pass Filter)}
+    \vspace{0.1cm}
+    \normalsize \textbf{2. EMA = Bộ lọc thông thấp bậc 1}
     
-    \footnotesize \textit{EMA (Exponential Moving Average – Trung bình trượt hàm mũ) là phương pháp làm mượt chuỗi dữ liệu theo thời gian, trong đó dữ liệu mới được gán trọng số lớn hơn và ảnh hưởng của dữ liệu cũ giảm dần theo hàm mũ.}
+    \footnotesize \textit{EMA (Exponential Moving Average – Trung bình trượt hàm mũ) là phương pháp làm mượt chuỗi dữ liệu, trong đó các quan sát gần hiện tại có ảnh hưởng lớn hơn các quan sát ở xa trong quá khứ, và ảnh hưởng của dữ liệu cũ giảm dần theo hàm mũ.}
     
+    \vspace{-0.1cm}
     $$ EMA_t = \alpha \cdot W_t + (1 - \alpha) \cdot EMA_{t-1} $$
+    \vspace{-0.1cm}
     
-    \textbf{Diễn giải tần số:}
+    \normalsize \textbf{Ý nghĩa làm mượt (với $\alpha = 0.1$):}
     \begin{itemize}
-        \item Tín hiệu tần số \textbf{thấp} (xu hướng dài hạn) $\rightarrow$ \textbf{Đi qua (pass)}.
-        \item Tín hiệu tần số \textbf{cao} (nhiễu theo ngày) $\rightarrow$ \textbf{Bị suy giảm (attenuated)}.
+        \small
+        \item Cân nặng mới: \textbf{10\%}; xu hướng trước đó: \textbf{90\%}.
+        \item Biến động ngắn hạn chỉ ảnh hưởng nhẹ.
+        \item Thay đổi kéo dài sẽ tích lũy và hình thành xu hướng mới.
+        \item Giúp $\Delta\text{Weight}$ ổn định hơn khi tính Adaptive TDEE.
     \end{itemize}
 \end{frame}
 
@@ -929,11 +934,12 @@
     \end{itemize}
     
     \vspace{0.1cm}
-    \textbf{8. Phát hiện Plateau (Chững cân)}
-    \begin{block}{\scriptsize Logic phát hiện Plateau}
+    \textbf{8. Đánh giá độ tin cậy (Confidence Score)}
+    \begin{block}{\scriptsize Logic phân loại Confidence}
         \scriptsize
-        $\bullet$ \textbf{Nếu:} TDEE thực tế thấp hơn trên 5\% so với TDEE tĩnh (\texttt{diffPct < -5}).\\
-        $\bullet$ \textbf{Hành động:} Gắn cờ chững cân, chặn dưới mục tiêu bằng BMR và thông báo.
+        $\bullet$ \textbf{High:} Có đủ 7 ngày nhật ký (Hoàn hảo).\\
+        $\bullet$ \textbf{Medium:} Có 6 ngày nhật ký.\\
+        $\bullet$ \textbf{Low:} Vừa đủ ngưỡng tối thiểu (5 ngày nhật ký).
     \end{block}
     
     \vspace{0.1cm}
