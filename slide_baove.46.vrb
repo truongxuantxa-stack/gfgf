@@ -1,39 +1,32 @@
-\frametitle{BACKUP B7.1: Luồng xác thực \& Đồng bộ Frontend}
+\frametitle{BACKUP B7.1: Phân loại Route theo mức bảo vệ}
 \hypertarget{b7_target}{}
-    \textbf{1. Xử lý Route \& Code-splitting}
-    \begin{itemize}
-        \item Sử dụng \texttt{ProtectedRoute} và \texttt{AuthOnlyRoute} để bảo vệ các trang.
-        \item Áp dụng Code-splitting để tối ưu hóa thời gian tải trang (lazy loading).
-    \end{itemize}
-
+    \textbf{Tổ chức điều hướng (Routing) tại Frontend}
     \vspace{0.1cm}
-    \textbf{2. Luồng Refresh Token tự động (Axios Interceptor)}
-    \begin{center}
-    \begin{tikzpicture}[>=Stealth, node distance=0.3cm and 0.4cm,
-        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, text centered, font=\scriptsize, inner sep=4pt},
-        arrow/.style={->, thick, NutriDark}]
 
-        \node[box] (req) {Gửi Request};
-        \node[box, right=of req] (err) {Lỗi 401};
-        \node[box, right=of err] (ref) {Gọi API Refresh};
-        \node[box, right=of ref] (new) {Nhận Token mới};
-        \node[box, below=0.4cm of ref] (retry) {Gửi lại Request cũ};
-        \node[box, left=of retry] (cache) {Cập nhật Cache \& UI};
-
-        \draw[arrow] (req) -- (err);
-        \draw[arrow] (err) -- (ref);
-        \draw[arrow] (ref) -- (new);
-        \draw[arrow] (new) |- (retry);
-        \draw[arrow] (retry) -- (cache);
-    \end{tikzpicture}
-    \end{center}
+    \small
+    Hệ thống phân chia các tuyến đường (Route) trong \texttt{App.jsx} thành 4 nhóm với các mức độ bảo vệ khác nhau:
 
     \begin{itemize}
-        \item \textbf{Queue Request:} Các request gửi đến trong lúc đang refresh sẽ được đưa vào hàng đợi (queue) và đồng loạt gọi lại khi Refresh Token thành công.
-    \end{itemize}
+        \item \textbf{1. Public Routes (Không bảo vệ):}
+        \begin{itemize}
+            \item Các trang: \texttt{/}, \texttt{/login}, \texttt{/register}
+            \item Không yêu cầu đăng nhập, cho phép khách vãng lai truy cập.
+        \end{itemize}
 
-    \vspace{0.1cm}
-    \textbf{3. Đồng bộ trạng thái UI (TanStack Query)}
-    \begin{itemize}
-        \item Quản lý bộ nhớ đệm (cache) phía client. Các mutation chủ động gọi \texttt{invalidateQueries} cho những query key bị ảnh hưởng để giao diện refetch và đồng bộ với backend.
+        \item \textbf{2. AuthOnlyRoute (Bảo vệ Cấp 1):}
+        \begin{itemize}
+            \item Trang: \texttt{/onboarding}
+            \item Chỉ yêu cầu \textbf{đã đăng nhập}. Đặc biệt, route này \textbf{không} kiểm tra biến \texttt{isOnboarded} để tránh lặp vô hạn.
+        \end{itemize}
+
+        \item \textbf{3. ProtectedRoute + AppLayout (Bảo vệ Cấp 2):}
+        \begin{itemize}
+            \item Trang chính: \texttt{/dashboard}, \texttt{/diary}, \texttt{/meal-planner}, \texttt{/weight}...
+            \item Yêu cầu: Phải đăng nhập \textbf{VÀ} hoàn tất Onboarding. Bọc bởi \texttt{AppLayout} để có chung giao diện.
+        \end{itemize}
+
+        \item \textbf{4. Fallback (Bắt lỗi):}
+        \begin{itemize}
+            \item Route \texttt{*} $\rightarrow$ Trả về trang 404 Not Found.
+        \end{itemize}
     \end{itemize}
