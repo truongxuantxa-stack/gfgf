@@ -2,27 +2,26 @@
 \textbf{Tổ chức điều hướng (Routing) tại Frontend}
     \vspace{0.1cm}
 
+    \small
     Hệ thống phân chia các tuyến đường (Route) trong \texttt{App.jsx} thành 4 nhóm với các mức độ bảo vệ khác nhau:
 
-    \vspace{0.2cm}
     \begin{itemize}
-        \setlength{\itemsep}{6pt}
         \item \textbf{1. Public Routes (Không bảo vệ):}
         \begin{itemize}
             \item Các trang: \texttt{/}, \texttt{/login}, \texttt{/register}
-            \item Không yêu cầu đăng nhập, cho phép người dùng vãng lai truy cập.
+            \item Không yêu cầu đăng nhập, cho phép khách vãng lai truy cập.
         \end{itemize}
 
         \item \textbf{2. AuthOnlyRoute (Bảo vệ Cấp 1):}
         \begin{itemize}
             \item Trang: \texttt{/onboarding}
-            \item Chỉ yêu cầu người dùng \textbf{đã đăng nhập}. Đặc biệt, route này \textbf{không} kiểm tra biến \texttt{isOnboarded} để tránh bị lặp vô hạn (redirect loop).
+            \item Chỉ yêu cầu \textbf{đã đăng nhập}. Đặc biệt, route này \textbf{không} kiểm tra biến \texttt{isOnboarded} để tránh lặp vô hạn.
         \end{itemize}
 
         \item \textbf{3. ProtectedRoute + AppLayout (Bảo vệ Cấp 2):}
         \begin{itemize}
-            \item Các trang chính: \texttt{/dashboard}, \texttt{/diary}, \texttt{/meal-planner}, \texttt{/weight}, \texttt{/exercise}, \texttt{/profile}
-            \item Yêu cầu nghiêm ngặt: Phải đăng nhập \textbf{VÀ} đã hoàn tất quá trình Onboarding. Các trang này được bọc thêm \texttt{AppLayout} để có chung giao diện (Sidebar/Header).
+            \item Trang chính: \texttt{/dashboard}, \texttt{/diary}, \texttt{/meal-planner}, \texttt{/weight}...
+            \item Yêu cầu: Phải đăng nhập \textbf{VÀ} hoàn tất Onboarding. Bọc bởi \texttt{AppLayout} để có chung giao diện.
         \end{itemize}
 
         \item \textbf{4. Fallback (Bắt lỗi):}
