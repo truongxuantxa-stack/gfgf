@@ -1197,23 +1197,35 @@
 \end{frame}
 
 % --- BACKUP B6 ---
-\begin{frame}[label=b6]{BACKUP B6.1: Pipeline Scanner \& Xử lý rủi ro AI}
+\begin{frame}[label=b6]{BACKUP B6.1: Cơ chế xác minh cộng đồng (Trust Score)}
 \hypertarget{b6_target}{}
-    \textbf{1. Pipeline Ưu tiên Dữ liệu \& Chống rủi ro (Hallucination)}
-    \begin{itemize}
-        \small
-        \item \textbf{Thứ tự quét:} Ưu tiên Local DB Verified $\rightarrow$ Unverified $\rightarrow$ Open Food Facts $\rightarrow$ AI Vision. AI chỉ là giải pháp cuối cùng.
-        \item \textbf{Không tin tưởng tuyệt đối AI:} Dữ liệu AI trả về phải qua lớp \textbf{Physics Validation} (Tổng chất $\le 100$g, calo phải xấp xỉ tổng macro). Nếu vi phạm logic vật lý, hệ thống từ chối lưu.
-    \end{itemize}
-    
+    \textbf{Định giá độ tin cậy (Confidence Score) của dữ liệu}
     \vspace{0.2cm}
-    \textbf{2. Trust Score (Cơ chế Xác minh Đóng góp)}
-    \begin{itemize}
-        \small
-        \item \textbf{Đóng góp đầu tiên:} Dù từ AI hay người dùng, mức độ tin cậy ban đầu chỉ ở mức \textbf{0.3} (Chưa xác minh).
-        \item \textbf{Nâng cấp tin cậy:} Đòi hỏi có nhiều đóng góp tương đồng từ các người dùng khác nhau để nâng \textit{confidence} lên 0.5 và 0.8 (\textbf{Verified}).
-        \item \textbf{Giải quyết tranh chấp:} Mọi báo cáo sai lệch đều đẩy sản phẩm về trạng thái \textbf{Disputed} để Admin kiểm duyệt.
-    \end{itemize}
+    
+    Hệ thống không tin tưởng tuyệt đối vào bất kỳ dữ liệu đơn lẻ nào từ AI hay người dùng. Để sản phẩm trở thành \textbf{Verified} (đáng tin cậy), nó phải trải qua quá trình xác minh cộng đồng (Crowdsourcing).
+    
+    \vspace{0.3cm}
+    \begin{columns}[T]
+        \begin{column}{0.95\textwidth}
+            \modulelabel{Quy tắc thăng hạng (Hàm \texttt{recalculateConfidence})}
+            \vspace{0.15cm}
+            \begin{itemize}
+                \small
+                \item \textbf{1 đóng góp:} Confidence = \textbf{0.3} (Dữ liệu mới quét/chưa kiểm chứng).
+                \item \textbf{2 đóng góp tương đồng:} Confidence = \textbf{0.5} (Đáng chú ý).
+                \item \textbf{$\ge$ 3 đóng góp tương đồng:} Confidence = \textbf{0.8} $\rightarrow$ Tự động thăng hạng \textbf{Verified}.
+                \item \textbf{Ngoại lệ (CSDL uy tín):} Nếu nguồn là \texttt{OpenFoodFacts}, Confidence lập tức đạt \textbf{1.0} (Verified) vì đây là tổ chức quốc tế.
+            \end{itemize}
+            
+            \vspace{0.3cm}
+            \modulelabel{Triết lý thiết kế}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item Cơ chế này giúp \textbf{dữ liệu cộng đồng tự làm sạch và lớn dần}, thay vì đặt cược vào độ chính xác của một lần quét AI duy nhất. Mọi báo cáo sai lệch sẽ đưa sản phẩm về trạng thái \textbf{Disputed} chờ Admin duyệt.
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{BACKUP B6.2: Luồng xử lý ảnh dinh dưỡng (AI Vision)}
@@ -1265,6 +1277,67 @@
         \item \textbf{Điểm mấu chốt:} Hệ thống \textbf{không tin tưởng tuyệt đối} vào AI. Gemini Vision chỉ đóng vai trò trích xuất dữ liệu thô ban đầu để tiết kiệm công nhập liệu.
         \item Dữ liệu bắt buộc phải qua 2 chốt chặn: \textbf{Người dùng review/chỉnh sửa} ở Frontend và \textbf{Physics Validation} (logic vật lý, VD: tổng các chất $\le 100$g) ở Backend trước khi lưu.
     \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{BACKUP B6.3: Xử lý ngoại lệ với kết quả từ AI (JSON \& Validation)}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \modulelabel{1. Bắt buộc trả JSON}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item \textbf{Lý do:} Backend cần cấu trúc chuẩn để parse và lưu CSDL. Văn bản tự do khiến việc trích xuất \textit{calories, protein...} thiếu chính xác.
+                \item \textbf{Lợi ích:} Giúp kiểm tra trường bắt buộc, ép kiểu số và báo lỗi nếu AI trả sai định dạng.
+            \end{itemize}
+            
+            \vspace{0.2cm}
+            \modulelabel{2. Xử lý rác Markdown}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item Mặc dù prompt yêu cầu trả JSON thuần, AI đôi khi vẫn tự động bọc kết quả trong markdown code block (\verb|```json|).
+                \item \textbf{Giải pháp:} Service chủ động dọn dẹp chuỗi bằng cách loại bỏ \verb|```json| và \verb|```| trước khi gọi \texttt{JSON.parse()}. Giúp chống lỗi định dạng phổ biến từ AI.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \modulelabel{3. JSON sai hoặc thiếu trường}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item \textbf{TH1 - Parse Lỗi:} AI sinh văn bản không phải JSON (VD: \textit{"Calories khoảng..."}) $\rightarrow$ \texttt{JSON.parse()} văng lỗi.
+                \item \textbf{TH2 - Thiếu trường:} JSON hợp lệ nhưng thiếu 4 trường bắt buộc (\textit{calo, đạm, carb, béo}) hoặc không phải kiểu số.
+                \item \textbf{Giải pháp chung:} Backend \textbf{từ chối lưu} dữ liệu. Service ném lỗi rõ ràng để Controller báo về Frontend, yêu cầu người dùng chụp ảnh rõ nét hơn. Tránh tuyệt đối việc lưu rác (garbage) vào CSDL.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{BACKUP B6.4: Quét Barcode \& Chiến lược Fallback nhiều lớp}
+    \textbf{Chiến lược quét Barcode: Không phụ thuộc hoàn toàn vào AI}
+    \vspace{0.1cm}
+    
+    Để tối ưu tốc độ và chi phí API, việc giải mã Barcode được chia làm 3 lớp chiến lược:
+    
+    \begin{itemize}
+        \item \textbf{Strategy 1 (Ưu tiên): Native BarcodeDetector.} Sử dụng API có sẵn của trình duyệt. Tốc độ cực nhanh, xử lý hoàn toàn ở client-side.
+        \item \textbf{Strategy 2 (Dự phòng 1): html5-qrcode / ZXing.} Thư viện quét mã vạch fallback bằng JavaScript nếu trình duyệt không hỗ trợ API native.
+        \item \textbf{Strategy 3 (Dự phòng cuối): AI Vision (\texttt{extractBarcodeFromImage}).}
+    \end{itemize}
+    
+    \vspace{0.1cm}
+    \begin{columns}[T]
+        \begin{column}{0.98\textwidth}
+            \modulelabel{Cơ chế hoạt động của Strategy 3 (AI Fallback)}
+            \vspace{0.15cm}
+            \begin{itemize}
+                \small
+                \item Khi client-side thất bại (ảnh lóa, mờ), ảnh được nén (800px, Base64) gửi lên API.
+                \item AI sẽ không cố đọc vạch đen trắng, mà sẽ dùng OCR để \textbf{đọc các chữ số in bên dưới} mã vạch để trích xuất ra mã Barcode.
+                \item \textbf{Safety:} Backend ép JSON, validate Regex (chuỗi rỗng hoặc chỉ chứa số). Nếu AI đọc ra chữ cái hoặc trả rác, hệ thống dập lỗi và trả về \texttt{null} êm ái, bảo vệ luồng UX của người dùng khỏi bị crash.
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % --- BACKUP B7 ---
