@@ -885,6 +885,31 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}[label=b2_6]{BACKUP B2.6: Tổng kết luồng tính điểm Daily Health Score}
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.25cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.55cm, text width=8.5cm, text centered, font=\small},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[box, fill=NutriLightGray] (n1) {\textbf{1. Bắt đầu:} 100 điểm (Mức tối đa ban đầu)};
+        \node[box, below=of n1] (n2) {\textbf{2. Penalty (Trừ điểm):} Theo các cảnh báo Insight (có trọng số)};
+        \node[box, below=of n2] (n3) {\textbf{3. Bonus (Cộng điểm):} Calo lý tưởng, đủ Đạm, Nước, Xơ, Vi chất};
+        \node[box, below=of n3] (n4) {\textbf{4. Multiplier:} Nhân hệ số trượt (Calo quá thấp/cao, dư Đường)};
+        \node[box, below=of n4] (n5) {\textbf{5. Hard Cap:} Áp giới hạn trần (nếu vi chất/xơ quá thấp)};
+        \node[box, below=of n5] (n6) {\textbf{6. Clamp:} Ép điểm cuối cùng nằm trong khoảng [0, 100]};
+        \node[box, below=of n6, fill=NutriGreen!20, text=NutriDark, font=\small\bfseries] (n7) {\textbf{7. Kết quả:} Ra điểm số cuối cùng + Gán Label \& Emoji};
+        
+        \draw[arrow] (n1) -- (n2);
+        \draw[arrow] (n2) -- (n3);
+        \draw[arrow] (n3) -- (n4);
+        \draw[arrow] (n4) -- (n5);
+        \draw[arrow] (n5) -- (n6);
+        \draw[arrow] (n6) -- (n7);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
 % --- BACKUP B3 ---
 \begin{frame}[label=b3]{BACKUP B3.1: EMA \& Bộ Lọc Thông Thấp (Bài toán)}
 \hypertarget{b3_target}{}
