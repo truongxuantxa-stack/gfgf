@@ -35,5 +35,5 @@
     \vspace{0.1cm}
     \textbf{3. Đồng bộ trạng thái UI (TanStack Query)}
     \begin{itemize}
-        \item Quản lý bộ nhớ đệm (cache) phía client, tự động \texttt{invalidateQueries} sau mỗi \texttt{mutation} (thêm/sửa/xóa) để giao diện luôn đồng bộ.
+        \item Quản lý bộ nhớ đệm (cache) phía client. Các mutation chủ động gọi \texttt{invalidateQueries} cho những query key bị ảnh hưởng để giao diện refetch và đồng bộ với backend.
     \end{itemize}

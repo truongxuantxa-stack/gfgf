@@ -356,32 +356,35 @@
 
 % Thời lượng dự kiến: 40-50 giây
 \begin{frame}{Phân tích chất lượng dinh dưỡng}
-    \vspace{0.3cm}
+    \vspace{0.2cm}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
             \modulelabel{Food Scoring}
-            \vspace{0.4cm}
+            \vspace{0.25cm}
             \begin{itemize}
                 \item \normalsize \textbf{Chấm điểm món ăn} chuẩn hóa theo 100 kcal.
-                \vspace{0.3cm}
+                \vspace{0.2cm}
                 \item \normalsize Xét các chỉ số: protein, chất xơ, đường, natri và vi chất.
-                \vspace{0.3cm}
+                \vspace{0.2cm}
                 \item \normalsize \textbf{Ứng dụng:} Báo cáo PDF chấm điểm thực phẩm 7/30 ngày $\rightarrow$ Tìm ra Top 5 thực phẩm tốt/xấu nhất.
             \end{itemize}
         \end{column}
         
         \begin{column}{0.48\textwidth}
             \modulelabel{Daily Health Score}
-            \vspace{0.4cm}
+            \vspace{0.25cm}
             \begin{itemize}
                 \item \normalsize \textbf{Chấm điểm dinh dưỡng trong ngày}.
-                \vspace{0.3cm}
+                \vspace{0.2cm}
                 \item \normalsize Đưa ra \textbf{cảnh báo dinh dưỡng} (có xét ngữ cảnh calo và thời điểm trong ngày).
-                \vspace{0.3cm}
+                \vspace{0.2cm}
                 \item \normalsize Tổng hợp thành Insight và xu hướng sức khỏe (7/30 ngày).
             \end{itemize}
         \end{column}
     \end{columns}
+    
+    \vspace{0.3cm}
+    \centering\small \textit{\textcolor{NutriDark}{\textbf{Ghi chú phân biệt:} \textbf{Food Scoring} đánh giá độ lành mạnh của \textbf{từng món ăn đơn lẻ}, còn \textbf{Daily Health Score} đánh giá chất lượng \textbf{tổng thể chế độ ăn trong cả ngày}.}}
 \end{frame}
 
 % Thời lượng dự kiến: 1 phút 30 giây
@@ -742,8 +745,35 @@
 \end{frame}
 
 % --- BACKUP B2 ---
-\begin{frame}[label=b2]{BACKUP B2.1: Thuật toán Chấm Điểm — Phân loại 3 tầng (Triage)}
+\begin{frame}[label=b2]{BACKUP B2.0: Luồng tổng hợp dữ liệu Health Insights}
 \hypertarget{b2_target}{}
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.3cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.55cm, text width=9cm, text centered, font=\small},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[box, fill=NutriLightGray] (n1) {\textbf{1. DiaryEntry trong ngày} (Dữ liệu ăn uống thô)};
+        \node[box, below=of n1] (n2) {\textbf{2. sumNutritionFromEntries()}};
+        \node[box, below=of n2] (n3) {Tổng kết calo, đa lượng, vi lượng (fiber, sugar, sodium...)};
+        \node[box, below=of n3] (n4) {Đối chiếu mục tiêu cá nhân, waterGoal \& RDI y khoa (theo giới tính)};
+        \node[box, below=of n4] (n5) {\textbf{3. getHealthInsights()}};
+        \node[box, below=of n5, fill=NutriGreen!20] (n6) {Sinh cảnh báo: \textbf{danger / warning / water / suggestion}};
+        \node[box, below=of n6] (n7) {\textbf{4. calculateDailyHealthScore()}};
+        \node[box, below=of n7, fill=NutriDark!15, text=NutriDark, font=\small\bfseries] (n8) {Dashboard hiển thị: Điểm số tổng hợp (Score) + Health Insights};
+        
+        \draw[arrow] (n1) -- (n2);
+        \draw[arrow] (n2) -- (n3);
+        \draw[arrow] (n3) -- (n4);
+        \draw[arrow] (n4) -- (n5);
+        \draw[arrow] (n5) -- (n6);
+        \draw[arrow] (n6) -- (n7);
+        \draw[arrow] (n7) -- (n8);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\begin{frame}[label=b2_1]{BACKUP B2.1: Thuật toán Chấm Điểm — Phân loại 3 tầng (Triage)}
     \textbf{1. Kiến trúc thuật toán — Phân loại 3 tầng (Calorie-Gated)}
     \vspace{0.1cm}
     

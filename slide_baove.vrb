@@ -11,11 +11,12 @@
     \end{itemize}
 
     \vspace{0.1cm}
-    \textbf{8. Phát hiện Plateau (Chững cân)}
-    \begin{block}{\scriptsize Logic phát hiện Plateau}
+    \textbf{8. Đánh giá độ tin cậy (Confidence Score)}
+    \begin{block}{\scriptsize Logic phân loại Confidence}
         \scriptsize
-        $\bullet$ \textbf{Nếu:} TDEE thực tế thấp hơn trên 5\% so với TDEE tĩnh (\texttt{diffPct < -5}).\\
-        $\bullet$ \textbf{Hành động:} Gắn cờ chững cân, chặn dưới mục tiêu bằng BMR và thông báo.
+        $\bullet$ \textbf{High:} Có đủ 7 ngày nhật ký (Hoàn hảo).\\
+        $\bullet$ \textbf{Medium:} Có 6 ngày nhật ký.\\
+        $\bullet$ \textbf{Low:} Vừa đủ ngưỡng tối thiểu (5 ngày nhật ký).
     \end{block}
 
     \vspace{0.1cm}
