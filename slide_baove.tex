@@ -814,8 +814,18 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{BACKUP B2.3: Nhận biết ngữ cảnh (Context-Awareness)}
-    \textbf{3. Nhận biết ngữ cảnh (Context-Awareness) — Xử lý theo thời gian thực}
+\begin{frame}[t]{BACKUP B2.3: Điểm thưởng}
+    \textbf{3. Điểm thưởng (Bonus Rules)}
+    \begin{itemize}
+        \item Calo đạt 90–110\% mục tiêu: \textbf{+5 điểm}.
+        \item Đạt mục tiêu Protein: \textbf{+3 điểm}.
+        \item Uống đủ nước mục tiêu: \textbf{+5 điểm}.
+        \item Đạt mục tiêu Chất xơ: \textbf{+2 điểm}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{BACKUP B2.4: Nhận biết ngữ cảnh (Context-Awareness)}
+    \textbf{4. Nhận biết ngữ cảnh (Context-Awareness) — Xử lý theo thời gian thực}
     \vspace{0.1cm}
     
     \begin{block}{\small Cổng logic kiểm tra cảnh báo thiếu hụt}
@@ -831,16 +841,6 @@
         \item \textbf{Cảnh báo DƯ THỪA} (muối, đường, calo vượt): Kích hoạt \textbf{MỌI LÚC}. (Ví dụ: Ăn mặn lúc sáng vẫn cần phải biết ngay).
         \item \textbf{Cảnh báo THIẾU HỤT}: Chỉ kích hoạt khi \texttt{isDayComplete = true}. (Tránh false positive khi người dùng mới chỉ ăn sáng xong).
         \item \textbf{\texttt{clientHour}}: Được truyền từ Frontend để hệ thống Backend xử lý đúng ngữ cảnh thời gian, tránh sai lệch múi giờ (Ví dụ: Server ở múi giờ UTC 13:30, nhưng người dùng ở VN đang là 20:30).
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[t]{BACKUP B2.4: Điểm thưởng}
-    \textbf{4. Điểm thưởng (Bonus Rules)}
-    \begin{itemize}
-        \item Calo đạt 90–110\% mục tiêu: \textbf{+5 điểm}.
-        \item Đạt mục tiêu Protein: \textbf{+3 điểm}.
-        \item Uống đủ nước mục tiêu: \textbf{+5 điểm}.
-        \item Đạt mục tiêu Chất xơ: \textbf{+2 điểm}.
     \end{itemize}
 \end{frame}
 
