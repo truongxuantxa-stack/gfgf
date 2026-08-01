@@ -391,20 +391,26 @@
 \begin{frame}{Meal Planner – Tính khẩu phần bằng phương pháp khử Gauss}
     \textbf{Bài toán:} Từ mục tiêu Protein, Carb và Fat của bữa ăn, hệ thống lựa chọn tổ hợp nguyên liệu phù hợp và tính khối lượng cần sử dụng.
     
-    \vspace{0.3cm}
+    \vspace{0.1cm}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
-            \vspace{0.1cm}
+            \textbf{\textcolor{NutriGreen!80!black}{Vấn đề: Chồng lấn đa lượng (Macro Overlap)}}
+            \vspace{0.05cm}
+            
             \begin{itemize}
-                \item \small \textbf{Cố định lượng rau:} Ưu tiên chất xơ trước, sau đó trừ đi các macro tương ứng.
-                \vspace{0.25cm}
-                \item \small \textbf{Lập hệ phương trình $A\mathbf{x} = \mathbf{b}$:} Trong đó $A$ là hàm lượng dinh dưỡng, $\mathbf{b}$ là mục tiêu.
-                \vspace{0.25cm}
-                \item \small \textbf{Khử Gauss + Partial Pivoting:} Giải hệ tuyến tính an toàn, phát hiện tỷ lệ trùng lặp.
-                \vspace{0.25cm}
-                \item \small \textbf{Kiểm tra nghiệm:} Lọc các nghiệm âm hoặc khối lượng bất thường.
-                \vspace{0.25cm}
-                \item \small \textbf{Xử lý ngoại lệ:} Nếu không khả thi, tự động \textbf{chọn tổ hợp khác}.
+                \scriptsize \setlength{\itemsep}{2pt}
+                \item Mỗi nguyên liệu không chỉ chứa 1 chất duy nhất. Ví dụ: \textbf{Gạo} chủ yếu là Carb nhưng vẫn có Protein; \textbf{Gà} giàu Protein nhưng vẫn có Fat.
+                \item Nếu tính khối lượng từng món một cách độc lập thì tổng macro cuối cùng sẽ \textbf{bị dội lên sai lệch}.
+            \end{itemize}
+            
+            \vspace{0.2cm}
+            \textbf{\textcolor{NutriGreen!80!black}{Giải pháp: Hệ phương trình tuyến tính}}
+            \vspace{0.05cm}
+            
+            \begin{itemize}
+                \scriptsize \setlength{\itemsep}{2pt}
+                \item Mô hình hóa bài toán thành hệ phương trình $A\mathbf{x} = \mathbf{b}$ để xử lý triệt để sự phụ thuộc chéo của các chất.
+                \item Nghiệm $\mathbf{x}$ chính là \textbf{khối lượng (gram) chính xác} của từng nguyên liệu cần dùng để khớp hoàn hảo bộ 3 mục tiêu Carb - Protein - Fat cùng lúc.
             \end{itemize}
         \end{column}
 
@@ -1052,8 +1058,9 @@
 % --- BACKUP B5 ---
 \begin{frame}[label=b5_0]{BACKUP B5.0: Luồng tổng hợp thuật toán Food Scoring}
 \hypertarget{b5_target}{}
-    \vspace{0.1cm}
+    \vspace{-0.1cm}
     \begin{center}
+    \resizebox{!}{0.85\textheight}{
     \begin{tikzpicture}[>=Stealth, node distance=0.25cm,
         box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.55cm, text width=9.5cm, text centered, font=\small},
         arrow/.style={->, thick, NutriDark}]
@@ -1075,6 +1082,7 @@
         \draw[arrow] (n6) -- (n7);
         \draw[arrow] (n7) -- (n8);
     \end{tikzpicture}
+    }
     \end{center}
 \end{frame}
 
