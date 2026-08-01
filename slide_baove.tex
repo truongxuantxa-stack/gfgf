@@ -1205,31 +1205,6 @@
     \small \textit{*Ghi chú: Phạt/trần vi chất được miễn cho nhóm thịt, protein hoặc nguồn protein rất giàu đạm; trần chất xơ cũng có các nhóm được miễn.}
 \end{frame}
 
-\begin{frame}{BACKUP B5.4: Chi tiết Thuật toán Trích xuất thói quen \& Đánh giá}
-    \textbf{Luồng xử lý dữ liệu (\texttt{buildWeeklyFoodReport}):}
-    \vspace{0.1cm}
-    
-    \small
-    \begin{enumerate}
-        \item \textbf{Tổng hợp (Aggregation):} Quét toàn bộ nhật ký ăn uống (\texttt{diaryEntries}), gộp các món ăn giống nhau và tính lượng calo tiêu thụ trung bình.
-        \item \textbf{Chấm điểm (Scoring):} Dùng \texttt{scoreFoodItem()} đánh giá mật độ dinh dưỡng (thang 100 điểm) dựa trên lượng vi chất (Vitamin, Canxi...) và đa lượng (Đạm, Xơ, Đường, Muối).
-        \item \textbf{Lọc tần suất (Frequency Filter):} Chỉ xét các món xuất hiện $\ge 2$ lần/tuần (hoặc $\ge 4$ lần/tháng) để xác nhận đây là "thói quen".
-        \item \textbf{Phân loại thói quen (Branching \& Top-K):}
-        \begin{itemize}
-            \item \textbf{Thói quen Tốt:} Điểm $\ge 70$. Trích xuất Top 5 món điểm cao nhất để khích lệ.
-            \item \textbf{Vùng Im lặng (Neutral):} Điểm $60 - 69$. Bỏ qua để giảm nhiễu thông tin (Cognitive Load).
-            \item \textbf{Thói quen Cần hạn chế:} Điểm $< 60$. Trích xuất Top 5 món điểm thấp nhất.
-        \end{itemize}
-        \item \textbf{Kết luận Toàn cục (Weekly Verdict):} Dựa vào \textit{Điểm trung bình} và \textit{Tỷ lệ Cờ đỏ} (\% lượng bữa ăn $< 60$ điểm) để xếp loại:
-        \begin{itemize}
-            \item \textbf{Xuất sắc (Xanh):} Cờ đỏ $\le 15\%$ VÀ Điểm TB $\ge 75$.
-            \item \textbf{Khá (Xanh/Vàng):} Cờ đỏ $\le 30\%$ VÀ Điểm TB $\ge 65$.
-            \item \textbf{Cần lưu ý (Cam):} Cờ đỏ $\le 50\%$ VÀ Điểm TB $\ge 50$.
-            \item \textbf{Tệ (Đỏ):} Các trường hợp còn lại.
-        \end{itemize}
-    \end{enumerate}
-\end{frame}
-
 \begin{frame}[label=b5_3]{BACKUP B5.3: Food Scoring -- Miễn trừ phạt (Triage Logic)}
     \begin{columns}[T]
         \begin{column}{0.48\textwidth}
@@ -1253,6 +1228,31 @@
             \end{itemize}
         \end{column}
     \end{columns}
+\end{frame}
+
+\begin{frame}{BACKUP B5.4: Chi tiết Thuật toán Trích xuất thói quen \& Đánh giá}
+    \textbf{Luồng xử lý dữ liệu (\texttt{buildWeeklyFoodReport}):}
+    \vspace{0.1cm}
+    
+    \small
+    \begin{enumerate}
+        \item \textbf{Tổng hợp (Aggregation):} Quét toàn bộ nhật ký ăn uống (\texttt{diaryEntries}), gộp các món ăn giống nhau và tính lượng calo tiêu thụ trung bình.
+        \item \textbf{Chấm điểm (Scoring):} Dùng \texttt{scoreFoodItem()} đánh giá mật độ dinh dưỡng (thang 100 điểm) dựa trên lượng vi chất (Vitamin, Canxi...) và đa lượng (Đạm, Xơ, Đường, Muối).
+        \item \textbf{Lọc tần suất (Frequency Filter):} Chỉ xét các món xuất hiện $\ge 2$ lần/tuần (hoặc $\ge 4$ lần/tháng) để xác nhận đây là "thói quen".
+        \item \textbf{Phân loại thói quen (Branching \& Top-K):}
+        \begin{itemize}
+            \item \textbf{Thói quen Tốt:} Điểm $\ge 70$. Trích xuất Top 5 món điểm cao nhất để khích lệ.
+            \item \textbf{Vùng Im lặng (Neutral):} Điểm $60 - 69$. Bỏ qua để giảm nhiễu thông tin (Cognitive Load).
+            \item \textbf{Thói quen Cần hạn chế:} Điểm $< 60$. Trích xuất Top 5 món điểm thấp nhất.
+        \end{itemize}
+        \item \textbf{Kết luận Toàn cục (Weekly Verdict):} Dựa vào \textit{Điểm trung bình} và \textit{Tỷ lệ Cờ đỏ} (\% lượng bữa ăn $< 60$ điểm) để xếp loại:
+        \begin{itemize}
+            \item \textbf{Xuất sắc (Xanh):} Cờ đỏ $\le 15\%$ VÀ Điểm TB $\ge 75$.
+            \item \textbf{Khá (Xanh/Vàng):} Cờ đỏ $\le 30\%$ VÀ Điểm TB $\ge 65$.
+            \item \textbf{Cần lưu ý (Cam):} Cờ đỏ $\le 50\%$ VÀ Điểm TB $\ge 50$.
+            \item \textbf{Tệ (Đỏ):} Các trường hợp còn lại.
+        \end{itemize}
+    \end{enumerate}
 \end{frame}
 
 % --- BACKUP B6 ---
