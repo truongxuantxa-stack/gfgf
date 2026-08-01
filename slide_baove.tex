@@ -1200,29 +1200,29 @@
 \begin{frame}[label=b6]{BACKUP B6.1: Cơ chế xác minh cộng đồng (Trust Score)}
 \hypertarget{b6_target}{}
     \textbf{Định giá độ tin cậy (Confidence Score) của dữ liệu}
-    \vspace{0.2cm}
+    \vspace{0.1cm}
     
-    Hệ thống không tin tưởng tuyệt đối vào bất kỳ dữ liệu đơn lẻ nào từ AI hay người dùng. Để sản phẩm trở thành \textbf{Verified} (đáng tin cậy), nó phải trải qua quá trình xác minh cộng đồng (Crowdsourcing).
+    Hệ thống không tin tuyệt đối vào dữ liệu đơn lẻ. Để đạt trạng thái \textbf{Verified}, dữ liệu phải trải qua quá trình xác minh cộng đồng (Crowdsourcing).
     
-    \vspace{0.3cm}
+    \vspace{0.1cm}
     \begin{columns}[T]
-        \begin{column}{0.95\textwidth}
+        \begin{column}{0.98\textwidth}
             \modulelabel{Quy tắc thăng hạng (Hàm \texttt{recalculateConfidence})}
-            \vspace{0.15cm}
+            \vspace{0.1cm}
             \begin{itemize}
                 \small
-                \item \textbf{1 đóng góp:} Confidence = \textbf{0.3} (Dữ liệu mới quét/chưa kiểm chứng).
+                \item \textbf{1 đóng góp:} Confidence = \textbf{0.3} (Mới quét/chưa kiểm chứng).
                 \item \textbf{2 đóng góp tương đồng:} Confidence = \textbf{0.5} (Đáng chú ý).
-                \item \textbf{$\ge$ 3 đóng góp tương đồng:} Confidence = \textbf{0.8} $\rightarrow$ Tự động thăng hạng \textbf{Verified}.
-                \item \textbf{Ngoại lệ (CSDL uy tín):} Nếu nguồn là \texttt{OpenFoodFacts}, Confidence lập tức đạt \textbf{1.0} (Verified) vì đây là tổ chức quốc tế.
+                \item \textbf{$\ge$ 3 đóng góp tương đồng:} Confidence = \textbf{0.8} $\rightarrow$ \textbf{Verified}.
+                \item \textbf{Ngoại lệ:} Nguồn \texttt{OpenFoodFacts} $\rightarrow$ Confidence lập tức \textbf{1.0} (Verified).
             \end{itemize}
             
-            \vspace{0.3cm}
+            \vspace{0.15cm}
             \modulelabel{Triết lý thiết kế}
             \vspace{0.1cm}
             \begin{itemize}
                 \small
-                \item Cơ chế này giúp \textbf{dữ liệu cộng đồng tự làm sạch và lớn dần}, thay vì đặt cược vào độ chính xác của một lần quét AI duy nhất. Mọi báo cáo sai lệch sẽ đưa sản phẩm về trạng thái \textbf{Disputed} chờ Admin duyệt.
+                \item Giúp dữ liệu cộng đồng tự làm sạch và lớn dần, không phụ thuộc vào 1 lần AI đọc ảnh. Báo cáo sai lệch sẽ đưa sản phẩm về \textbf{Disputed} chờ Admin duyệt.
             \end{itemize}
         \end{column}
     \end{columns}
