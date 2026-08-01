@@ -1050,8 +1050,35 @@
 \end{frame}
 
 % --- BACKUP B5 ---
-\begin{frame}[label=b5]{BACKUP B5.1: Food Scoring — Mật độ Dinh dưỡng}
+\begin{frame}[label=b5_0]{BACKUP B5.0: Luồng tổng hợp thuật toán Food Scoring}
 \hypertarget{b5_target}{}
+    \vspace{0.1cm}
+    \begin{center}
+    \begin{tikzpicture}[>=Stealth, node distance=0.25cm,
+        box/.style={rectangle, draw=NutriDark, fill=white, rounded corners, minimum height=0.55cm, text width=9.5cm, text centered, font=\small},
+        arrow/.style={->, thick, NutriDark}]
+        
+        \node[box, fill=NutriLightGray] (n1) {\textbf{1. Đầu vào:} Nhận Food object (Calories, Đa lượng, Vi lượng...)};
+        \node[box, below=of n1] (n2) {\textbf{2. Lọc ngoại lệ:} Bỏ qua không chấm nếu Calories $< 20$ kcal};
+        \node[box, below=of n2] (n3) {\textbf{3. Chuẩn hóa:} Quy đổi toàn bộ chất về Mật độ dinh dưỡng / 100 kcal};
+        \node[box, below=of n3] (n4) {\textbf{4. Base Score:} Khởi tạo từ 50 điểm (Thang điểm 0 - 100)};
+        \node[box, below=of n4] (n5) {\textbf{5. Bonus/Penalty:} +Điểm (Đạm, Xơ, Vi chất) | -Điểm (Muối, Đường)};
+        \node[box, below=of n5] (n6) {\textbf{6. Hard Cap:} Áp trần điểm (Vd: Tối đa 40đ nếu siêu mặn, 60đ nếu thiếu xơ)};
+        \node[box, below=of n6] (n7) {\textbf{7. Clamp:} Ép điểm số cuối cùng nằm chặt trong đoạn [0, 100]};
+        \node[box, below=of n7, fill=NutriGreen!20, text=NutriDark, font=\small\bfseries] (n8) {\textbf{8. Kết quả:} Trả về \texttt{qualityScore, qualityLevel, label, badge}};
+        
+        \draw[arrow] (n1) -- (n2);
+        \draw[arrow] (n2) -- (n3);
+        \draw[arrow] (n3) -- (n4);
+        \draw[arrow] (n4) -- (n5);
+        \draw[arrow] (n5) -- (n6);
+        \draw[arrow] (n6) -- (n7);
+        \draw[arrow] (n7) -- (n8);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\begin{frame}[label=b5]{BACKUP B5.1: Food Scoring — Mật độ Dinh dưỡng}
     \textbf{1. Nguyên lý Mật độ Dinh dưỡng (Nutrient Density per 100 kcal)}
     \begin{itemize}
         \small
