@@ -810,7 +810,41 @@
     \end{center}
 \end{frame}
 
-\begin{frame}[label=b2_1]{BACKUP B2.1: Thuật toán Chấm Điểm — Phân loại 3 tầng (Triage)}
+\begin{frame}[fragile, label=b2_1]{BACKUP B2.1: RDI theo giới tính (Gender-based RDI)}
+    \textbf{Nhu cầu dinh dưỡng y khoa theo giới tính}
+    \vspace{0.1cm}
+    
+    Một số ngưỡng vi chất và đa lượng được hệ thống tham chiếu theo chuẩn y khoa (WHO, AHA, IOM) thay đổi phụ thuộc vào giới tính của người dùng. Hệ thống đóng gói logic này vào helper \texttt{getRDIByGender()}.
+    
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \small
+                \item \textbf{Đường (Sugar):} Nam 36g, Nữ 25g
+                \item \textbf{Sắt (Iron):} Nam 8mg, Nữ 18mg 
+                \item \textbf{Chất xơ (Fiber):} Nam 30-38g, Nữ 25g
+                \item \textbf{Vitamin C:} Nam 90mg, Nữ 75mg
+                \item \textbf{Vitamin A:} Nam 900µg, Nữ 700µg
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \small
+                \item \textbf{Muối (Sodium):} Chung 2300mg
+                \item \textbf{Canxi (Calcium):} Chung 1000mg
+            \end{itemize}
+            
+            \vspace{0.3cm}
+            \begin{block}{\small Thiết kế tối ưu (DRY)}
+                \footnotesize Hàm \texttt{getRDIByGender()} được gọi chung bởi cả \texttt{getHealthInsights()} và \texttt{calculateDailyHealthScore()}. Việc này giúp tập trung các biến số y khoa vào một nơi, tránh hard-code rải rác.
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[label=b2_2]{BACKUP B2.2: Thuật toán Chấm Điểm — Phân loại 3 tầng (Triage)}
     \textbf{1. Kiến trúc thuật toán — Phân loại 3 tầng (Calorie-Gated)}
     \vspace{0.1cm}
     
@@ -833,7 +867,7 @@
     \small \textit{Nguồn code: Hàm \texttt{getCalorieLevel(calPct)} và \texttt{getHealthInsights()} trong \texttt{suggestion.service.js}.}
 \end{frame}
 
-\begin{frame}[fragile]{BACKUP B2.2: Weighted Penalty — Hàm phạt tỷ lệ theo mức độ sai lệch}
+\begin{frame}[fragile]{BACKUP B2.3: Weighted Penalty — Hàm phạt tỷ lệ theo mức độ sai lệch}
     \textbf{2. Weighted Penalty — Hàm phạt tỷ lệ theo mức độ sai lệch}
     \vspace{0.1cm}
     
@@ -851,7 +885,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{BACKUP B2.3: Điểm thưởng}
+\begin{frame}[t]{BACKUP B2.4: Điểm thưởng}
     \textbf{3. Điểm thưởng (Bonus Rules)}
     \begin{itemize}
         \item Calo đạt 90–110\% mục tiêu: \textbf{+5 điểm}.
@@ -861,7 +895,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{BACKUP B2.4: Nhận biết ngữ cảnh (Context-Awareness)}
+\begin{frame}[fragile]{BACKUP B2.5: Nhận biết ngữ cảnh (Context-Awareness)}
     \textbf{4. Nhận biết ngữ cảnh (Context-Awareness) — Xử lý theo thời gian thực}
     \vspace{0.1cm}
     
@@ -881,7 +915,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{BACKUP B2.5: Hệ số trượt \& Giới hạn trần (Multiplier \& Hard Cap)}
+\begin{frame}{BACKUP B2.6: Hệ số trượt \& Giới hạn trần (Multiplier \& Hard Cap)}
     \textbf{5. Sliding Calorie Multiplier (Nhân toàn bộ điểm)}
     
     \begin{columns}[T]
@@ -922,7 +956,7 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}[label=b2_6]{BACKUP B2.6: Tổng kết luồng tính điểm Daily Health Score}
+\begin{frame}[label=b2_7]{BACKUP B2.7: Tổng kết luồng tính điểm Daily Health Score}
     \vspace{0.1cm}
     \begin{center}
     \begin{tikzpicture}[>=Stealth, node distance=0.25cm,
@@ -1171,7 +1205,7 @@
     \small \textit{*Ghi chú: Phạt/trần vi chất được miễn cho nhóm thịt, protein hoặc nguồn protein rất giàu đạm; trần chất xơ cũng có các nhóm được miễn.}
 \end{frame}
 
-\begin{frame}{BACKUP B5.3: Chi tiết Thuật toán Trích xuất thói quen \& Đánh giá}
+\begin{frame}{BACKUP B5.4: Chi tiết Thuật toán Trích xuất thói quen \& Đánh giá}
     \textbf{Luồng xử lý dữ liệu (\texttt{buildWeeklyFoodReport}):}
     \vspace{0.1cm}
     

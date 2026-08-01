@@ -1,23 +1,24 @@
-\frametitle{BACKUP B3.4: Guardrails — Chống nhiễu dữ liệu (Anti-Noise)}
-\textbf{7. Tránh cập nhật sai lệch (Guardrails)}
+\frametitle{BACKUP B6.5: Quản trị Rủi ro API (Key Rotation \& Timeout)}
+\begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \modulelabel{1. Cơ chế xoay vòng khóa (Key Rotation)}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item \textbf{Vấn đề:} API miễn phí của Gemini có giới hạn ngặt nghèo về Quota (lỗi \texttt{429 Too Many Requests}).
+                \item \textbf{Giải pháp:} Cung cấp mảng nhiều API Keys vào biến môi trường \texttt{GOOGLE\_API\_KEY} (cách nhau bằng dấu phẩy).
+                \item Hàm \texttt{executeWithKeyRotation()} tự động bắt lỗi 429. Nếu gặp, hệ thống sẽ \textbf{xoay vòng sang Key tiếp theo} và gọi lại thay vì văng lỗi, giúp tăng tính sẵn sàng cho Backend.
+            \end{itemize}
+        \end{column}
 
-    TDEE tĩnh chỉ là ước lượng. TDEE thực tế được tính bằng calo và cân nặng đã làm mượt (EMA). Để chống người dùng nhập sai, hệ thống bảo vệ bằng các lớp:
-
-    \begin{itemize}
-        \scriptsize
-        \item \textbf{Không cập nhật ngay:} Yêu cầu \textbf{tối thiểu 2 tuần hợp lệ} (\texttt{validWeeksCount} $\ge 2$) mới được cập nhật vào User. Tuần đầu tiên chỉ đóng vai trò khởi tạo (Warm-up).
-        \item \textbf{Minimum data:} Mỗi tuần phải có $\ge 5$ ngày nhật ký + $\ge 2$ lần cân để đảm bảo ý nghĩa thống kê.
-        \item \textbf{Giới hạn biên (Clamp):} TDEE thực tế bị khóa ở mức $\pm 30\%$ so với TDEE tĩnh để chặn các đột biến từ dữ liệu rác.
-    \end{itemize}
-
-    \vspace{0.1cm}
-    \textbf{8. Đánh giá độ tin cậy (Confidence Score)}
-    \begin{block}{\scriptsize Logic phân loại Confidence}
-        \scriptsize
-        $\bullet$ \textbf{High:} Có đủ 7 ngày nhật ký (Hoàn hảo).\\
-        $\bullet$ \textbf{Medium:} Có 6 ngày nhật ký.\\
-        $\bullet$ \textbf{Low:} Vừa đủ ngưỡng tối thiểu (5 ngày nhật ký).
-    \end{block}
-
-    \vspace{0.1cm}
-    \textbf{9. Tự động hóa (Cron Job):} Chạy ngầm vào 0:00 sáng Thứ Hai để tổng hợp và cập nhật TDEE cho tuần mới.
+        \begin{column}{0.48\textwidth}
+            \modulelabel{2. Giới hạn thời gian (Timeout 30s)}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item \textbf{Vấn đề:} Đôi khi server AI bị treo (hanging), không phản hồi khiến giao diện người dùng phải chờ mãi mãi.
+                \item \textbf{Giải pháp:} Cài đặt cơ chế chặn Timeout \textbf{30 giây} bằng \texttt{Promise.race}.
+                \item Nếu quá 30s, API sẽ chủ động ném lỗi \textit{"Gemini API timeout"} để giải phóng luồng, giúp Frontend báo lỗi kịp thời để user thử lại thay vì đứng chờ vô tận.
+            \end{itemize}
+        \end{column}
+    \end{columns}
