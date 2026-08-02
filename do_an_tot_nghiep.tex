@@ -769,177 +769,13 @@ Hình \ref{fig:kientruc_tongthe} mô tả luồng truy xuất dữ liệu: Ngư�
 \subsection{Mô hình kiến trúc Client - Server}
 Việc phân chia thành phần Client và Server phân định rõ ràng trách nhiệm hiển thị và xử lý logic nghiệp vụ. Client nhận dữ liệu định dạng JSON để cập nhật giao diện không cần tải lại trang. Trong khi đó, Server đảm bảo tính bảo mật và toàn vẹn dữ liệu thông qua cơ chế kiểm tra và điều phối tập trung.
 
-\subsection{Kiến trúc Frontend}
-Frontend được tổ chức theo kiến trúc React SPA dạng component. Hệ thống điều hướng bằng React Router và bảo vệ quyền truy cập bằng Auth Context. Việc quản lý trạng thái dữ liệu (cache, đồng bộ) được thực hiện tối ưu qua TanStack Query, giảm thiểu gánh nặng gọi API lặp lại. Quá trình trao đổi dữ liệu với Backend do Axios đảm nhiệm (Chi tiết xem Hình \ref{fig:kientruc_frontend}).
+\textbf{Kiến trúc Frontend:} Frontend được tổ chức theo kiến trúc React SPA dạng component. Hệ thống điều hướng bằng React Router và bảo vệ quyền truy cập bằng Auth Context. Việc quản lý trạng thái dữ liệu (cache, đồng bộ) được thực hiện tối ưu qua TanStack Query, giảm thiểu gánh nặng gọi API lặp lại. Quá trình trao đổi dữ liệu với Backend do Axios đảm nhiệm. Kiến trúc Frontend chi tiết sẽ được trình bày tại Chương 3 (Hình \ref{fig:frontend_architecture}).
 
-\begin{figure}[htbp]
-    \centering
-    \resizebox{0.8\textwidth}{!}{
-    \begin{tikzpicture}[
-        node distance=0.6cm and 1.5cm,
-        box/.style={rectangle, draw=black, rounded corners=4pt, inner sep=6pt, align=center, fill=white, font=\bfseries\fontsize{10pt}{12pt}\selectfont, minimum width=7.5cm},
-        authbox/.style={rectangle, draw=orange, rounded corners=4pt, inner sep=6pt, align=center, fill=orange!10, font=\bfseries\fontsize{10pt}{12pt}\selectfont, minimum width=4cm},
-        groupbox/.style={rectangle, draw=black, rounded corners=6pt, inner sep=15pt, align=center, fill=cyan!5},
-        grouptitle/.style={font=\bfseries\fontsize{12pt}{14pt}\selectfont},
-        arrow/.style={-{Stealth[length=3mm]}, thick},
-        dashedarrow/.style={-{Stealth[length=3mm]}, thick, dashed, draw=orange}
-    ]
+\textbf{Kiến trúc Backend:} Backend tổ chức theo mô hình MVC kết hợp tầng Service tập trung nghiệp vụ. Kiến trúc phân lớp Backend được trình bày chi tiết tại Hình \ref{fig:backend_architecture}. Controller chỉ nhận nhiệm vụ nhận và trả dữ liệu, mọi xử lý cốt lõi (tính toán dinh dưỡng, thuật toán, quét mã vạch) được trừu tượng hóa vào Service. Cách thiết kế này nâng cao tính độc lập của logic hệ thống, giúp dễ dàng mở rộng và bảo trì.
 
-        % Main flow (vertical)
-        \node[box, fill=gray!10, minimum width=4cm] (user) {Người dùng};
-        
-        \node[box, below=1.5cm of user] (providers) {QueryClientProvider | AuthProvider | BrowserRouter};
-        
-        \node[box, below=0.6cm of providers] (router) {React Router\\ \normalfont\fontsize{9pt}{11pt}\selectfont Routes, ProtectedRoute, AuthOnlyRoute};
-        
-        \node[box, below=0.6cm of router] (pages) {Pages\\ \normalfont\fontsize{9pt}{11pt}\selectfont Dashboard, Diary, Meal Planner, Weight, Exercise, Profile\\ \normalfont\fontsize{9pt}{11pt}\selectfont Login, Register, Onboarding};
-        
-        \node[box, below=0.6cm of pages] (components) {Components\\ \normalfont\fontsize{9pt}{11pt}\selectfont Layout, Cards, Forms, Modals, Charts, Scanner UI};
-        
-        \node[box, below=0.6cm of components] (hooks) {Custom Hooks\\ \normalfont\fontsize{9pt}{11pt}\selectfont useDashboard, useDiary, useWeight, useMealPlanner, useScanner...};
-        
-        \node[box, below=0.6cm of hooks] (query) {TanStack Query\\ \normalfont\fontsize{9pt}{11pt}\selectfont useQuery, useMutation, cache, invalidateQueries};
-        
-        \node[box, below=0.6cm of query] (axios) {Axios\\ \normalfont\fontsize{9pt}{11pt}\selectfont baseURL /api/v1, Authorization Header, Refresh Token};
-        
-        \node[box, fill=blue!10, below=1.2cm of axios, minimum width=5cm] (backend) {Backend RESTful API};
+\textbf{Kiến trúc cơ sở dữ liệu:} Cơ sở dữ liệu MySQL được thiết kế quan hệ, tổ chức xoay quanh thông tin người dùng, lịch sử dinh dưỡng, cân nặng và luyện tập. Cơ sở dữ liệu được phân chia thành các nhóm dữ liệu người dùng, nhật ký, Meal Planner, Adaptive TDEE và Scanner; chi tiết phân nhóm và sơ đồ thực thể liên kết (ERD) được trình bày tại Mục 2.4. Việc ứng dụng Sequelize ORM giúp đảm bảo tính tương thích và bảo toàn dữ liệu bằng các ánh xạ Model, quản lý quan hệ khóa ngoại thay cho câu lệnh truy vấn SQL nguyên thủy.
 
-        % Auth Context (side)
-        % Placed to the right of 'components'
-        \node[authbox, right=1.5cm of components] (auth) {Auth Context\\ \normalfont\fontsize{9pt}{11pt}\selectfont user, token, login};
-
-        % Connections main flow
-        \draw[arrow] (user) -- (providers);
-        \draw[arrow] (providers) -- (router);
-        \draw[arrow] (router) -- (pages);
-        \draw[arrow] (pages) -- (components);
-        \draw[arrow] (components) -- (hooks);
-        \draw[arrow] (hooks) -- (query);
-        \draw[arrow] (query) -- (axios);
-        \draw[arrow] (axios) -- (backend);
-
-        % Connections Auth Context
-        \draw[dashedarrow] (auth.north) |- node[above, font=\fontsize{9pt}{11pt}\selectfont, text=orange, pos=0.75] {Xác thực} ([yshift=-6pt]router.east);
-        \draw[dashedarrow] (auth.west) -- node[above, font=\fontsize{9pt}{11pt}\selectfont, text=orange] {Thông tin user} (components.east);
-        \draw[dashedarrow] (auth.south) |- node[above, font=\fontsize{9pt}{11pt}\selectfont, text=orange, pos=0.75] {Access Token} (axios.east);
-
-        % Group box
-        \begin{scope}[on background layer]
-            \node[groupbox, fit=(providers) (pages) (components) (hooks) (query) (axios) (auth)] (frontend) {};
-            \node[grouptitle, anchor=south, yshift=5pt] at (frontend.north) {REACT FRONTEND SPA};
-        \end{scope}
-
-    \end{tikzpicture}
-    }
-    \caption{Kiến trúc Frontend trong ứng dụng React SPA}
-    \label{fig:kientruc_frontend}
-\end{figure}
-
-\subsection{Kiến trúc Backend}
-Backend tổ chức theo mô hình MVC kết hợp tầng Service tập trung nghiệp vụ (Hình \ref{fig:kientruc_backend}). Controller chỉ nhận nhiệm vụ nhận và trả dữ liệu, mọi xử lý cốt lõi (tính toán dinh dưỡng, thuật toán, quét mã vạch) được trừu tượng hóa vào Service. Cách thiết kế này nâng cao tính độc lập của logic hệ thống, giúp dễ dàng mở rộng và bảo trì.
-
-\begin{figure}[htbp]
-    \centering
-    \resizebox{0.8\textwidth}{!}{
-    \begin{tikzpicture}[
-        node distance=0.7cm and 1.5cm,
-        box/.style={rectangle, draw=black, rounded corners=4pt, inner sep=6pt, align=center, fill=white, font=\bfseries\fontsize{10pt}{12pt}\selectfont, minimum width=8cm},
-        servicebox/.style={rectangle, draw=blue!80!black, rounded corners=4pt, inner sep=8pt, align=center, fill=blue!5, font=\bfseries\fontsize{10pt}{12pt}\selectfont, minimum width=8.5cm},
-        extbox/.style={rectangle, draw=gray, rounded corners=4pt, inner sep=6pt, align=center, fill=gray!10, font=\bfseries\fontsize{10pt}{12pt}\selectfont, dashed, minimum width=4cm},
-        groupbox/.style={rectangle, draw=black, rounded corners=6pt, inner sep=15pt, align=center, fill=green!5},
-        grouptitle/.style={font=\bfseries\fontsize{12pt}{14pt}\selectfont},
-        arrow/.style={-{Stealth[length=3mm]}, thick},
-        dashedarrow/.style={-{Stealth[length=3mm]}, thick, dashed}
-    ]
-
-        % Nodes
-        \node[box, fill=gray!10, minimum width=4cm] (request) {Request từ Frontend\\ \normalfont\fontsize{9pt}{11pt}\selectfont HTTP Request / JSON};
-        
-        \node[box, below=1.8cm of request] (router) {Router\\ \normalfont\fontsize{9pt}{11pt}\selectfont Định tuyến /api/v1};
-        
-        \node[box, below=0.7cm of router] (middleware) {Middleware\\ \normalfont\fontsize{9pt}{11pt}\selectfont Xác thực JWT, kiểm tra dữ liệu};
-        
-        \node[box, below=0.7cm of middleware] (controller) {Controller\\ \normalfont\fontsize{9pt}{11pt}\selectfont Điều phối request / response};
-        
-        \node[servicebox, below=0.7cm of controller] (service) {Service\\ \normalfont\fontsize{9pt}{11pt}\selectfont Business Logic:\\ \normalfont\fontsize{9pt}{11pt}\selectfont Nutrition Core | Adaptive TDEE | Food Scoring | Health Insights\\ \normalfont\fontsize{9pt}{11pt}\selectfont Meal Planner | Scanner | Report};
-        
-        \node[box, below=0.7cm of service] (model) {Model / Sequelize ORM\\ \normalfont\fontsize{9pt}{11pt}\selectfont Truy vấn dữ liệu, ánh xạ bảng};
-        
-        \node[box, below=1.5cm of model] (mysql) {MySQL Database};
-        
-        \node[box, fill=gray!10, below=1.2cm of mysql, minimum width=4cm] (response) {JSON Response về Frontend};
-
-        % External APIs
-        \node[extbox, right=1.2cm of service, yshift=1cm] (openfood) {Open Food Facts API\\ \normalfont\fontsize{9pt}{11pt}\selectfont Tra cứu mã vạch};
-        \node[extbox, right=1.2cm of service, yshift=-1cm] (gemini) {Gemini AI Vision\\ \normalfont\fontsize{9pt}{11pt}\selectfont Nhận dạng bảng dinh dưỡng};
-
-        % Connections
-        \draw[arrow] (request) -- (router);
-        \draw[arrow] (router) -- (middleware);
-        \draw[arrow] (middleware) -- (controller);
-        \draw[arrow] (controller) -- (service);
-        \draw[arrow] (service) -- (model);
-        \draw[arrow] (model) -- (mysql);
-        \draw[arrow] (mysql) -- (response);
-
-        % External API connections
-        \draw[dashedarrow, <->] (service.east |- openfood.west) -- (openfood.west);
-        \draw[dashedarrow, <->] (service.east |- gemini.west) -- (gemini.west);
-
-        % Group box
-        \begin{scope}[on background layer]
-            \node[groupbox, fit=(router) (middleware) (controller) (service) (model)] (backend) {};
-            \node[grouptitle, anchor=south, yshift=5pt] at (backend.north) {BACKEND - Node.js + Express};
-        \end{scope}
-
-    \end{tikzpicture}
-    }
-    \caption{Kiến trúc Backend theo mô hình MVC kết hợp Service}
-    \label{fig:kientruc_backend}
-\end{figure}
-
-\subsection{Kiến trúc cơ sở dữ liệu}
-Cơ sở dữ liệu MySQL được thiết kế quan hệ, tổ chức xoay quanh thông tin người dùng, lịch sử dinh dưỡng, cân nặng và luyện tập (Hình \ref{fig:kientruc_csdl}). Việc ứng dụng Sequelize ORM giúp đảm bảo tính tương thích và bảo toàn dữ liệu bằng các ánh xạ Model, quản lý quan hệ khóa ngoại thay cho câu lệnh truy vấn SQL nguyên thủy. Chi tiết thiết kế dữ liệu được đề cập tại Chương 2.
-
-\begin{figure}[htbp]
-    \centering
-    \resizebox{0.8\textwidth}{!}{
-    \begin{tikzpicture}[
-        node distance=0.8cm and 1.5cm,
-        databox/.style={rectangle, draw=black, rounded corners=4pt, inner sep=10pt, align=left, fill=white, minimum width=6.5cm, font=\normalfont\fontsize{10pt}{12pt}\selectfont},
-        groupbox/.style={rectangle, draw=blue!80!black, rounded corners=6pt, inner sep=20pt, align=center, fill=blue!5},
-        grouptitle/.style={font=\bfseries\fontsize{14pt}{16pt}\selectfont}
-    ]
-
-        % Nodes
-        \node[databox] (user) {\textbf{Người dùng \& hồ sơ}\\[6pt] User};
-        \node[databox, right=1.5cm of user] (food) {\textbf{Thực phẩm}\\[6pt] Food};
-        
-        \node[databox, below=0.8cm of user] (diary) {\textbf{Nhật ký ăn uống}\\[6pt] DiaryEntry};
-        \node[databox, anchor=north] (health) at (diary.north -| food) {\textbf{Theo dõi sức khỏe}\\[6pt] WeightLog\\ WaterLog\\ ExerciseLog};
-        
-        \node[databox, below=1.5cm of diary] (meal) {\textbf{Meal Planner}\\[6pt] MealTemplate\\ UserMealConfig};
-        \node[databox, anchor=north] (tdee) at (meal.north -| food) {\textbf{Adaptive TDEE}\\[6pt] AdaptiveTDEELog};
-        
-        \node[databox, below=0.8cm of meal] (scanner) {\textbf{Scanner}\\[6pt] ScannedProduct\\ ProductContribution};
-
-        % Group box
-        \begin{scope}[on background layer]
-            \node[groupbox, fit=(user) (food) (diary) (health) (meal) (tdee) (scanner)] (db) {};
-            \node[grouptitle, anchor=south, yshift=8pt] at (db.north) {MySQL Database};
-        \end{scope}
-
-        % Note
-        \node[font=\itshape\fontsize{10pt}{12pt}\selectfont, below=0.6cm of db, text width=12cm, align=center] (note) {Ghi chú: Báo cáo PDF được tổng hợp từ các nhóm dữ liệu liên quan, không lưu thành bảng riêng.};
-
-    \end{tikzpicture}
-    }
-    \caption{Kiến trúc tổng quan cơ sở dữ liệu}
-    \label{fig:kientruc_csdl}
-\end{figure}
-
-\subsection{Đánh giá kiến trúc hệ thống}
-Kiến trúc đa tầng được ứng dụng cung cấp độ gắn kết lỏng lẻo giữa Frontend và Backend, hỗ trợ tích hợp linh hoạt các luồng nghiệp vụ chính. Các thành phần có tính độc lập cao, vừa phục vụ tính năng phân tích dữ liệu hiệu quả, vừa đảm bảo khả năng triển khai hệ thống an toàn và mở rộng trong tương lai.
+\textbf{Đánh giá kiến trúc hệ thống:} Kiến trúc đa tầng được ứng dụng cung cấp độ gắn kết lỏng lẻo giữa Frontend và Backend, hỗ trợ tích hợp linh hoạt các luồng nghiệp vụ chính. Các thành phần có tính độc lập cao, vừa phục vụ tính năng phân tích dữ liệu hiệu quả, vừa đảm bảo khả năng triển khai hệ thống an toàn và mở rộng trong tương lai.
 
 \section{Kết luận chương}
 Chương 1 đã trình bày tổng quan về bài toán và yêu cầu xây dựng ứng dụng NutriTrack, bao gồm các mục tiêu quản lý dữ liệu đa nguồn và phân tích chỉ số dinh dưỡng tự động. Việc ứng dụng linh hoạt các nền tảng React, Node.js, Express, kết hợp cùng cơ sở dữ liệu MySQL và các dịch vụ bổ trợ đã được định hình rõ qua mô hình Client-Server nhiều tầng. Kiến trúc và công nghệ này cung cấp tiền đề kỹ thuật vững chắc để hệ thống bước vào giai đoạn thiết kế chi tiết các chức năng và cơ sở dữ liệu ở Chương 2.
@@ -2007,39 +1843,7 @@ Sau khi cấu hình middleware và route, Backend thực hiện kết nối MySQ
 
 Trong file route tổng hợp, các nhóm route nghiệp vụ được gắn với middleware xác thực trước khi chuyển đến route chi tiết. Các route như dashboard, diary, weight, water, exercise, profile, meal planner, report, adaptive TDEE và scanner đều yêu cầu người dùng đã đăng nhập. Riêng nhóm route xác thực được tách riêng để phục vụ đăng ký, đăng nhập, đăng xuất, làm mới token và lấy thông tin người dùng hiện tại.
 
-Các phương thức HTTP được sử dụng theo ý nghĩa của từng thao tác. Thao tác đọc dữ liệu sử dụng GET, thao tác tạo dữ liệu sử dụng POST, thao tác cập nhật sử dụng PUT hoặc PATCH, còn thao tác xóa sử dụng DELETE. Cách tổ chức này giúp API dễ kiểm tra, dễ tích hợp với Frontend và giữ được sự thống nhất khi hệ thống mở rộng thêm chức năng. Một số nhóm API chính của Backend được tóm tắt trong Bảng \ref{tab:api_backend}.
-
-\begin{longtable}{|>{\raggedright\arraybackslash}p{5cm}|p{10cm}|}
-\caption{Một số nhóm API chính của Backend}
-\label{tab:api_backend} \\
-\hline
-\textbf{Nhóm API} & \textbf{Vai trò chính} \\
-\hline
-\endfirsthead
-\hline
-\textbf{Nhóm API} & \textbf{Vai trò chính} \\
-\hline
-\endhead
-
-/api/v1/auth & Đăng ký, đăng nhập, đăng xuất, làm mới token \\
-\hline
-/api/v1/profile & Quản lý hồ sơ cá nhân và mục tiêu dinh dưỡng \\
-\hline
-/api/v1/dashboard & Tổng hợp dữ liệu dinh dưỡng, nước uống, vận động và cân nặng \\
-\hline
-/api/v1/diary & Quản lý nhật ký ăn uống và thực phẩm người dùng \\
-\hline
-/api/v1/weight, /water, /exercise & Ghi nhận cân nặng, nước uống và vận động \\
-\hline
-/api/v1/meal-planner & Cấu hình và tạo kế hoạch bữa ăn \\
-\hline
-/api/v1/adaptive-tdee & Theo dõi và cập nhật TDEE thích ứng \\
-\hline
-/api/v1/scanner & Xử lý mã vạch, ảnh nhãn dinh dưỡng và dữ liệu sản phẩm \\
-\hline
-/api/v1/report & Tổng hợp dữ liệu và xuất báo cáo PDF \\
-\hline
-\end{longtable}
+Các phương thức HTTP được sử dụng theo ý nghĩa của từng thao tác. Thao tác đọc dữ liệu sử dụng GET, thao tác tạo dữ liệu sử dụng POST, thao tác cập nhật sử dụng PUT hoặc PATCH, còn thao tác xóa sử dụng DELETE. Cách tổ chức này giúp API dễ kiểm tra, dễ tích hợp với Frontend và giữ được sự thống nhất khi hệ thống mở rộng thêm chức năng. Các nhóm route được triển khai tương ứng với thiết kế API đã trình bày tại Bảng \ref{tab:nhom_api_chinh}.
 
 Chi tiết luồng xử lý một request có xác thực được minh họa trong Hình \ref{fig:auth_flow}.
 
@@ -3522,31 +3326,7 @@ Báo cáo PDF mới tập trung vào dữ liệu theo tuần và tháng & Bổ s
 \end{longtable}
 
 
-\section{Kết luận chương}Chương 4 đã trình bày quá trình thực nghiệm và đánh giá hệ thống NutriTrack sau giai đoạn triển khai. Nội dung chương tập trung vào môi trường thực nghiệm, kiểm thử chức năng, thực nghiệm các thuật toán chính, đánh giá kết quả, đồng thời nêu ra một số hạn chế và hướng phát triển tiếp theo. Trong phạm vi kiểm thử cục bộ, các nhóm chức năng chính của hệ thống đã hoạt động theo luồng nghiệp vụ đã thiết kế, bao gồm xác thực tài khoản, quản lý hồ sơ, ghi nhận nhật ký dinh dưỡng, theo dõi nước uống, cân nặng, luyện tập, thống kê dashboard, lập kế hoạch bữa ăn, quét thông tin sản phẩm và xuất báo cáo PDF (Chi tiết xem Bảng \ref{tab:tong_hop_chuong_4}).
-
-\begin{longtable}{|>{\raggedright\arraybackslash}p{5cm}|p{10cm}|}
-\caption{Tổng hợp nội dung đánh giá trong Chương 4}
-\label{tab:tong_hop_chuong_4} \\
-\hline
-\textbf{Nội dung đánh giá} & \textbf{Kết quả tổng quát} \\
-\hline
-\endfirsthead
-\hline
-\textbf{Nội dung đánh giá} & \textbf{Kết quả tổng quát} \\
-\hline
-\endhead
-
-Môi trường thực nghiệm & Hệ thống được kiểm thử trên môi trường cục bộ với backend, frontend và cơ sở dữ liệu \\
-\hline
-Kiểm thử chức năng & Các chức năng chính có thể thực hiện theo luồng người dùng đã xây dựng \\
-\hline
-Thực nghiệm thuật toán & Các thuật toán chính trả về kết quả theo dữ liệu đầu vào \\
-\hline
-Xử lý lỗi & API phản hồi lỗi theo cấu trúc JSON thống nhất \\
-\hline
-Hạn chế & Kết quả còn phụ thuộc vào dữ liệu đầu vào, phạm vi kiểm thử và chất lượng dữ liệu thực phẩm \\
-\hline
-\end{longtable}
+\section{Kết luận chương}Chương 4 đã trình bày quá trình thực nghiệm và đánh giá hệ thống NutriTrack sau giai đoạn triển khai. Nội dung chương tập trung vào môi trường thực nghiệm, kiểm thử chức năng, thực nghiệm các thuật toán chính, đánh giá kết quả, đồng thời nêu ra một số hạn chế và hướng phát triển tiếp theo. Trong phạm vi kiểm thử cục bộ, các nhóm chức năng chính của hệ thống đã hoạt động theo luồng nghiệp vụ đã thiết kế, bao gồm xác thực tài khoản, quản lý hồ sơ, ghi nhận nhật ký dinh dưỡng, theo dõi nước uống, cân nặng, luyện tập, thống kê dashboard, lập kế hoạch bữa ăn, quét thông tin sản phẩm và xuất báo cáo PDF.
 
 \chapter*{KẾT LUẬN}
 \addcontentsline{toc}{chapter}{KẾT LUẬN}
