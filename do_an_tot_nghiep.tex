@@ -3037,33 +3037,8 @@ Hệ thống cũng phân biệt các nhóm lỗi HTTP thường gặp. Lỗi d�
 
 Về phía Frontend, hệ thống sử dụng React để xây dựng giao diện dạng SPA. Các thành phần như React Router, Auth Context, Axios và TanStack Query được sử dụng để quản lý điều hướng, xác thực, gọi API và đồng bộ dữ liệu. Các màn hình như Dashboard, Diary, Profile, Meal Planner và Scanner được triển khai theo hướng component hóa, giúp giao diện được tổ chức rõ ràng và thuận tiện hơn trong quá trình bảo trì.
 
-Chương này cũng đã trình bày các thành phần xử lý cốt lõi và chức năng hỗ trợ nhập liệu của NutriTrack. Mỗi thành phần giải quyết một vấn đề riêng trong quá trình quản lý và phân tích dữ liệu dinh dưỡng. Vai trò và các điểm kỹ thuật nổi bật của các thành phần được tổng hợp trong Bảng~\ref{tab:tong-hop-thanh-phan-cot-loi}.
+Chương này cũng đã trình bày các thành phần xử lý cốt lõi và chức năng hỗ trợ nhập liệu của NutriTrack. Mỗi thành phần giải quyết một vấn đề riêng trong quá trình quản lý và phân tích dữ liệu dinh dưỡng.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Tổng hợp các thành phần xử lý cốt lõi của NutriTrack}
-    \label{tab:tong-hop-thanh-phan-cot-loi}
-    \renewcommand{\arraystretch}{1.2}
-    \setlength{\tabcolsep}{4pt}
-    \small
-    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{0.2\textwidth}|>{\raggedright\arraybackslash}p{0.3\textwidth}|>{\raggedright\arraybackslash}X|}
-        \hline
-        \textbf{Thành phần} & \textbf{Vấn đề giải quyết} & \textbf{Điểm kỹ thuật nổi bật} \\
-        \hline
-        Nutrition Core & Tính toán thống nhất các chỉ số và mục tiêu dinh dưỡng nền tảng. & Cung cấp calculateAllMetrics và các kết quả dùng chung cho Dashboard, Meal Planner và PDF Report. \\
-        \hline
-        Adaptive TDEE & TDEE tĩnh không phản ánh đầy đủ biến động theo dữ liệu thực tế của người dùng. & EMA với hệ số 0,1; warm-up 14 ngày; rolling tối đa bốn tuần; clamp trong khoảng 70–130\% TDEE tĩnh; kiểm tra điều kiện dữ liệu. \\
-        \hline
-        Food Scoring & Tổng năng lượng không phản ánh đầy đủ chất lượng dinh dưỡng của thực phẩm. & Chuẩn hóa thành phần theo 100 kcal; cơ chế cộng và trừ điểm; giới hạn điểm cứng theo chất xơ, vi chất và natri. \\
-        \hline
-        Health Insights & Dữ liệu nhật ký khó diễn giải và có thể tạo cảnh báo thiếu hụt không phù hợp với thời điểm. & Triage theo mức đạt calo; Context-Awareness theo thời gian và số bữa; phân loại mức độ ưu tiên của insight. \\
-        \hline
-        Meal Planner & Tính khẩu phần thủ công khó xử lý sự chồng lấn macro giữa nhiều nguyên liệu. & Cố định phần rau; lập hệ phương trình tuyến tính \(3 \times 3\); khử Gauss kết hợp chọn phần tử trụ từng phần; kiểm tra tính khả thi của nghiệm. \\
-        \hline
-        Hybrid Nutrition Scanner & Nhập liệu sản phẩm đóng gói mất thời gian và dữ liệu cục bộ có thể chưa đầy đủ. & Tra cứu Local Verified/Unverified, Open Food Facts và Gemini AI Vision; Physics Validation; cập nhật confidenceScore từ dữ liệu đóng góp. \\
-        \hline
-    \end{tabularx}
-\end{table}
 
 Các thành phần trên không hoạt động độc lập mà liên kết với nhau thông qua dữ liệu mục tiêu cá nhân, nhật ký ăn uống, cân nặng, nước uống và thông tin thực phẩm. Frontend tiếp nhận và trình bày kết quả xử lý thông qua các màn hình như Dashboard, Diary, Meal Planner và Scanner. Bên cạnh đó, chức năng xuất báo cáo PDF tổng hợp dữ liệu theo khoảng thời gian nhằm phục vụ quá trình theo dõi và đánh giá.
 
