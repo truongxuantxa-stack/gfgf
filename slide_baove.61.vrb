@@ -1,0 +1,23 @@
+\frametitle{BACKUP B7.9: Vai trò của Custom hook}
+\hypertarget{b7_9_target}{}
+    \textbf{1. Phân tách logic (Separation of Concerns)}
+    \vspace{0.1cm}
+
+    Custom hook giúp tách biệt logic truy xuất dữ liệu (data/API) ra khỏi các component UI.
+
+    \begin{itemize}
+        \small \setlength{\itemsep}{1pt}
+        \item \textbf{\texttt{useDashboard.js}} $\rightarrow$ lấy dashboard data
+        \item \textbf{\texttt{useDiary.js}} $\rightarrow$ lấy diary, thêm/xóa entry, thêm/xóa nước
+        \item \textbf{\texttt{useScanner.js}} $\rightarrow$ quản lý scanner state + API
+        \item \textbf{\texttt{useMealPlanner.js}} $\rightarrow$ lấy config/template/foods, generate/swap/push diary
+        \item \textbf{\texttt{useAdaptiveTDEE.js}} $\rightarrow$ adaptive status/history/toggle/calculate
+        \item \textbf{\texttt{useProfile.js}} $\rightarrow$ profile data/update
+        \item \textbf{\texttt{useWeight.js}} $\rightarrow$ weight data/add/delete
+    \end{itemize}
+
+    \vspace{0.2cm}
+    \textbf{2. Lợi ích bảo trì (Maintainability)}
+    \vspace{0.1cm}
+
+    Tách API logic vào custom hooks để component chỉ tập trung vào việc hiển thị và xử lý event. Điều này giúp code dễ bảo trì hơn, vì khi API thay đổi thì chỉ cần sửa tập trung trong hook thay vì sửa rải rác ở nhiều component.

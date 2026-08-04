@@ -1,0 +1,18 @@
+\frametitle{BACKUP B7.4: Axios interceptor xử lý token thế nào?}
+\hypertarget{b7_4_target}{}
+    \textbf{1. Chi tiết kỹ thuật (\texttt{lib/axios.js})}
+    \vspace{0.1cm}
+
+    \begin{itemize}
+        \item \textbf{Khởi tạo Axios:} Cấu hình \texttt{withCredentials: true} để tự động gửi cookie (chứa Refresh Token) lên backend.
+        \item \textbf{Request Interceptor:} Lấy \texttt{accessToken} từ \texttt{localStorage} và đính kèm vào Header \texttt{Authorization: Bearer <token>}.
+        \item \textbf{Response Interceptor:} Khi API trả lỗi \texttt{401 Unauthorized}, frontend gọi endpoint \texttt{/auth/refresh-token}, lấy token mới, lưu \texttt{localStorage}, rồi \textbf{retry} request bị lỗi.
+    \end{itemize}
+
+    \vspace{0.2cm}
+    \textbf{2. Cách thức hoạt động và Xử lý hàng đợi (Queue)}
+    \vspace{0.1cm}
+
+    Axios interceptor giúp tự động gắn access token vào mọi request một cách trong suốt. Nếu token hết hạn (401), hệ thống sẽ ngầm dùng cookie \texttt{HttpOnly} để refresh token.
+
+    \textbf{Điểm cốt lõi:} Nếu có \textbf{nhiều request cùng bị 401} trong lúc đang gọi refresh, hệ thống sẽ đưa chúng vào \textbf{Queue} (hàng đợi) để chờ một lần refresh duy nhất, giúp tránh spam server. Khi lấy được token mới, toàn bộ request trong Queue sẽ được tự động gửi lại.

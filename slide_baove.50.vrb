@@ -1,0 +1,33 @@
+\frametitle{BACKUP B6.3: Xử lý ngoại lệ với kết quả từ AI (JSON \& Validation)}
+\hypertarget{b6_3_target}{}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \modulelabel{1. Bắt buộc trả JSON}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item \textbf{Lý do:} Backend cần cấu trúc chuẩn để parse và lưu CSDL. Văn bản tự do khiến việc trích xuất \textit{calories, protein...} thiếu chính xác.
+                \item \textbf{Lợi ích:} Giúp kiểm tra trường bắt buộc, ép kiểu số và báo lỗi nếu AI trả sai định dạng.
+            \end{itemize}
+
+            \vspace{0.2cm}
+            \modulelabel{2. Xử lý rác Markdown}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item Mặc dù prompt yêu cầu trả JSON thuần, AI đôi khi vẫn tự động bọc kết quả trong markdown code block (\verb|```json|).
+                \item \textbf{Giải pháp:} Service chủ động dọn dẹp chuỗi bằng cách loại bỏ \verb|```json| và \verb|```| trước khi gọi \texttt{JSON.parse()}. Giúp chống lỗi định dạng phổ biến từ AI.
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \modulelabel{3. JSON sai hoặc thiếu trường}
+            \vspace{0.1cm}
+            \begin{itemize}
+                \small
+                \item \textbf{TH1 - Parse Lỗi:} AI sinh văn bản không phải JSON (VD: \textit{"Calories khoảng..."}) $\rightarrow$ \texttt{JSON.parse()} văng lỗi.
+                \item \textbf{TH2 - Thiếu trường:} JSON hợp lệ nhưng thiếu 4 trường bắt buộc (\textit{calo, đạm, carb, béo}) hoặc không phải kiểu số.
+                \item \textbf{Giải pháp chung:} Backend \textbf{từ chối lưu} dữ liệu. Service ném lỗi rõ ràng để Controller báo về Frontend, yêu cầu người dùng chụp ảnh rõ nét hơn. Tránh tuyệt đối việc lưu rác (garbage) vào CSDL.
+            \end{itemize}
+        \end{column}
+    \end{columns}

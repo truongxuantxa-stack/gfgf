@@ -1,0 +1,19 @@
+\frametitle{BACKUP B7.2: ProtectedRoute hoạt động thế nào?}
+\hypertarget{b7_2_target}{}
+    \textbf{1. Luồng xử lý (từ source code)}
+    \vspace{0.1cm}
+
+    \texttt{ProtectedRoute} lấy trạng thái từ \texttt{useAuth()}: \texttt{isAuthenticated}, \texttt{isLoading}, \texttt{user}. Sau đó xử lý:
+
+    \begin{itemize}
+        \item Nếu \texttt{isLoading} $\rightarrow$ hiện spinner.
+        \item Nếu chưa \texttt{authenticated} $\rightarrow$ Navigate \texttt{/login}.
+        \item Nếu \texttt{user.isOnboarded === false} $\rightarrow$ Navigate \texttt{/onboarding}.
+        \item Ngược lại $\rightarrow$ render \texttt{<Outlet />}.
+    \end{itemize}
+
+    \vspace{0.2cm}
+    \textbf{2. Vai trò bảo mật}
+    \vspace{0.1cm}
+
+    \texttt{ProtectedRoute} là lớp bảo vệ route. Nó đảm bảo \textbf{chỉ user đã đăng nhập và đã hoàn tất onboarding} mới vào được các trang chính. Nếu chưa đăng nhập thì chuyển về login, nếu chưa onboarding thì chuyển về trang onboarding.

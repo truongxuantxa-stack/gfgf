@@ -1,0 +1,26 @@
+\frametitle{BACKUP B7.5: Luồng xử lý khi Access Token hết hạn}
+\hypertarget{b7_5_target}{}
+    \textbf{1. Các bước thực thi (Interceptors Flow)}
+    \vspace{0.1cm}
+
+    \begin{itemize}
+        \small \setlength{\itemsep}{2pt}
+        \item[\textbf{1.}] Frontend gửi Request (kèm Access Token cũ).
+        \item[\textbf{2.}] Backend trả về lỗi \texttt{401 Unauthorized}.
+        \item[\textbf{3.}] \textbf{Axios Interceptor} bắt lỗi 401 và kiểm tra chưa retry (\texttt{\_retry = false}).
+        \item[\textbf{4.}] Gọi API \texttt{POST /auth/refresh-token} (Tự động gửi kèm \texttt{HttpOnly Cookie}).
+        \item[\textbf{5.}] Backend xác thực Cookie và trả về Access Token mới.
+        \item[\textbf{6.}] Lưu Access Token mới vào \texttt{localStorage}.
+        \item[\textbf{7.}] Cập nhật Token mới vào Header của Request cũ.
+        \item[\textbf{8.}] \textbf{Retry:} Gửi lại Request ban đầu. \textit{(Nếu quá trình Refresh thất bại $\rightarrow$ Xóa token, chuyển về /login)}.
+    \end{itemize}
+
+    \vspace{0.15cm}
+    \textbf{2. Vì sao Access Token lưu ở localStorage còn Refresh Token lưu ở Cookie?}
+    \vspace{0.1cm}
+
+    \begin{itemize}
+        \small \setlength{\itemsep}{2pt}
+        \item \textbf{Access Token:} Sống ngắn (15 phút). Lưu ở \texttt{localStorage} để Frontend lấy và gắn vào \texttt{Authorization Header} một cách chủ động khi gọi API.
+        \item \textbf{Refresh Token:} Sống dài, rất nhạy cảm. Được Backend cài vào \textbf{HttpOnly Cookie} để trình duyệt bảo vệ, ngăn mã độc JavaScript (XSS) đọc được. Khi gọi Refresh API (với \texttt{withCredentials}), trình duyệt tự gửi Cookie này lên backend một cách an toàn.
+    \end{itemize}

@@ -1,0 +1,17 @@
+\frametitle{BACKUP B2.3: Weighted Penalty — Hàm phạt tỷ lệ theo mức độ sai lệch}
+\hypertarget{b2_3_target}{}
+    \textbf{2. Weighted Penalty — Hàm phạt tỷ lệ theo mức độ sai lệch}
+    \vspace{0.1cm}
+
+    Thay vì trừ điểm cố định gây cứng nhắc, hệ thống sử dụng công thức linh hoạt:
+
+    \begin{center}
+        \colorbox{NutriDark!10}{\textbf{Điểm phạt = Mức lỗi gốc $\times$ Hệ số sai lệch}}
+    \end{center}
+
+    \begin{itemize}
+        \small
+        \item \textbf{Mức lỗi gốc (Base Penalty):} Xác định theo loại cảnh báo (Danger, Warning, Suggestion). Ví dụ: Lỗi liên quan đến Protein có mức lỗi gốc cao hơn lỗi thiếu một loại vi chất.
+        \item \textbf{Hệ số sai lệch (Multiplier):} Tăng dần theo mức độ thiếu hụt hoặc dư thừa thực tế (Ví dụ: sai lệch $>$ 60\% thì nhân hệ số 2.5).
+        \item \textbf{Mục đích thực tế:} Đảm bảo sự công bằng. Việc thiếu 1g Protein sẽ bị trừ rất ít điểm so với việc thiếu 50g Protein. Điểm số phản ánh đúng mức độ nghiêm trọng của vấn đề dinh dưỡng.
+    \end{itemize}

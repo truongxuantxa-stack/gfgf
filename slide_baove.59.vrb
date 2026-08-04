@@ -1,0 +1,26 @@
+\frametitle{BACKUP B7.7: Cách sử dụng useMutation để ghi dữ liệu}
+\hypertarget{b7_7_target}{}
+    \textbf{1. Công dụng của useMutation}
+    \vspace{0.1cm}
+
+    Khác với \texttt{useQuery} (chỉ đọc), \texttt{useMutation} được dùng chuyên biệt cho các request \textbf{làm thay đổi dữ liệu (POST, PUT, DELETE)}.
+
+    \begin{itemize}
+        \item \textbf{Thêm/Xóa món ăn, nước, cân nặng:} \texttt{POST}, \texttt{DELETE}.
+        \item \textbf{Cập nhật Profile/Mục tiêu:} \texttt{PUT}.
+        \item \textbf{Các tác vụ phức tạp:} \texttt{POST} scanner confirm, \texttt{POST} meal planner generate.
+    \end{itemize}
+
+    \vspace{0.2cm}
+    \textbf{2. Cơ chế Đồng bộ dữ liệu (invalidateQueries)}
+    \vspace{0.1cm}
+
+    Sau khi thao tác ghi/sửa/xóa thành công, hệ thống dùng hàm \texttt{invalidateQueries} để đánh dấu các query liên quan là đã cũ (stale), kích hoạt \textbf{tự động refetch}.
+
+    \textit{Ví dụ:} Khi \texttt{useAddEntry(date)} gọi API thêm món ăn thành công, nó sẽ \texttt{invalidate} các keys:
+    \begin{itemize}
+        \item \texttt{['diary', date]}
+        \item \texttt{['diary', 'recent', date]}
+        \item \texttt{['dashboard', date]}
+    \end{itemize}
+    $\rightarrow$ Nhờ đó, cả màn hình \textbf{Nhật ký}, \textbf{Lịch sử món gần đây} và \textbf{Dashboard} đều tự động cập nhật dữ liệu mới nhất mà không cần tải lại toàn bộ trang.

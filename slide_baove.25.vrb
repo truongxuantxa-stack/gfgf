@@ -1,0 +1,29 @@
+\frametitle{BACKUP B1.2: Thuật toán Khử Gauss + Partial Pivoting}
+\hypertarget{b1_2_target}{}
+    \textbf{2. Thuật toán: Khử Gauss + Partial Pivoting}
+
+    \footnotesize \textit{Khử Gauss là phương pháp giải hệ phương trình tuyến tính bằng các phép biến đổi sơ cấp trên hàng, đưa ma trận về dạng tam giác trên, sau đó thế ngược để tìm nghiệm.}
+    \vspace{0.1cm}
+
+    \begin{block}{Luồng thực thi của thuật toán}
+        \footnotesize
+        \textbf{Bước 1 — Quá trình khử (Forward Elimination):} Đưa hệ phương trình về dạng tam giác.\\
+        $\bullet$ Lần lượt xét từng cột (tương ứng với Protein, Carb, Fat).\\
+        $\bullet$ Đổi chỗ hàng có giá trị lớn nhất lên trên cùng để thuật toán chạy ổn định nhất (Partial Pivoting).\\
+        $\bullet$ Dừng thuật toán ngay lập tức nếu phát hiện các nguyên liệu bị trùng lặp tỷ lệ dinh dưỡng (Ma trận suy biến).\\
+        $\bullet$ Dùng phép trừ tỷ lệ để triệt tiêu dần các biến ở các hàng bên dưới.\\
+
+        \vspace{0.1cm}
+        \textbf{Bước 2 — Quá trình thế ngược (Back Substitution):}\\
+        $\bullet$ Bắt đầu từ phương trình cuối cùng (lúc này đã bị triệt tiêu chỉ còn đúng 1 ẩn số).\\
+        $\bullet$ Giải ra ngay được khối lượng của nguyên liệu thứ 3.\\
+        $\bullet$ Lấy kết quả đó thế ngược dần lên các phương trình bên trên để tìm ra khối lượng nguyên liệu 2 và 1.
+    \end{block}
+
+    \vspace{0.1cm}
+    \textbf{Giải thích thêm về Bước 1 (Forward Elimination):}
+    \begin{itemize}
+        \small
+        \item \textbf{Partial Pivoting:} Chọn phần tử trội nhất trong cột để tránh chia cho số rất nhỏ $\rightarrow$ giảm sai số số học (floating-point).
+        \item \textbf{Ngưỡng suy biến} ($|pivot| < 10^{-10}$): Xảy ra khi 2 nguyên liệu có tỷ lệ macro giống nhau (ví dụ: 2 loại gạo) $\rightarrow$ vô số nghiệm / vô nghiệm.
+    \end{itemize}

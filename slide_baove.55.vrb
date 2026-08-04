@@ -1,0 +1,20 @@
+\frametitle{BACKUP B7.3: AuthOnlyRoute khác gì ProtectedRoute?}
+\hypertarget{b7_3_target}{}
+    \textbf{1. Đặc điểm của AuthOnlyRoute}
+    \vspace{0.1cm}
+
+    \texttt{AuthOnlyRoute} chỉ kiểm tra: \textbf{Đã đăng nhập chưa?} Nó không kiểm tra biến \texttt{isOnboarded}.
+
+    \begin{itemize}
+        \item Nếu đang loading thì hiện spinner.
+        \item Nếu chưa đăng nhập thì về \texttt{/login}.
+        \item Đăng nhập rồi thì render \texttt{<Outlet />}.
+    \end{itemize}
+
+    \vspace{0.2cm}
+    \textbf{2. Vì sao /onboarding không dùng ProtectedRoute?}
+    \vspace{0.1cm}
+
+    Vì \texttt{ProtectedRoute} có kiểm tra \texttt{isOnboarded}. Nếu user chưa onboarding mà trang onboarding cũng dùng \texttt{ProtectedRoute}, route sẽ tự redirect lại \texttt{/onboarding}, dễ gây \textbf{vòng lặp vô hạn (redirect loop)} hoặc logic khó kiểm soát.
+
+    Vì vậy \texttt{/onboarding} dùng \texttt{AuthOnlyRoute} (như comment trong source), chỉ yêu cầu đăng nhập nhưng không kiểm tra \texttt{isOnboarded}.

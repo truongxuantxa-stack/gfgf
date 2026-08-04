@@ -1,0 +1,30 @@
+\frametitle{BACKUP B7.6: Cách sử dụng useQuery để đọc dữ liệu}
+\hypertarget{b7_6_target}{}
+    \textbf{1. Công dụng của useQuery}
+    \vspace{0.1cm}
+
+    \texttt{useQuery} (từ thư viện TanStack Query) được sử dụng chuyên biệt cho các \textbf{request đọc dữ liệu (GET)} từ server. Ví dụ:
+
+    \begin{itemize}
+        \item \texttt{GET /dashboard?date=...}
+        \item \texttt{GET /diary?date=...}
+        \item \texttt{GET /weight}, \texttt{GET /profile}, \texttt{GET /meal-planner/config}...
+    \end{itemize}
+
+    \vspace{0.1cm}
+    \textbf{2. Cơ chế Query Key (Định danh Cache)}
+    \vspace{0.1cm}
+
+    Mỗi query có một \textbf{queryKey} (dạng mảng) để định danh vùng nhớ cache.
+
+    \begin{itemize}
+        \item \textbf{Dashboard:} \texttt{useDashboard(date)} dùng key \texttt{['dashboard', date]}.
+        \item \textbf{Nhật ký:} \texttt{useDiaryData(date)} dùng key \texttt{['diary', date]}.
+    \end{itemize}
+    \textit{Cách thức hoạt động:} Khi biến \texttt{date} thay đổi, \texttt{queryKey} sẽ đổi theo, khiến React Query tự động gọi lại API để lấy dữ liệu ngày mới cực kỳ mượt mà.
+
+    \vspace{0.15cm}
+    \textbf{3. Tối ưu gọi API với \texttt{enabled}}
+    \vspace{0.1cm}
+
+    Trong các custom hook, query được đi kèm cấu hình \texttt{enabled: !!date}. Nhờ đó, API chỉ thực sự được gọi khi biến \texttt{date} có giá trị, ngăn chặn việc gửi request rác lên server.

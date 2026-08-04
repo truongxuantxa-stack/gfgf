@@ -1,0 +1,19 @@
+\frametitle{BACKUP B2.5: Nhận biết ngữ cảnh (Context-Awareness)}
+\hypertarget{b2_5_target}{}
+    \textbf{4. Nhận biết ngữ cảnh (Context-Awareness) — Xử lý theo thời gian thực}
+    \vspace{0.1cm}
+
+    \begin{block}{\small Cổng logic kiểm tra cảnh báo thiếu hụt}
+        \footnotesize
+        Chỉ kích hoạt cảnh báo khi ngày ăn uống được tính là \textbf{hoàn tất}, thỏa 1 trong 3 điều kiện:\\
+        $\bullet$ 1. Dữ liệu thuộc về ngày hôm trước (Historical).\\
+        $\bullet$ 2. Thời gian hiện tại đã qua 20:00 tối.\\
+        $\bullet$ 3. Đã ghi nhận đầy đủ 3 bữa: Sáng, Trưa, Tối.
+    \end{block}
+
+    \begin{itemize}
+        \small
+        \item \textbf{Cảnh báo DƯ THỪA} (muối, đường, calo vượt): Kích hoạt \textbf{MỌI LÚC}. (Ví dụ: Ăn mặn lúc sáng vẫn cần phải biết ngay).
+        \item \textbf{Cảnh báo THIẾU HỤT}: Chỉ kích hoạt khi \texttt{isDayComplete = true}. (Tránh false positive khi người dùng mới chỉ ăn sáng xong).
+        \item \textbf{\texttt{clientHour}}: Được truyền từ Frontend để hệ thống Backend xử lý đúng ngữ cảnh thời gian, tránh sai lệch múi giờ (Ví dụ: Server ở múi giờ UTC 13:30, nhưng người dùng ở VN đang là 20:30).
+    \end{itemize}

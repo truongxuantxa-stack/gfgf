@@ -1,0 +1,19 @@
+\frametitle{BACKUP B7.8: Luồng đồng bộ: Thêm món $\rightarrow $ Dashboard cập nhật}
+\hypertarget{b7_8_target}{}
+    \textbf{Các bước thực thi (Mutation \& Invalidate Flow)}
+    \vspace{0.1cm}
+
+    Khi người dùng thêm một món ăn mới, hệ thống tự động đồng bộ từ Backend về Frontend theo luồng \textbf{9 bước} cực kỳ chặt chẽ:
+
+    \begin{itemize}
+        \small \setlength{\itemsep}{2pt}
+        \item[\textbf{1.}] User thêm món ăn trong màn hình Nhật ký (Diary).
+        \item[\textbf{2.}] Component gọi custom hook \texttt{useAddEntry(date)}.
+        \item[\textbf{3.}] Mutation thực thi request \texttt{POST /diary/entries}.
+        \item[\textbf{4.}] Backend tiếp nhận, xử lý và lưu record \texttt{DiaryEntry} vào CSDL.
+        \item[\textbf{5.}] Hàm \texttt{onSuccess} (Frontend) kích hoạt \texttt{invalidateQueries(['diary', date])}.
+        \item[\textbf{6.}] \texttt{onSuccess} tiếp tục kích hoạt \texttt{invalidateQueries(['dashboard', date])}.
+        \item[\textbf{7.}] Hook \texttt{useDiaryData} tự động \textbf{refetch} danh sách món ăn mới nhất.
+        \item[\textbf{8.}] Hook \texttt{useDashboard} tự động \textbf{refetch} lại tổng Calories, Macro và Health Score.
+        \item[\textbf{9.}] \textbf{UI đồng bộ hoàn toàn:} Cả hai màn hình đều cập nhật số liệu ngay lập tức mà không cần reload (F5) trang.
+    \end{itemize}

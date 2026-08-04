@@ -1,0 +1,33 @@
+\frametitle{BACKUP B2.1: RDI theo giới tính (Gender-based RDI)}
+\hypertarget{b2_1_target}{}
+    \textbf{Nhu cầu dinh dưỡng y khoa theo giới tính}
+    \vspace{0.1cm}
+
+    Một số ngưỡng vi chất và đa lượng được hệ thống tham chiếu theo chuẩn y khoa (WHO, AHA, IOM) thay đổi phụ thuộc vào giới tính của người dùng. Hệ thống đóng gói logic này vào helper \texttt{getRDIByGender()}.
+
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \small
+                \item \textbf{Đường (Sugar):} Nam 36g, Nữ 25g
+                \item \textbf{Sắt (Iron):} Nam 8mg, Nữ 18mg
+                \item \textbf{Chất xơ (Fiber):} Nam 30-38g, Nữ 25g
+                \item \textbf{Vitamin C:} Nam 90mg, Nữ 75mg
+                \item \textbf{Vitamin A:} Nam 900µg, Nữ 700µg
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{itemize}
+                \small
+                \item \textbf{Muối (Sodium):} Chung 2300mg
+                \item \textbf{Canxi (Calcium):} Chung 1000mg
+            \end{itemize}
+
+            \vspace{0.3cm}
+            \begin{block}{\small Thiết kế tối ưu (DRY)}
+                \footnotesize Hàm \texttt{getRDIByGender()} được gọi chung bởi cả \texttt{getHealthInsights()} và \texttt{calculateDailyHealthScore()}. Việc này giúp tập trung các biến số y khoa vào một nơi, tránh hard-code rải rác.
+            \end{block}
+        \end{column}
+    \end{columns}
